@@ -25,8 +25,7 @@ from subprocess import Popen, PIPE, STDOUT
 #   name rastring destring vstring fstring
 test_string = "lol    010203.04 121314.5 123 0"
 
-p = Popen(['gfortran', 
-          '/Users/tsrice/Documents/Code/mark_reid_kdist/revised_kinematic_distance_3.f'], 
+p = Popen(['/Users/tsrice/Documents/Code/mark_reid_kdist/revised_kinematic_distance'], 
           shell = False, stdin = PIPE)
 output, error = p.communicate(input = test_string)
 
