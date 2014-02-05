@@ -1,0 +1,12 @@
+! Control file for Fit_Galaxy program
+! Galactic and Solar Motion parameters
+  8.34        ! Ro (kpc)
+240.0         ! To (km/s)
+ -0.2         ! dT/dr (km/s/kpc)
+ 10.0         ! Solar Motion Uo toward G.C. (km/s)
+ 14.6         ! Solar Motion Vo toward Galactic rotation (km/s)
+  7.2         ! Solar Motion Wo toward North Gal. Pole (km/s)
+  5.0         ! Source peculiar motion Us toward G.C. (km/s) 
+ -6.0         ! Source peculiar motion Vs toward Galactic rotation (km/s)
+  0.0         ! Source peculiar motion Ws toard North Gal. Pole (km/s)
+  7.0         ! LSR velocity uncertainty (1-sigma) (km/s)
