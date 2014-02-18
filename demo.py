@@ -65,16 +65,24 @@ def cogal_downsampled_demo(downsample_factor=4):
     cogal, cogal_header = getdata(data_path+'COGAL_all_mom.fits', memmap=True,
                                   header=True)
 
-    cogal_downsampled = cogal[::df, ::df, ::df]
+    cogal_downsampled_transposed = cogal[::df, ::df, ::df].transpose(2,0,1)
+
+    cogal_dt_header = transpose_and_downsample_header(cogal_header, df, (2,0,1))
+
+    cogal_dt_wcs = wcs.wcs.WCS(cogal_dt_header)
 
     v_scale = cogal_header['cdelt1'] * df
     v_unit = u.km / u.s
     l_scale = cogal_header['cdelt2'] * df
     b_scale = cogal_header['cdelt3'] * df
 
+    assert v_scale == cogal_dt_header['cdelt3']
+    assert l_scale == cogal_dt_header['cdelt1']
+    assert b_scale == cogal_dt_header['cdelt2']
+
     print "computing dendrogram: ..."
     d = astrodendro.Dendrogram.compute(
-        cogal_downsampled.transpose(2,0,1), 
+        cogal_downsampled_transposed, 
         min_value=0.01, min_delta=0.005, min_npix=2000//df**3, verbose=True)
 
     d.viewer(galactic=True)
@@ -83,9 +91,10 @@ def cogal_downsampled_demo(downsample_factor=4):
     metadata['data_unit'] = u.Jy # This is a LIE but Kelvin don't work yet
     metadata['spatial_scale'] = b_scale * u.deg
     metadata['velocity_scale'] = v_scale * v_unit
-    metadata['vaxis'] = 1 # because we transposed from (v, l, b) to (2, 0, 1)
+    metadata['vaxis'] = 0 # because we transposed from (v, l, b) to (2, 0, 1)
                           # for plotting reasons
+    metadata['wcs'] = cogal_dt_wcs
 
     catalog = astrodendro.ppv_catalog(d, metadata)
 
-    return d, catalog, cogal_header, metadata
+    return d, catalog, cogal_dt_header, metadata
