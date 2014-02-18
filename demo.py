@@ -14,10 +14,41 @@ import astrodendro
 import astropy.units as u
 
 from astropy import wcs
-
 from astropy.io.fits import getdata
 
 data_path = "/Users/tsrice/Dropbox/college/Astro99/DATA/"
+
+def transpose_and_downsample_header(input_header, downsample_factor=4, 
+                                    transpose_tuple=(2,0,1)):
+
+    df = downsample_factor
+    tt = transpose_tuple
+
+    new_header = input_header.copy()
+
+    # let's transpose. and downsample.
+    new_header['naxis'+str(tt[0]+1)] = input_header['naxis1'] // df
+    new_header['naxis'+str(tt[1]+1)] = input_header['naxis2'] // df
+    new_header['naxis'+str(tt[2]+1)] = input_header['naxis3'] // df    
+
+    new_header['ctype'+str(tt[0]+1)] = input_header['ctype1']
+    new_header['ctype'+str(tt[1]+1)] = input_header['ctype2']
+    new_header['ctype'+str(tt[2]+1)] = input_header['ctype3']
+
+    new_header['crval'+str(tt[0]+1)] = input_header['crval1']
+    new_header['crval'+str(tt[1]+1)] = input_header['crval2']
+    new_header['crval'+str(tt[2]+1)] = input_header['crval3']
+
+    new_header['cdelt'+str(tt[0]+1)] = input_header['cdelt1'] * df
+    new_header['cdelt'+str(tt[1]+1)] = input_header['cdelt2'] * df
+    new_header['cdelt'+str(tt[2]+1)] = input_header['cdelt3'] * df
+
+    new_header['crpix'+str(tt[0]+1)] = (input_header['crpix1'] - 1)//df + 1
+    new_header['crpix'+str(tt[1]+1)] = (input_header['crpix2'] - 1)//df + 1
+    new_header['crpix'+str(tt[2]+1)] = (input_header['crpix3'] - 1)//df + 1
+
+    return new_header
+    
 
 def cogal_downsampled_demo(downsample_factor=4):
 
