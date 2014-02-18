@@ -12,6 +12,7 @@ import numpy as np
 import astropy
 import astrodendro
 import astropy.units as u
+import astropy.constants as c
 
 from astropy import wcs
 from astropy.io.fits import getdata
@@ -65,39 +66,38 @@ def cogal_downsampled_demo(downsample_factor=4):
     cogal, cogal_header = getdata(data_path+'COGAL_all_mom.fits', memmap=True,
                                   header=True)
 
+    print "transposing, downsampling, and unit-converting data: ..."
     cogal_downsampled_transposed = cogal[::df, ::df, ::df].transpose(2,0,1)
-
-    # beam solid angle. Beam width is 1/8 degree
-    omega_B = np.pi * (1/8 * 0.5 * u.deg)**2
-    frequency = 115 * u.GHz
-    K_to_Jy = u.K.to(u.Jy, 
-                     equivalencies=u.brightness_temperature(omega_B, frequency))
-    # Convert the data from kelvin to jansky
-    cogal_dt_jansky = cogal_downsampled_transposed * K_to_Jy
-
     cogal_dt_header = transpose_and_downsample_header(cogal_header, df, (2,0,1))
     cogal_dt_wcs = wcs.wcs.WCS(cogal_dt_header)
 
-    v_scale = cogal_header['cdelt1'] * df
-    v_unit = u.km / u.s
-    l_scale = cogal_header['cdelt2'] * df
-    b_scale = cogal_header['cdelt3'] * df
-
-    assert v_scale == cogal_dt_header['cdelt3']
-    assert l_scale == cogal_dt_header['cdelt1']
-    assert b_scale == cogal_dt_header['cdelt2']
+    # Convert the data from kelvin to jansky
+    omega_beam = np.pi * (1/8 * 0.5 * u.deg)**2 # Beam width is 1/8 degree
+    frequency = 115 * u.GHz
+    K_to_Jy = u.K.to(u.Jy, equivalencies=
+                     u.brightness_temperature(omega_beam, frequency))
+    # the df**3 term is because the same data/"photons" 
+    # have been binned into 1/(df**3) as many pixels.
+    cogal_dt_jansky = cogal_downsampled_transposed * K_to_Jy * df**3
 
     print "computing dendrogram: ..."
     d = astrodendro.Dendrogram.compute(
         cogal_dt_jansky, 
-        min_value=0.01, min_delta=0.005, min_npix=2000//df**3, verbose=True)
+        min_value=0.01*K_to_Jy, min_delta=0.005*K_to_Jy, 
+        min_npix=2000//df**3, verbose=True)
 
     d.viewer(galactic=True)
 
+    v_scale = cogal_dt_header['cdelt3']
+    v_unit = u.km / u.s
+    l_scale = cogal_dt_header['cdelt1']
+    b_scale = cogal_dt_header['cdelt2']
+    
     metadata = {}
     metadata['data_unit'] = u.Jy # Now this is actually true because I converted!
     metadata['spatial_scale'] = b_scale * u.deg
     metadata['velocity_scale'] = v_scale * v_unit
+    metadata['wavelength'] = (c.c / frequency).to('mm')
     metadata['vaxis'] = 0 # keep it this way if you think the input data is (l, b, v)
     metadata['wcs'] = cogal_dt_wcs
 
