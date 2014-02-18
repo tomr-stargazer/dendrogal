@@ -67,8 +67,15 @@ def cogal_downsampled_demo(downsample_factor=4):
 
     cogal_downsampled_transposed = cogal[::df, ::df, ::df].transpose(2,0,1)
 
-    cogal_dt_header = transpose_and_downsample_header(cogal_header, df, (2,0,1))
+    # beam solid angle. Beam width is 1/8 degree
+    omega_B = np.pi * (1/8 * 0.5 * u.deg)**2
+    frequency = 115 * u.GHz
+    K_to_Jy = u.K.to(u.Jy, 
+                     equivalencies=u.brightness_temperature(omega_B, frequency))
+    # Convert the data from kelvin to jansky
+    cogal_dt_jansky = cogal_downsampled_transposed * K_to_Jy
 
+    cogal_dt_header = transpose_and_downsample_header(cogal_header, df, (2,0,1))
     cogal_dt_wcs = wcs.wcs.WCS(cogal_dt_header)
 
     v_scale = cogal_header['cdelt1'] * df
@@ -82,17 +89,16 @@ def cogal_downsampled_demo(downsample_factor=4):
 
     print "computing dendrogram: ..."
     d = astrodendro.Dendrogram.compute(
-        cogal_downsampled_transposed, 
+        cogal_dt_jansky, 
         min_value=0.01, min_delta=0.005, min_npix=2000//df**3, verbose=True)
 
     d.viewer(galactic=True)
 
     metadata = {}
-    metadata['data_unit'] = u.Jy # This is a LIE but Kelvin don't work yet
+    metadata['data_unit'] = u.Jy # Now this is actually true because I converted!
     metadata['spatial_scale'] = b_scale * u.deg
     metadata['velocity_scale'] = v_scale * v_unit
-    metadata['vaxis'] = 0 # because we transposed from (v, l, b) to (2, 0, 1)
-                          # for plotting reasons
+    metadata['vaxis'] = 0 # keep it this way if you think the input data is (l, b, v)
     metadata['wcs'] = cogal_dt_wcs
 
     catalog = astrodendro.ppv_catalog(d, metadata)
