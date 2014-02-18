@@ -71,18 +71,18 @@ def cogal_downsampled_demo(downsample_factor=4):
     cogal_dt_header = transpose_and_downsample_header(cogal_header, df, (2,0,1))
     cogal_dt_wcs = wcs.wcs.WCS(cogal_dt_header)
 
+    beam_size = 1/8 * u.deg
+
     # Convert the data from kelvin to jansky
-    omega_beam = np.pi * (1/8 * 0.5 * u.deg)**2 # Beam width is 1/8 degree
+    omega_beam = np.pi * (0.5 * beam_size)**2 # Beam width is 1/8 degree
     frequency = 115 * u.GHz
     K_to_Jy = u.K.to(u.Jy, equivalencies=
                      u.brightness_temperature(omega_beam, frequency))
-    # the df**3 term is because the same data/"photons" 
-    # have been binned into 1/(df**3) as many pixels.
-    cogal_dt_jansky = cogal_downsampled_transposed * K_to_Jy * df**3
+    cogal_dt_jansky_perbeam = cogal_downsampled_transposed * K_to_Jy 
 
     print "computing dendrogram: ..."
     d = astrodendro.Dendrogram.compute(
-        cogal_dt_jansky, 
+        cogal_dt_jansky_perbeam, 
         min_value=0.01*K_to_Jy, min_delta=0.005*K_to_Jy, 
         min_npix=2000//df**3, verbose=True)
 
@@ -94,10 +94,12 @@ def cogal_downsampled_demo(downsample_factor=4):
     b_scale = cogal_dt_header['cdelt2']
     
     metadata = {}
-    metadata['data_unit'] = u.Jy # Now this is actually true because I converted!
+    metadata['data_unit'] = u.Jy / u.beam # According to A. Ginsburg
     metadata['spatial_scale'] = b_scale * u.deg
     metadata['velocity_scale'] = v_scale * v_unit
     metadata['wavelength'] = (c.c / frequency).to('mm')
+    metadata['beam_major'] = beam_size
+    metadata['beam_minor'] = beam_size    
     metadata['vaxis'] = 0 # keep it this way if you think the input data is (l, b, v)
     metadata['wcs'] = cogal_dt_wcs
 
