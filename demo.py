@@ -51,7 +51,7 @@ def transpose_and_downsample_header(input_header, downsample_factor=4,
     return new_header
     
 
-def cogal_downsampled_demo(downsample_factor=4):
+def cogal_downsampled_demo(downsample_factor=4, transpose_tuple=(2,0,1)):
 
     if type(downsample_factor) != int:
         raise TypeError("Downsample factor must be an Integer")
@@ -61,14 +61,15 @@ def cogal_downsampled_demo(downsample_factor=4):
         raise ValueError("Downsample factor must be less than 100")
     
     df = downsample_factor
+    tt = transpose_tuple
 
     print "loading data: ..."
     cogal, cogal_header = getdata(data_path+'COGAL_all_mom.fits', memmap=True,
                                   header=True)
 
     print "transposing, downsampling, and unit-converting data: ..."
-    cogal_downsampled_transposed = cogal[::df, ::df, ::df].transpose(2,0,1)
-    cogal_dt_header = transpose_and_downsample_header(cogal_header, df, (2,0,1))
+    cogal_downsampled_transposed = cogal[::df, ::df, ::df].transpose(*tt)
+    cogal_dt_header = transpose_and_downsample_header(cogal_header, df, tt)
     cogal_dt_wcs = wcs.wcs.WCS(cogal_dt_header)
 
     beam_size = 1/8 * u.deg
