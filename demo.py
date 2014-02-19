@@ -19,11 +19,15 @@ from astropy.io.fits import getdata
 
 data_path = "/Users/tsrice/Dropbox/college/Astro99/DATA/"
 
-def transpose_and_downsample_header(input_header, downsample_factor=4, 
-                                    transpose_tuple=(2,0,1)):
-
+def downsample_and_transpose_data_and_header(input_data, input_header, 
+                                             downsample_factor=4, 
+                                             transpose_tuple=(2,0,1)):
+    
     df = downsample_factor
     tt = transpose_tuple
+
+    # Someday I may improve this with something less crude.
+    new_data = input_data[::df, ::df, ::df].transpose(*tt)
 
     new_header = input_header.copy()
 
@@ -48,7 +52,7 @@ def transpose_and_downsample_header(input_header, downsample_factor=4,
     new_header['crpix'+str(tt[1]+1)] = (input_header['crpix2'] - 1)//df + 1
     new_header['crpix'+str(tt[2]+1)] = (input_header['crpix3'] - 1)//df + 1
 
-    return new_header
+    return new_data, new_header
     
 
 def cogal_downsampled_demo(downsample_factor=4, transpose_tuple=(2,0,1)):
@@ -68,18 +72,18 @@ def cogal_downsampled_demo(downsample_factor=4, transpose_tuple=(2,0,1)):
                                   header=True)
 
     print "transposing, downsampling, and unit-converting data: ..."
-    cogal_downsampled_transposed = cogal[::df, ::df, ::df].transpose(*tt)
-    cogal_dt_header = transpose_and_downsample_header(cogal_header, df, tt)
+    cogal_dt, cogal_dt_header = \
+      downsample_and_transpose_data_and_header(cogal, cogal_header, df, tt)      
     cogal_dt_wcs = wcs.wcs.WCS(cogal_dt_header)
 
     beam_size = 1/8 * u.deg
 
-    # Convert the data from kelvin to jansky
+    # Convert the data from kelvin to jansky-per-beam
     omega_beam = np.pi * (0.5 * beam_size)**2 # Beam width is 1/8 degree
     frequency = 115 * u.GHz
     K_to_Jy = u.K.to(u.Jy, equivalencies=
                      u.brightness_temperature(omega_beam, frequency))
-    cogal_dt_jansky_perbeam = cogal_downsampled_transposed * K_to_Jy 
+    cogal_dt_jansky_perbeam = cogal_dt * K_to_Jy 
 
     print "computing dendrogram: ..."
     d = astrodendro.Dendrogram.compute(
