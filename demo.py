@@ -87,8 +87,8 @@ def cogal_downsampled_demo(downsample_factor=4, transpose_tuple=(2,0,1)):
 
     print "computing dendrogram: ..."
     d = astrodendro.Dendrogram.compute(
-        cogal_dt_jansky_perbeam, 
-        min_value=0.01*K_to_Jy, min_delta=0.005*K_to_Jy, 
+        cogal_dt_jansky_perbeam,
+        min_value=0.01*K_to_Jy, min_delta=0.005*K_to_Jy,  #these are arbitrary
         min_npix=2000//df**3, verbose=True)
 
     d.viewer(galactic=True)
