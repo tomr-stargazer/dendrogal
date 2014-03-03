@@ -11,8 +11,10 @@ import matplotlib.pyplot as plt
 import astropy
 import astrodendro
 
+from reid_distance_assigner import make_reid_distance_column
 
-def assign_distances(catalog):
+
+def assign_distances(catalog, nearfar='near'):
     """ 
     Assigns distances to all entries in the catalog. 
 
@@ -24,8 +26,8 @@ def assign_distances(catalog):
 
     # let's pretend these are in... parsecs.
     distance_column = astropy.table.Column(
-        "Distance", 
-        60*catalog['v_cen'] + 4*catalog['x_cen'] - 3*catalog['y_cen'])
+        data=make_reid_distance_column(catalog, nearfar)['D_k'], 
+        name="Distance")
 
     catalog.add_column(distance_column)
 
@@ -44,11 +46,12 @@ def assign_size_mass_alpha(catalog):
         raise ValueError("Catalog must have distance!")
 
     size = astropy.table.Column(
-        "Size", catalog['radius'] * (catalog['Distance']*1000) * 0.00218)
+        data=catalog['radius'] * (catalog['Distance']*1000) * 3600, 
+        name="Size")
 
     mass = astropy.table.Column(
-        "Mass", 
-        4.4 * catalog['flux'] / (210099.2) * (catalog['Distance']*1000)**2)
+        data=4.4 * catalog['flux'] / (210099.2) * (catalog['Distance']*1000)**2,
+        name="Mass")
 
     eta = 1.91
     G = 1/232.
@@ -56,7 +59,8 @@ def assign_size_mass_alpha(catalog):
     factors = 5 * eta * (catalog['v_rms'])**2 / G
     
     virial_parameter = astropy.table.Column(
-        "Virial_Parameter", factors * size.data / mass.data)
+        data=factors * size.data / mass.data, 
+        name="Virial_Parameter")
     
     catalog.add_columns([size, mass, virial_parameter])
 

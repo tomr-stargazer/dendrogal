@@ -51,7 +51,7 @@ def test_reid_distances():
     print kd_output
     
 
-def make_reid_distance_column(table, nearfar='near'):
+def make_reid_distance_column(catalog, nearfar='near'):
     """ Makes a reid distance column. 
 
     Input: ppv_catalog output. """
@@ -61,7 +61,7 @@ def make_reid_distance_column(table, nearfar='near'):
 
     source_file_string = ''
     
-    for row in table:
+    for row in catalog:
 
         name = str(row["_idx"])
         
