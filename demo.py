@@ -91,8 +91,6 @@ def cogal_downsampled_demo(downsample_factor=4, transpose_tuple=(2,0,1)):
         min_value=0.01*K_to_Jy, min_delta=0.005*K_to_Jy,  #these are arbitrary
         min_npix=2000//df**3, verbose=True)
 
-    d.viewer(galactic=True)
-
     v_scale = cogal_dt_header['cdelt3']
     v_unit = u.km / u.s
     l_scale = cogal_dt_header['cdelt1']
@@ -105,7 +103,7 @@ def cogal_downsampled_demo(downsample_factor=4, transpose_tuple=(2,0,1)):
     metadata['wavelength'] = (c.c / frequency).to('mm')
     metadata['beam_major'] = beam_size
     metadata['beam_minor'] = beam_size    
-    metadata['vaxis'] = 0 # keep it this way if you think the input data is (l, b, v)
+    metadata['vaxis'] = 0 # keep it this way if you think the (post-downsample/transpoed) input data is (l, b, v)
     metadata['wcs'] = cogal_dt_wcs
 
     catalog = astrodendro.ppv_catalog(d, metadata)
