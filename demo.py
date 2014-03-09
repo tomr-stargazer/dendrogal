@@ -7,6 +7,7 @@ The data are allowed to be the "actual" thing we're trying to dendrogram I guess
 
 from __future__ import division
 
+import pickle
 import numpy as np
 
 import astropy
@@ -15,7 +16,7 @@ import astropy.units as u
 import astropy.constants as c
 
 from astropy import wcs
-from astropy.io.fits import getdata
+from astropy.io.fits import getdata, getheader
 
 data_path = "/Users/tsrice/Dropbox/college/Astro99/DATA/"
 
@@ -107,5 +108,36 @@ def cogal_downsampled_demo(downsample_factor=4, transpose_tuple=(2,0,1)):
     metadata['wcs'] = cogal_dt_wcs
 
     catalog = astrodendro.ppv_catalog(d, metadata)
+
+    return d, catalog, cogal_dt_header, metadata
+
+savepath = "/Users/tsrice/Documents/Code/astrodendro_analysis/saved_dendrogram/"
+dendro_fame = "saved_dendrogram_object.hdf5"
+catalog_fname = "saved_catalog_table.fits"
+header_fname = "saved_header.fits"
+metadata_fname = "saved_metadata.p"
+
+def write_cogal_demo_to_file(**kwargs):
+
+    d, catalog, cogal_dt_header, metadata = cogal_downsampled_demo(**kwargs)
+
+    d.save_to(savepath+dendro_fame)
+    catalog.write(savepath+catalog_fname)
+    cogal_dt_header.tofile(savepath+header_fname)
+    pickle.dump(metadata, open(savepath+metadata_fname, 'wb'))
+
+    return None
+
+# I noticed that "loaded" dendrograms tend not to respond well to click events... 
+# the branches seem to lose their self._dendrogram attachments and everything breaks.
+def load_demo_from_file(override=False):
+
+    if not override:
+        raise Exception("Don't use this method! The dendrograms fail to load properly.")
+
+    d = astrodendro.Dendrogram.load_from(savepath+dendro_fame)
+    catalog = astropy.table.Table.read(savepath+catalog_fname)
+    cogal_dt_header = getheader(savepath+header_fname)
+    metadata = pickle.load(open(savepath+metadata_fname, 'rb'))
 
     return d, catalog, cogal_dt_header, metadata
