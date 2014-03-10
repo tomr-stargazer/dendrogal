@@ -34,3 +34,12 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+*~
+notes_for_implementation.txt
+pickled_dendrogram_object.p
+saved_dendrogram/
+saved_dendrogram_object.hdf5
+source_file.dat
+test_header.fits
+wat.py
