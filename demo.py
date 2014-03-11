@@ -58,13 +58,6 @@ def downsample_and_transpose_data_and_header(input_data, input_header,
 
 def cogal_downsampled_demo(downsample_factor=4, transpose_tuple=(2,0,1)):
 
-    if type(downsample_factor) != int:
-        raise TypeError("Downsample factor must be an Integer")
-    elif downsample_factor < 1:
-        raise ValueError("Downsample factor must be positive")
-    elif downsample_factor > 100:
-        raise ValueError("Downsample factor must be less than 100")
-    
     df = downsample_factor
     tt = transpose_tuple
 
