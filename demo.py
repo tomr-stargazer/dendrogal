@@ -100,7 +100,7 @@ def cogal_downsampled_demo(downsample_factor=4, transpose_tuple=(2,0,1)):
     metadata['wavelength'] = (c.c / frequency).to('mm')
     metadata['beam_major'] = beam_size
     metadata['beam_minor'] = beam_size    
-    metadata['vaxis'] = 0 # keep it this way if you think the (post-downsample/transpoed) input data is (l, b, v)
+    metadata['vaxis'] = 0 # keep it this way if you think the (post-downsample/transposed) input data is (l, b, v)
     metadata['wcs'] = cogal_dt_wcs
 
     catalog = astrodendro.ppv_catalog(d, metadata)
