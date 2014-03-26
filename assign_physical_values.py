@@ -11,6 +11,9 @@ import matplotlib.pyplot as plt
 import astropy
 import astrodendro
 
+import astropy.units as u
+import astropy.constants as c
+
 from reid_distance_assigner import make_reid_distance_column
 
 
@@ -43,9 +46,28 @@ def assign_size_mass_alpha(catalog):
     """
 
     if 'Distance' not in catalog.colnames:
-        raise ValueError("Catalog must have distance!")
+        try:
+            catalog['Distance'] = catalog['D_k']
+        except Exception:
+            raise ValueError("Catalog must have distance!")
 
-    size = astropy.table.Column(
+    sky_radius = catalog['radius'].data * catalog['radius'].unit
+    distance = catalog['Distance'].data * catalog['Distance'].unit
+    size = sky_radius.to(u.rad).value * distance
+    flux_kelvin_kms_deg2 = catalog['flux_kelvin_kms_deg2'].data * catalog['flux_kelvin_kms_deg2'].unit
+    sigma_v = catalog['v_rms'].data * catalog['v_rms'].unit
+
+    luminosity = flux_kelvin_kms_deg2.to(u.K * u.km/u.s * u.rad**2) * distance**2 / (1 * u.rad**2)
+    mass = 4.4 * luminosity.to(u.K * u.km/u.s * u.pc**2).value * u.M_sun
+
+    eta = 1.9
+
+    virial_parameter = 5 * eta * sigma_v**2 * size / (mass * c.G)
+
+    return size.to('pc'), mass, virial_parameter.decompose()
+
+    """
+    astropy.table.Column(
         data=catalog['radius'] * (catalog['Distance']*1000) * 3600, 
         name="Size")
 
@@ -65,6 +87,7 @@ def assign_size_mass_alpha(catalog):
     catalog.add_columns([size, mass, virial_parameter])
 
     return catalog
+    """
 
 """
 # Don't forget - kdist returns values in kpc, but we want
