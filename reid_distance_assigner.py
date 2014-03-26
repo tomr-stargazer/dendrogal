@@ -107,6 +107,14 @@ def make_reid_distance_column(catalog, nearfar='near'):
     kd_output.rename_column('col7', 'error_D_k_plus')
     kd_output.rename_column('col8', 'error_D_k_minus')
     
+    kd_output['gal_long'].unit = u.deg
+    kd_output['gal_lat'].unit = u.deg
+    kd_output['V_lsr'].unit = u.km/u.s
+    kd_output['V_rev'].unit = u.km/u.s
+    kd_output['D_k'].unit = u.kpc
+    kd_output['error_D_k_plus'].unit = u.kpc
+    kd_output['error_D_k_minus'].unit = u.kpc
+
     #    print kd_output
 
     return kd_output
