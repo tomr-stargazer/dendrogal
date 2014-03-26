@@ -105,6 +105,18 @@ def cogal_downsampled_demo(downsample_factor=4, transpose_tuple=(2,0,1)):
 
     catalog = astrodendro.ppv_catalog(d, metadata)
 
+    if catalog['flux'].unit.is_equivalent('Jy'):
+        # Workaround because flux is computed wrong
+
+        flux = catalog['flux'].data * catalog['flux'].unit
+        area_exact = catalog['area_exact'].unit*catalog['area_exact'].data
+
+        flux_kelvin = flux.to('K', equivalencies=u.brightness_temperature(area_exact, frequency))
+
+        flux_kelvin_kms_deg2 = flux_kelvin * metadata['velocity_scale'] * area_exact
+
+        catalog.add_column(astropy.table.Column(data=flux_kelvin_kms_deg2, name='flux_kelvin_kms_deg2'))
+
     return d, catalog, cogal_dt_header, metadata
 
 def multiple_linked_viewer_demo(**kwargs):
