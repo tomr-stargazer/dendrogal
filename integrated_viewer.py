@@ -23,7 +23,7 @@ class IntegratedViewer(object):
 
         self.selected_contours = {} # selection_id -> (contour, contour) tuple
 
-        self.fig = plt.figure(figsize=(14, 8))
+        self.fig = plt.figure(figsize=(10, 4.4))
 
         self.ax_lb = self.fig.add_axes([0.1, 0.05, 0.8, 0.4])
         self.ax_lv = self.fig.add_axes([0.1, 0.5, 0.8, 0.5])
