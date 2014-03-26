@@ -41,21 +41,20 @@ class IntegratedViewer(object):
         crop_factor = np.round(len_v/5)
 
         # Crop l,v plot because it normally goes awkwardly too high and low in v space
-        self.array_lv_cropped = self.array_lv[crop_factor:-crop_factor,:]
-
         self._clim_lb = (np.min(self.array_lb[~np.isnan(self.array_lb) & ~np.isinf(self.array_lb)]),
         	             np.max(self.array_lb[~np.isnan(self.array_lb) & ~np.isinf(self.array_lb)]))
 
-        self._clim_lv = (np.min(self.array_lv_cropped[~np.isnan(self.array_lv_cropped) & ~np.isinf(self.array_lv_cropped)]),
-        	             np.max(self.array_lv_cropped[~np.isnan(self.array_lv_cropped) & ~np.isinf(self.array_lv_cropped)]))
+        self._clim_lv = (np.min(self.array_lv[~np.isnan(self.array_lv) & ~np.isinf(self.array_lv)]),
+        	             np.max(self.array_lv[~np.isnan(self.array_lv) & ~np.isinf(self.array_lv)]))
 
         self.image_lb = self.ax1.imshow(self.array_lb, origin='lower', 
             interpolation='nearest', vmin=self._clim_lb[0], 
             vmax=0.025*self._clim_lb[1], cmap=plt.cm.gray)
 
-        self.image_lv = self.ax2.imshow(self.array_lv_cropped, origin='lower', 
+        self.image_lv = self.ax2.imshow(self.array_lv, origin='lower', 
             interpolation='nearest', vmin=self._clim_lv[0], 
             vmax=0.05*self._clim_lv[1], cmap=plt.cm.gray, aspect=2.5)
+        self.ax2.set_ylim(crop_factor, len_v - crop_factor)
 
         self.fig.canvas.draw()
 
