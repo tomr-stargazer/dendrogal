@@ -20,6 +20,8 @@ from astropy.io.fits import getdata, getheader
 
 from astrodendro.scatter import Scatter
 from astrodendro_analysis.integrated_viewer import IntegratedViewer
+from astrodendro_analysis.reid_distance_assigner import make_reid_distance_column
+from astrodendro_analysis.assign_physical_values import assign_size_mass_alpha
 
 data_path = "/Users/tsrice/Dropbox/college/Astro99/DATA/"
 
@@ -108,7 +110,7 @@ def cogal_downsampled_demo(downsample_factor=4, transpose_tuple=(2,0,1)):
     if catalog['flux'].unit.is_equivalent('Jy'):
         # Workaround because flux is computed wrong
 
-        flux = catalog['flux'].data * catalog['flux'].unit
+        flux = quantify_column(catalog['flux'])
         area_exact = catalog['area_exact'].unit*catalog['area_exact'].data
 
         flux_kelvin = flux.to('K', equivalencies=u.brightness_temperature(area_exact, frequency))
@@ -123,20 +125,27 @@ def multiple_linked_viewer_demo(**kwargs):
 
     d, catalog, cogal_dt_header, metadata = cogal_downsampled_demo(**kwargs)
 
+    # DISTANCES
+    reid = make_reid_distance_column(catalog)
+    catalog['Distance'] = reid['D_k']
+
+    # SIZE MASS VIRIAL
+    s, m, v = assign_size_mass_alpha(catalog)
+
+    catalog['size'] = astropy.table.Column(data=s, name='size')
+    catalog['mass'] = astropy.table.Column(data=m, name='mass')
+    catalog['virial'] = astropy.table.Column(data=v, name='virial')        
+
+
     dv = d.viewer()
 
     iv = IntegratedViewer(d, dv.hub)
 
-    ds = Scatter(d, dv.hub, catalog, 'radius', 'flux')
+    ds1 = Scatter(d, dv.hub, catalog, 'radius', 'flux')
+    ds2 = Scatter(d, dv.hub, catalog, 'size', 'v_rms')
+    ds3 = Scatter(d, dv.hub, catalog, 'mass', 'virial')
 
-    """ # this don't work -- the windows don't rescale when the figures do
-    # just to get things to tile nicely on my screen...
-    dv.fig.set_size_inches(16, 4)
-    dv.fig.canvas.draw()
-    ds.fig.set_size_inches(6, 4.4)
-    ds.fig.canvas.draw()    """
-
-    return dv, iv, ds
+    return dv, iv, ds1, ds2, ds3
 
 
 savepath = "/Users/tsrice/Documents/Code/astrodendro_analysis/saved_dendrogram/"
@@ -169,3 +178,7 @@ def load_demo_from_file(override=False):
     metadata = pickle.load(open(savepath+metadata_fname, 'rb'))
 
     return d, catalog, cogal_dt_header, metadata
+
+def quantify_column(column):
+
+    return (column.data * column.unit)
