@@ -15,11 +15,11 @@ class IntegratedViewer(object):
             raise ValueError(
                 "Only 3-dimensional arrays are supported")
 
-        self.hub = hub # good
-        self.hub.add_callback(self.update_selection) # good
+        self.hub = hub
+        self.hub.add_callback(self.update_selection)
 
         self.datacube = dendrogram.data
-        self.dendrogram = dendrogram # good
+        self.dendrogram = dendrogram
 
         self.selected_contours = {} # selection_id -> (contour, contour) tuple
 
