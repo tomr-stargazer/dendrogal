@@ -11,6 +11,7 @@ from matplotlib.colors import colorConverter
 from matplotlib.collections import RegularPolyCollection
 from matplotlib import path
 
+import matplotlib
 import matplotlib.pyplot as plt
 from numpy import nonzero
 from numpy.random import rand
@@ -72,6 +73,12 @@ if __name__ == '__main__':
     data = [Datum(*xy) for xy in rand(100, 2)]
 
     ax = plt.axes(xlim=(0,1), ylim=(0,1), autoscale_on=False)
+
+    # Silly workaround that is probably due to a bug in matplotlib!
+    if matplotlib.get_backend() == 'MacOSX':
+        # this overrides a line in matplotlib.widgets that crashes my session
+        ax.figure.canvas.supports_blit = False
+
     lman = LassoManager(ax, data)
 
     plt.show()
