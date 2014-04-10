@@ -5,7 +5,11 @@ selected points
 
 This is currently a proof-of-concept implementation (though it is
 usable as is).  There will be some refinement of the API.
+
+Mostly taken from http://matplotlib.org/examples/event_handling/lasso_demo.html
+
 """
+
 from matplotlib.widgets import Lasso
 from matplotlib.colors import colorConverter
 from matplotlib.collections import RegularPolyCollection
