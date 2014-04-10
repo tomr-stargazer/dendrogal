@@ -60,14 +60,19 @@ def downsample_and_transpose_data_and_header(input_data, input_header,
 
     return new_data, new_header
     
+def cogal_downsampled_demo(**kwargs):
+    return downsampled_demo('COGAL_all_mom.fits', **kwargs)
 
-def cogal_downsampled_demo(downsample_factor=4, transpose_tuple=(2,0,1)):
+def small_demo(**kwargs):
+    return downsampled_demo('DHT17_Quad2_bw_mom.fits', **kwargs)
+
+def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1)):
 
     df = downsample_factor
     tt = transpose_tuple
 
     print "loading data: ..."
-    cogal, cogal_header = getdata(data_path+'COGAL_all_mom.fits', memmap=True,
+    cogal, cogal_header = getdata(data_path+data_file, memmap=True,
                                   header=True)
 
     print "transposing, downsampling, and unit-converting data: ..."
@@ -121,13 +126,18 @@ def cogal_downsampled_demo(downsample_factor=4, transpose_tuple=(2,0,1)):
 
     return d, catalog, cogal_dt_header, metadata
 
-def multiple_linked_viewer_demo(**kwargs):
+def multiple_linked_viewer_demo(demo=cogal_downsampled_demo, **kwargs):
 
-    d, catalog, cogal_dt_header, metadata = cogal_downsampled_demo(**kwargs)
+    d, catalog, cogal_dt_header, metadata = demo(**kwargs)
 
     # DISTANCES
-    reid = make_reid_distance_column(catalog)
-    catalog['Distance'] = reid['D_k']
+    try:
+        reid = make_reid_distance_column(catalog)
+        catalog['Distance'] = reid['D_k']        
+    except Exception, e:
+        print "DISTANCE ASSIGNMENT FAILED:", e
+        catalog['Distance'] = 1000*np.ones_like(catalog['x_cen'])
+        catalog['Distance'].unit = u.kpc
 
     # SIZE MASS VIRIAL
     s, m, v = assign_size_mass_alpha(catalog)
