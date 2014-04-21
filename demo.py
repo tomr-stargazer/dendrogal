@@ -66,6 +66,9 @@ def cogal_downsampled_demo(**kwargs):
 def small_demo(**kwargs):
     return downsampled_demo('DHT17_Quad2_bw_mom.fits', **kwargs)
 
+def orion_demo(**kwargs):
+    return downsampled_demo('DHT27_Orion_mom.fits', **kwargs)
+
 def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1)):
 
     df = downsample_factor
