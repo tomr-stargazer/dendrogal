@@ -69,7 +69,8 @@ def small_demo(**kwargs):
 def orion_demo(**kwargs):
     return downsampled_demo('DHT27_Orion_mom.fits', **kwargs)
 
-def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1)):
+def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
+                     min_value=0.01, min_delta=0.005, min_npix=2000):
 
     df = downsample_factor
     tt = transpose_tuple
@@ -94,9 +95,9 @@ def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1)):
 
     print "computing dendrogram: ..."
     d = astrodendro.Dendrogram.compute(
-        min_value=0.01*K_to_Jy, min_delta=0.005*K_to_Jy,  #these are arbitrary
-        min_npix=2000//df**3, verbose=True)
         datacube_dt_jansky_perbeam,
+        min_value=min_value*K_to_Jy, min_delta=min_delta*K_to_Jy,  #these are arbitrary
+        min_npix=min_npix//df**3, verbose=True)
 
     v_scale = datacube_dt_header['cdelt3']
     v_unit = u.km / u.s
@@ -127,9 +128,10 @@ def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1)):
 
         catalog.add_column(astropy.table.Column(data=flux_kelvin_kms_deg2, name='flux_kelvin_kms_deg2'))
 
-    return d, catalog, cogal_dt_header, metadata
+    return d, catalog, datacube_dt_header, metadata
 
-def multiple_linked_viewer_demo(demo=cogal_downsampled_demo, **kwargs):
+def multiple_linked_viewer_demo(demo=cogal_downsampled_demo, galactic=False, 
+                                **kwargs):
 
     d, catalog, cogal_dt_header, metadata = demo(**kwargs)
 
@@ -149,8 +151,10 @@ def multiple_linked_viewer_demo(demo=cogal_downsampled_demo, **kwargs):
     catalog['mass'] = astropy.table.Column(data=m, name='mass')
     catalog['virial'] = astropy.table.Column(data=v, name='virial')        
 
-
-    dv = d.viewer()
+    if galactic:
+        dv = d.viewer(galactic=True)
+    else:
+        dv = d.viewer()
 
     iv = IntegratedViewer(d, dv.hub)
 
