@@ -75,13 +75,13 @@ def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1)):
     tt = transpose_tuple
 
     print "loading data: ..."
-    cogal, cogal_header = getdata(data_path+data_file, memmap=True,
-                                  header=True)
+    datacube, datacube_header = getdata(data_path+data_file, memmap=True,
+                                        header=True)
 
     print "transposing, downsampling, and unit-converting data: ..."
-    cogal_dt, cogal_dt_header = \
-      downsample_and_transpose_data_and_header(cogal, cogal_header, df, tt)      
-    cogal_dt_wcs = wcs.wcs.WCS(cogal_dt_header)
+    datacube_dt, datacube_dt_header = \
+      downsample_and_transpose_data_and_header(datacube, datacube_header, df, tt)
+    datacube_dt_wcs = wcs.wcs.WCS(datacube_dt_header)
 
     beam_size = 1/8 * u.deg
 
@@ -90,18 +90,18 @@ def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1)):
     frequency = 115 * u.GHz
     K_to_Jy = u.K.to(u.Jy, equivalencies=
                      u.brightness_temperature(omega_beam, frequency))
-    cogal_dt_jansky_perbeam = cogal_dt * K_to_Jy 
+    datacube_dt_jansky_perbeam = datacube_dt * K_to_Jy 
 
     print "computing dendrogram: ..."
     d = astrodendro.Dendrogram.compute(
-        cogal_dt_jansky_perbeam,
         min_value=0.01*K_to_Jy, min_delta=0.005*K_to_Jy,  #these are arbitrary
         min_npix=2000//df**3, verbose=True)
+        datacube_dt_jansky_perbeam,
 
-    v_scale = cogal_dt_header['cdelt3']
+    v_scale = datacube_dt_header['cdelt3']
     v_unit = u.km / u.s
-    l_scale = cogal_dt_header['cdelt1']
-    b_scale = cogal_dt_header['cdelt2']
+    l_scale = datacube_dt_header['cdelt1']
+    b_scale = datacube_dt_header['cdelt2']
     
     metadata = {}
     metadata['data_unit'] = u.Jy / u.beam # According to A. Ginsburg
@@ -111,7 +111,7 @@ def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1)):
     metadata['beam_major'] = beam_size
     metadata['beam_minor'] = beam_size    
     metadata['vaxis'] = 0 # keep it this way if you think the (post-downsample/transposed) input data is (l, b, v)
-    metadata['wcs'] = cogal_dt_wcs
+    metadata['wcs'] = datacube_dt_wcs
 
     catalog = astrodendro.ppv_catalog(d, metadata)
 
