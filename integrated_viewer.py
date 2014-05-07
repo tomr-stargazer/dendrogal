@@ -73,12 +73,16 @@ class IntegratedViewer(object):
         
         if selection_id in self.hub.selections:
 
-            struct = self.hub.selections[selection_id]
+            structures = self.hub.selections[selection_id]
+            select_subtree = self.hub.select_subtree[selection_id]
 
-            struct = struct[0]
+            struct = structures[0]
 
             if struct is not None:
-                mask = struct.get_mask(subtree=True)
+                if select_subtree:
+                    mask = struct.get_mask(subtree=True)
+                else:
+                    mask = reduce(np.add, [structure.get_mask(subtree=True) for structure in structures])
                 # numpy magic sets nonzero values to True
                 mask_lb = np.sum(mask, axis=0).astype('bool') 
                 mask_lv = np.sum(mask, axis=1).astype('bool')
