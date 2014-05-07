@@ -75,10 +75,6 @@ class IntegratedViewer(object):
 
             struct = self.hub.selections[selection_id]
 
-            if len(struct) != 1:
-                raise NotImplemented(
-                    "Multiple structures per selection not supported")
-
             struct = struct[0]
 
             if struct is not None:
