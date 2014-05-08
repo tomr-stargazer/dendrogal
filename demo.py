@@ -158,11 +158,12 @@ def multiple_linked_viewer_demo(demo=cogal_downsampled_demo, galactic=False,
 
     iv = IntegratedViewer(d, dv.hub)
 
+    ds0 = Scatter(d, dv.hub, catalog, 'radius', 'v_rms')
     ds1 = Scatter(d, dv.hub, catalog, 'radius', 'flux')
     ds2 = Scatter(d, dv.hub, catalog, 'size', 'v_rms')
     ds3 = Scatter(d, dv.hub, catalog, 'mass', 'virial')
 
-    return dv, iv, ds1, ds2, ds3
+    return dv, iv, ds0, ds1, ds2, ds3
 
 
 savepath = "/Users/tsrice/Documents/Code/astrodendro_analysis/saved_dendrogram/"
