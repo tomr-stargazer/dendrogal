@@ -42,32 +42,22 @@ monoceros_catalog = catalog[np.in1d(catalog['_idx'], monoceros_indices)]
 
 # okay. Let's apply distances and then do virial & pressure analysis
 
-oriona_distance_column = astropy.table.Column(
-	data=np.ones_like(oriona_indices)*u.pc*450, 
+distance_array = np.ones_like(catalog['_idx'])
+distance_array[np.in1d(catalog['_idx'], oriona_indices)] = 450
+distance_array[np.in1d(catalog['_idx'], orionb_indices)] = 450
+distance_array[np.in1d(catalog['_idx'], monoceros_indices)] = 800
+
+distance_column = astropy.table.Column(
+	data=distance_array*u.pc,
 	name="Distance")
-oriona_catalog.add_column(oriona_distance_column)
+catalog.add_column(distance_column)
 
+s, m, v = assign_size_mass_alpha(catalog)
 
+catalog['size'] = astropy.table.Column(data=s, name='size')
+catalog['mass'] = astropy.table.Column(data=m, name='mass')
+catalog['virial'] = astropy.table.Column(data=v, name='virial')
 
-orionb_distance_column = astropy.table.Column(
-	data=np.ones_like(orionb_indices)*u.pc*450, 
-	name="Distance")
-orionb_catalog.add_column(orionb_distance_column)
-
-monoceros_distance_column = astropy.table.Column(
-	data=np.ones_like(monoceros_indices)*u.pc*800, 
-	name="Distance")
-monoceros_catalog.add_column(monoceros_distance_column)
-
-
-for catalog in [oriona_catalog, orionb_catalog, monoceros_catalog]:
-
-	s, m, v = assign_size_mass_alpha(catalog)
-
-	catalog['size'] = astropy.table.Column(data=s, name='size')
-	catalog['mass'] = astropy.table.Column(data=m, name='mass')
-	catalog['virial'] = astropy.table.Column(data=v, name='virial')
-
-	catalog['pressure'] = catalog['mass'] * catalog['v_rms']**2 / catalog['size']**3
+catalog['pressure'] = catalog['mass'] * catalog['v_rms']**2 / catalog['size']**3
 
 #
