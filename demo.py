@@ -21,7 +21,7 @@ from astropy.io.fits import getdata, getheader
 from astrodendro.scatter import Scatter
 from astrodendro_analysis.integrated_viewer import IntegratedViewer
 from astrodendro_analysis.reid_distance_assigner import make_reid_distance_column
-from astrodendro_analysis.assign_physical_values import assign_size_mass_alpha
+from astrodendro_analysis.assign_physical_values import assign_size_mass_alpha_pressure
 
 data_path = "/Users/tsrice/Dropbox/college/Astro99/DATA/"
 
@@ -145,11 +145,12 @@ def multiple_linked_viewer_demo(demo=cogal_downsampled_demo, galactic=False,
         catalog['Distance'].unit = u.kpc
 
     # SIZE MASS VIRIAL
-    s, m, v = assign_size_mass_alpha(catalog)
+    s, m, v, p = assign_size_mass_alpha_pressure(catalog)
 
     catalog['size'] = astropy.table.Column(data=s, name='size')
     catalog['mass'] = astropy.table.Column(data=m, name='mass')
     catalog['virial'] = astropy.table.Column(data=v, name='virial')        
+    catalog['pressure'] = astropy.table.Column(data=p, name='pressure')        
 
     if galactic:
         dv = d.viewer(galactic=True)
@@ -162,8 +163,19 @@ def multiple_linked_viewer_demo(demo=cogal_downsampled_demo, galactic=False,
     ds1 = Scatter(d, dv.hub, catalog, 'radius', 'flux')
     ds2 = Scatter(d, dv.hub, catalog, 'size', 'v_rms')
     ds3 = Scatter(d, dv.hub, catalog, 'mass', 'virial')
+    ds4 = Scatter(d, dv.hub, catalog, 'size', 'pressure')
 
-    return dv, iv, ds0, ds1, ds2, ds3
+    scatter_viewers = [ds0, ds1, ds2, ds3, ds4]
+
+    return_dict = {}
+    return_dict['dendrogram'] = d
+    return_dict['catalog'] = catalog
+    return_dict['metadata'] = metadata
+    return_dict['dendrogram_viewer'] = dv
+    return_dict['integrated_viewer'] = iv
+    return_dict['scatter_viewers'] = scatter_viewers
+
+    return return_dict
 
 
 savepath = "/Users/tsrice/Documents/Code/astrodendro_analysis/saved_dendrogram/"
