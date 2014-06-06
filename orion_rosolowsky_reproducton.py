@@ -10,7 +10,7 @@ import astropy
 import astropy.units as u
 
 from demo import orion_demo
-from assign_physical_values import assign_size_mass_alpha
+from assign_physical_values import assign_size_mass_alpha_pressure
 
 d, catalog, datacube_dt_header, metadata = orion_demo(downsample_factor=1, min_npix=20)
 
@@ -22,6 +22,7 @@ oriona_trunk = [structure for structure in d.all_structures if structure.idx == 
 oriona_structures = oriona_trunk.descendants
 oriona_indices = [structure.idx for structure in oriona_structures]
 
+# probably the wrong approach
 oriona_catalog = catalog[np.in1d(catalog['_idx'], oriona_indices)]
 
 # Orion B trunk
@@ -30,6 +31,7 @@ orionb_trunk = [structure for structure in d.all_structures if structure.idx == 
 orionb_structures = orionb_trunk.descendants
 orionb_indices = [structure.idx for structure in orionb_structures]
 
+# see above - wrong approach
 orionb_catalog = catalog[np.in1d(catalog['_idx'], orionb_indices)]
 
 # Monoceros trunk
@@ -52,12 +54,11 @@ distance_column = astropy.table.Column(
 	name="Distance")
 catalog.add_column(distance_column)
 
-s, m, v = assign_size_mass_alpha(catalog)
+s, m, v, p = assign_size_mass_alpha_pressure(catalog)
 
 catalog['size'] = astropy.table.Column(data=s, name='size')
 catalog['mass'] = astropy.table.Column(data=m, name='mass')
 catalog['virial'] = astropy.table.Column(data=v, name='virial')
-
-catalog['pressure'] = catalog['mass'] * catalog['v_rms']**2 / catalog['size']**3
+catalog['pressure'] = astropy.table.Column(data=v, name='pressure')
 
 #
