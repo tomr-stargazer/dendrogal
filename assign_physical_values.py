@@ -37,9 +37,9 @@ def assign_distances(catalog, nearfar='near'):
     # misleading to return it, since it's modified in-place
     return catalog
 
-def assign_size_mass_alpha(catalog):
+def assign_size_mass_alpha_pressure(catalog):
     """
-    Assigns physical parameters size, mass, and virial parameter.
+    Assigns physical parameters size, mass, virial parameter, and pressure.
 
     Does this to a catalog that has distances in it.
 
@@ -64,7 +64,10 @@ def assign_size_mass_alpha(catalog):
 
     virial_parameter = 5 * eta * sigma_v**2 * size / (mass * c.G)
 
-    return size.to('pc'), mass, virial_parameter.decompose()
+    pressure = mass * sigma_v**2 / size**3
+    pressure_by_boltzmann = pressure / c.k_B
+
+    return size.to('pc'), mass, virial_parameter.decompose(), pressure_by_boltzmann.to('K cm-3')
 
     """
     astropy.table.Column(
