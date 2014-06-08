@@ -26,15 +26,45 @@ from astrodendro_analysis.assign_physical_values import assign_size_mass_alpha_p
 
 data_path = "/Users/tsrice/Dropbox/college/Astro99/DATA/"
 
+# Downsamples a datacube by averaging. Code borrowed from aplpy.image_util (written by Tom Robitaille)
+def resample_3d(array, factor):
+
+    nx, ny, nz = np.shape(array)
+
+    nx_new = nx // factor
+    ny_new = ny // factor
+    nz_new = nz // factor    
+
+    array2 = np.zeros((nx_new, ny, nz))
+    for i in range(nx_new):
+        array2[i, :, :] = np.nanmean(array[i * factor:(i + 1) * factor, :, :], axis=0)
+    del array
+
+    array3 = np.zeros((nx_new, ny_new, nz))
+    for j in range(ny_new):
+        array3[:, j, :] = np.nanmean(array2[:, j * factor:(j + 1) * factor, :], axis=1)
+    del array2
+
+    array4 = np.zeros((nx_new, ny_new, nz_new))
+    for k in range(nz_new):
+        array4[:, :, k] = np.nanmean(array3[:, :, k * factor:(k + 1) * factor], axis=2)
+    del array3
+
+    return array4
+
+
 def downsample_and_transpose_data_and_header(input_data, input_header, 
                                              downsample_factor=4, 
-                                             transpose_tuple=(2,0,1)):
+                                             transpose_tuple=(2,0,1), resample=False):
     
     df = downsample_factor
     tt = transpose_tuple
 
-    # Someday I may improve this with something less crude.
-    new_data = input_data[::df, ::df, ::df].transpose(*tt)
+    if resample:
+        new_data = resample_3d(input_data, df).transpose(*tt)
+    else:
+        # Someday I may improve this with something less crude.
+        new_data = input_data[::df, ::df, ::df].transpose(*tt)
 
     new_header = input_header.copy()
 
@@ -55,9 +85,14 @@ def downsample_and_transpose_data_and_header(input_data, input_header,
     new_header['cdelt'+str(tt[1]+1)] = input_header['cdelt2'] * df
     new_header['cdelt'+str(tt[2]+1)] = input_header['cdelt3'] * df
 
-    new_header['crpix'+str(tt[0]+1)] = (input_header['crpix1'] - 1)//df + 1
-    new_header['crpix'+str(tt[1]+1)] = (input_header['crpix2'] - 1)//df + 1
-    new_header['crpix'+str(tt[2]+1)] = (input_header['crpix3'] - 1)//df + 1
+    if resample:
+        new_header['crpix'+str(tt[0]+1)] = (input_header['crpix1'] - 1)//df
+        new_header['crpix'+str(tt[1]+1)] = (input_header['crpix2'] - 1)//df
+        new_header['crpix'+str(tt[2]+1)] = (input_header['crpix3'] - 1)//df
+    else:
+        new_header['crpix'+str(tt[0]+1)] = (input_header['crpix1'] - 1)//df + 1
+        new_header['crpix'+str(tt[1]+1)] = (input_header['crpix2'] - 1)//df + 1
+        new_header['crpix'+str(tt[2]+1)] = (input_header['crpix3'] - 1)//df + 1
 
     return new_data, new_header
     
