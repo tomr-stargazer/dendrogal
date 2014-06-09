@@ -57,7 +57,7 @@ def assign_size_mass_alpha_pressure(catalog):
     flux_kelvin_kms_deg2 = catalog['flux_kelvin_kms_deg2'].data * catalog['flux_kelvin_kms_deg2'].unit
     sigma_v = catalog['v_rms'].data * catalog['v_rms'].unit
 
-    luminosity = flux_kelvin_kms_deg2.to(u.K * u.km/u.s * u.rad**2) * distance**2 / (1 * u.rad**2)
+    luminosity = flux_kelvin_kms_deg2.to(u.K * u.km/u.s * u.steradian) * distance**2 / (1 * u.steradian)
     mass = 4.4 * luminosity.to(u.K * u.km/u.s * u.pc**2).value * u.M_sun
 
     eta = 1.9
