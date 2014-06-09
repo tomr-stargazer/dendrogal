@@ -46,7 +46,7 @@ monoceros_catalog = catalog[np.in1d(catalog['_idx'], monoceros_indices)]
 
 # okay. Let's apply distances and then do virial & pressure analysis
 
-distance_array = np.ones_like(catalog['_idx'])
+distance_array = np.ones_like(catalog['_idx']) * np.nan
 distance_array[np.in1d(catalog['_idx'], oriona_indices)] = 450
 distance_array[np.in1d(catalog['_idx'], orionb_indices)] = 450
 distance_array[np.in1d(catalog['_idx'], monoceros_indices)] = 800
