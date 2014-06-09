@@ -160,8 +160,9 @@ def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
         flux = quantify_column(catalog['flux'])
         area_exact = catalog['area_exact'].unit*catalog['area_exact'].data
 
+        # average brightness temperature integrated over area_exact
         flux_kelvin = flux.to('K', equivalencies=u.brightness_temperature(area_exact, frequency))
-
+        # flux integrated over area and velocity
         flux_kelvin_kms_deg2 = flux_kelvin * metadata['velocity_scale'] * area_exact
 
         catalog.add_column(astropy.table.Column(data=flux_kelvin_kms_deg2, name='flux_kelvin_kms_deg2'))
