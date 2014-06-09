@@ -105,6 +105,9 @@ def small_demo(**kwargs):
 def orion_demo(**kwargs):
     return downsampled_demo('DHT27_Orion_mom.fits', **kwargs)
 
+def perseus_demo(**kwargs):
+    return downsampled_demo('DHT21_Taurus_mom.fits', **kwargs)
+
 def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
                      min_value=0.01, min_delta=0.005, min_npix=2000):
 
