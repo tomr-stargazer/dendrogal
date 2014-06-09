@@ -60,7 +60,7 @@ def downsample_and_transpose_data_and_header(input_data, input_header,
     df = downsample_factor
     tt = transpose_tuple
 
-    if resample:
+    if resample and df > 1:
         new_data = resample_3d(input_data, df).transpose(*tt)
     else:
         # Someday I may improve this with something less crude.
