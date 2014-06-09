@@ -59,6 +59,6 @@ s, m, v, p = assign_size_mass_alpha_pressure(catalog)
 catalog['size'] = astropy.table.Column(data=s, name='size')
 catalog['mass'] = astropy.table.Column(data=m, name='mass')
 catalog['virial'] = astropy.table.Column(data=v, name='virial')
-catalog['pressure'] = astropy.table.Column(data=v, name='pressure')
+catalog['pressure'] = astropy.table.Column(data=p, name='pressure')
 
 #
