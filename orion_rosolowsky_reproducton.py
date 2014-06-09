@@ -9,8 +9,10 @@ import numpy as np
 import astropy
 import astropy.units as u
 
+import astrodendro
 from demo import orion_demo
 from assign_physical_values import assign_size_mass_alpha_pressure
+from integrated_viewer import IntegratedViewer
 
 d, catalog, datacube_dt_header, metadata = orion_demo(downsample_factor=1, min_npix=20)
 
