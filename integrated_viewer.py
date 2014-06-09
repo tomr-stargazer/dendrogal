@@ -15,6 +15,9 @@ class IntegratedViewer(object):
             raise ValueError(
                 "Only 3-dimensional arrays are supported")
 
+        if not hasattr(hub, 'select_subtree'):
+            raise NotImplementedError("astrodendro does not have scatter_picker enabled")
+
         self.hub = hub
         self.hub.add_callback(self.update_selection)
 
