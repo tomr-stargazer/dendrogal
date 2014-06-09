@@ -78,6 +78,9 @@ def compare_jansky_to_kelvin(data_file, downsample_factor=4, transpose_tuple=(2,
     catalog_jansky = astrodendro.ppv_catalog(d_jansky, metadata_jansky)
     catalog_kelvin = astrodendro.ppv_catalog(d_kelvin, metadata_kelvin)
 
+    beams_per_pixel = metadata_jansky['spatial_scale'] ** 2 / (metadata_jansky['beam_minor'] * metadata_jansky['beam_major'] * 1.1331) * u.beam
+    print beams_per_pixel
+
     # if catalog['flux'].unit.is_equivalent('Jy'):
     #     # Workaround because flux is computed wrong
 
