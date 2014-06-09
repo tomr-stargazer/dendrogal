@@ -121,18 +121,19 @@ def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
     datacube_dt_wcs = wcs.wcs.WCS(datacube_dt_header)
 
     beam_size = 1/8 * u.deg
+    frequency = 115 * u.GHz
 
     # Convert the data from kelvin to jansky-per-beam
-    omega_beam = np.pi * (0.5 * beam_size)**2 # Beam width is 1/8 degree
-    frequency = 115 * u.GHz
-    K_to_Jy = u.K.to(u.Jy, equivalencies=
-                     u.brightness_temperature(omega_beam, frequency))
-    datacube_dt_jansky_perbeam = datacube_dt * K_to_Jy 
+    # (These parameters will soon be outdated once the Kelvin compute_flux fix is merged!)
+    # omega_beam = np.pi * (0.5 * beam_size)**2 # Beam width is 1/8 degree
+    # K_to_Jy = u.K.to(u.Jy, equivalencies=
+    #                  u.brightness_temperature(omega_beam, frequency))
+    # datacube_dt_jansky_perbeam = datacube_dt * K_to_Jy 
 
     print "computing dendrogram: ..."
     d = astrodendro.Dendrogram.compute(
-        datacube_dt_jansky_perbeam,
-        min_value=min_value*K_to_Jy, min_delta=min_delta*K_to_Jy,  #these are arbitrary
+        datacube_dt,
+        min_value=min_value, min_delta=min_delta,  #these are arbitrary
         min_npix=min_npix//df**3, verbose=True)
 
     v_scale = datacube_dt_header['cdelt3']
@@ -141,7 +142,8 @@ def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
     b_scale = datacube_dt_header['cdelt2']
     
     metadata = {}
-    metadata['data_unit'] = u.Jy / u.beam # According to A. Ginsburg
+    # metadata['data_unit'] = u.Jy / u.beam # According to A. Ginsburg
+    metadata['data_unit'] = u.K
     metadata['spatial_scale'] = b_scale * u.deg
     metadata['velocity_scale'] = v_scale * v_unit
     metadata['wavelength'] = (c.c / frequency).to('mm')
