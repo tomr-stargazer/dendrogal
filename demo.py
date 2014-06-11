@@ -24,7 +24,7 @@ from astrodendro_analysis.integrated_viewer import IntegratedViewer
 from astrodendro_analysis.reid_distance_assigner import make_reid_distance_column
 from astrodendro_analysis.assign_physical_values import assign_size_mass_alpha_pressure
 
-data_path = "/Users/tsrice/Dropbox/college/Astro99/DATA/"
+data_path = os.path.expanduser("~/Dropbox/College/Astro99/DATA/")
 
 # Downsamples a datacube by averaging. Code borrowed from aplpy.image_util (written by Tom Robitaille)
 def resample_3d(array, factor):
@@ -107,6 +107,9 @@ def orion_demo(**kwargs):
 
 def perseus_demo(**kwargs):
     return downsampled_demo('DHT21_Taurus_mom.fits', **kwargs)
+
+def ophiuchus_demo(**kwargs):
+    return downsampled_demo('DHT37_Ophiuchus_mom.fits', **kwargs)
 
 def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
                      min_value=0.01, min_delta=0.005, min_npix=2000):
@@ -220,7 +223,7 @@ def multiple_linked_viewer_demo(demo=cogal_downsampled_demo, galactic=False,
     return return_dict
 
 
-savepath = "/Users/tsrice/Documents/Code/astrodendro_analysis/saved_dendrogram/"
+savepath = os.path.expanduser("~/Documents/Code/astrodendro_analysis/saved_dendrogram/")
 dendro_fame = "saved_dendrogram_object.hdf5"
 catalog_fname = "saved_catalog_table.fits"
 header_fname = "saved_header.fits"
