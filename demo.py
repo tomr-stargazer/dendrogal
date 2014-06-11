@@ -95,6 +95,27 @@ def downsample_and_transpose_data_and_header(input_data, input_header,
         new_header['crpix'+str(tt[2]+1)] = (input_header['crpix3'] - 1)//df + 1
 
     return new_data, new_header
+
+def make_2d_wcs_from_3d_wcs(input_wcs):
+    """ Turns a PPV WCS object into a PP WCS object by modifying its header representation. """
+
+    header = input_wcs.to_header()
+    if header['WCSAXES'] != 3:
+        raise ValueError("This function is only intended to work when WCSAXES == 3.")
+
+    header_keys = header.keys()
+
+    # strip the third axes everywhere
+    for key in header_keys:
+        if '3' in key:
+            del header[key]
+
+    # then declare there are only 2 axes
+    header['WCSAXES'] = 2
+
+    new_wcs = wcs.wcs.WCS(header)
+
+    return new_wcs
     
 def cogal_downsampled_demo(**kwargs):
     return downsampled_demo('COGAL_all_mom.fits', **kwargs)
