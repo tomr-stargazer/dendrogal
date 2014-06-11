@@ -10,7 +10,7 @@ import astropy
 import astropy.units as u
 
 import astrodendro
-from demo import orion_demo, perseus_demo
+from demo import orion_demo, perseus_demo, ophiuchus_demo
 from assign_physical_values import assign_size_mass_alpha_pressure
 from integrated_viewer import IntegratedViewer
 
@@ -76,6 +76,8 @@ def perseus_analysis():
 def L1448_analysis():
 	return variable_distance_analysis(perseus_demo, {417: 235}, downsample_factor=1, min_npix=20)
 
+def ophiuchus_analysis():
+	return fixed_distance_analysis(ophiuchus_demo, 125, downsample_factor=1, min_npix=20)
 
 orion_map_idx_distance = {47: 450, 58: 450, 158: 800} # Orion A, Orion B, Monoceros
 def orion_analysis():
