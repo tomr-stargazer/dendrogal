@@ -36,6 +36,8 @@ class IntegratedViewer(object):
 
         self._draw_plot()
         self.hub.add_callback(self.update_selection)
+        self.fig.canvas.mpl_connect('button_press_event', self.select_from_map)
+
 
     def _draw_plot(self):
     	""" Create an image to plot things onto. """
@@ -68,6 +70,46 @@ class IntegratedViewer(object):
                 for collection in contour.collections:
                     ax.collections.remove(collection)
             del self.selected_contours[selection_id]
+
+    def select_from_map(self, event):
+
+        # Only do this if no tools are currently selected
+        if event.canvas.toolbar.mode != '':
+            return
+        if event.button not in self.hub.colors:
+            return
+
+        input_key = event.button
+
+        if event.inaxes is self.ax_lb:
+
+            # Find pixel co-ordinates of click
+            ix = int(round(event.xdata))
+            iy = int(round(event.ydata))
+
+            iz = np.where(self.datacube[:, iy, ix] == np.nanmax(self.datacube[:, iy, ix]))[0][0]
+
+        elif event.inaxes is self.ax_lv:
+
+            # Find pixel co-ordinates of click
+            ix = int(round(event.xdata))
+            iz = int(round(event.ydata))
+
+            iy = np.where(self.datacube[iz, :, ix] == np.nanmax(self.datacube[iz, :, ix]))[0][0]
+
+        else:
+            return
+
+        indices = (iz, iy, ix)
+        assert type(iz) == type(iy) == type(ix) == type(1)
+
+        # Select the structure
+        structure = self.dendrogram.structure_at(indices)
+        self.hub.select(input_key, structure)
+        self.update_selection(input_key)
+
+        # Re-draw
+        event.canvas.draw()
 
     def update_selection(self, selection_id):
         """Highlight seleted structures"""
