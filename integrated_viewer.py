@@ -43,8 +43,13 @@ class IntegratedViewer(object):
             self.ax_lb = self.fig.add_axes(ax_lb_limits)
             self.ax_lv = self.fig.add_axes(ax_lv_limits)
 
-        self.array_lb = np.nansum(self.datacube, axis=0)
-        self.array_lv = np.nansum(self.datacube, axis=1)
+        array_lb = np.nansum(self.datacube, axis=0)
+        array_lb[(array_lb < 0) | np.isinf(array_lb) | np.isnan(array_lb)] = 0
+        self.array_lb = array_lb
+
+        array_lv = np.nansum(self.datacube, axis=1)
+        array_lv[(array_lv < 0) | np.isinf(array_lv) | np.isnan(array_lv)] = 0
+        self.array_lv = array_lv
 
         self._draw_plot()
         self.hub.add_callback(self.update_selection)
@@ -56,19 +61,11 @@ class IntegratedViewer(object):
 
         len_v, len_l, len_b = self.datacube.shape
 
-        self._clim_lb = (np.min(self.array_lb[~np.isnan(self.array_lb) & ~np.isinf(self.array_lb)]),
-        	             np.max(self.array_lb[~np.isnan(self.array_lb) & ~np.isinf(self.array_lb)]))
+        self.image_lb = self.ax_lb.imshow(np.log10(self.array_lb+1), origin='lower', 
+            interpolation='nearest', cmap=plt.cm.gray)
 
-        self._clim_lv = (np.min(self.array_lv[~np.isnan(self.array_lv) & ~np.isinf(self.array_lv)]),
-        	             np.max(self.array_lv[~np.isnan(self.array_lv) & ~np.isinf(self.array_lv)]))
-
-        self.image_lb = self.ax_lb.imshow(self.array_lb, origin='lower', 
-            interpolation='nearest', vmin=self._clim_lb[0], 
-            vmax=0.025*self._clim_lb[1], cmap=plt.cm.gray)
-
-        self.image_lv = self.ax_lv.imshow(self.array_lv, origin='lower', 
-            interpolation='nearest', vmin=self._clim_lv[0], 
-            vmax=0.05*self._clim_lv[1], cmap=plt.cm.gray, aspect=2.5)
+        self.image_lv = self.ax_lv.imshow(np.log10(self.array_lv+1), origin='lower', 
+            interpolation='nearest', cmap=plt.cm.gray, aspect=2.5)
 
         # Trim the top and bottom of the l, v plot for cosmetic reasons
         crop_factor = np.round(len_v/5)
