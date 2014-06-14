@@ -8,8 +8,10 @@ from __future__ import division
 import numpy as np
 import matplotlib.pyplot as plt
 
+from wcsaxes import WCSAxes
+
 class IntegratedViewer(object):
-    def __init__(self, dendrogram, hub):
+    def __init__(self, dendrogram, hub, wcs=None):
 
         if dendrogram.data.ndim != 3:
             raise ValueError(
@@ -28,8 +30,18 @@ class IntegratedViewer(object):
 
         self.fig = plt.figure(figsize=(10, 4.4))
 
-        self.ax_lb = self.fig.add_axes([0.1, 0.05, 0.8, 0.4])
-        self.ax_lv = self.fig.add_axes([0.1, 0.5, 0.8, 0.5])
+        ax_lb_limits = [0.1, 0.05, 0.8, 0.4]
+        ax_lv_limits = [0.1, 0.5, 0.8, 0.5]
+
+        if wcs is not None:
+            ax_lb = WCSAxes(self.fig, ax_lb_limits, wcs=wcs)
+            self.ax_lb = self.fig.add_axes(ax_lb)
+            # ax_lv = WCSAxes(self.fig, self.ax_lv_limits, wcs=wcs)
+            # self.ax_lv = self.fig.add_axes(ax_lv)
+            self.ax_lv = self.fig.add_axes(ax_lv_limits)             #temporary
+        else:
+            self.ax_lb = self.fig.add_axes(ax_lb_limits)
+            self.ax_lv = self.fig.add_axes(ax_lv_limits)
 
         self.array_lb = np.nansum(self.datacube, axis=0)
         self.array_lv = np.nansum(self.datacube, axis=1)
