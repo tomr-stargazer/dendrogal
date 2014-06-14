@@ -26,7 +26,7 @@ from astrodendro_analysis.assign_physical_values import assign_size_mass_alpha_p
 
 data_path = os.path.expanduser("~/Dropbox/College/Astro99/DATA/")
 
-# Downsamples a datacube by averaging. Code borrowed from aplpy.image_util (written by Tom Robitaille)
+# Downsamples a datacube by averaging. Code derived from aplpy.image_util (written by Tom Robitaille)
 def resample_3d(array, factor):
 
     nx, ny, nz = np.shape(array)
