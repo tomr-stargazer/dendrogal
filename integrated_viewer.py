@@ -113,7 +113,6 @@ class IntegratedViewer(object):
             return
 
         indices = (iz, iy, ix)
-        assert type(iz) == type(iy) == type(ix) == type(1)
 
         # Select the structure
         structure = self.dendrogram.structure_at(indices)
