@@ -63,8 +63,8 @@ def variable_distance_analysis(demo_function, map_idx_distance, **kwargs):
 
 	return d, catalog, datacube_dt_header, metadata
 
-def fixed_perseus_analysis():
-	return fixed_distance_analysis(perseus_demo, 250, downsample_factor=1, min_npix=20)
+def fixed_perseus_analysis(downsample_factor=1, min_npix=20, **kwargs):
+	return fixed_distance_analysis(perseus_demo, 250, downsample_factor=downsample_factor, min_npix=min_npix, **kwargs)
 
 perseus_map = {}
 for idx in [64, 296, 373, 499, 392, 63, 11]:
@@ -76,8 +76,8 @@ def perseus_analysis():
 def L1448_analysis():
 	return variable_distance_analysis(perseus_demo, {417: 250}, downsample_factor=1, min_npix=20)
 
-def ophiuchus_analysis():
-	return fixed_distance_analysis(ophiuchus_demo, 125, downsample_factor=1, min_npix=20)
+def ophiuchus_analysis(downsample_factor=1, min_npix=20):
+	return fixed_distance_analysis(ophiuchus_demo, 125, downsample_factor=downsample_factor, min_npix=min_npix)
 
 orion_map_idx_distance = {47: 450, 58: 450, 158: 800} # Orion A, Orion B, Monoceros
 def orion_analysis():
