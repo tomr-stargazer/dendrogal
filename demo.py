@@ -133,7 +133,7 @@ def ophiuchus_demo(**kwargs):
     return downsampled_demo('DHT37_Ophiuchus_mom.fits', **kwargs)
 
 def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
-                     min_value=0.01, min_delta=0.005, min_npix=2000):
+                     min_value=0.01, min_delta=0.005, min_npix=2000, resample=False, compute_catalog=True, input_units=u.K):
 
     df = downsample_factor
     tt = transpose_tuple
@@ -144,7 +144,7 @@ def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
 
     print "transposing, downsampling, and unit-converting data: ..."
     datacube_dt, datacube_dt_header = \
-      downsample_and_transpose_data_and_header(datacube, datacube_header, df, tt)
+      downsample_and_transpose_data_and_header(datacube, datacube_header, df, tt, resample=resample)
     datacube_dt_wcs = wcs.wcs.WCS(datacube_dt_header)
 
     beam_size = 1/8 * u.deg
@@ -170,7 +170,7 @@ def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
     
     metadata = {}
     # metadata['data_unit'] = u.Jy / u.beam # According to A. Ginsburg
-    metadata['data_unit'] = u.K
+    metadata['data_unit'] = input_units
     metadata['spatial_scale'] = b_scale * u.deg
     metadata['velocity_scale'] = v_scale * v_unit
     metadata['wavelength'] = (c.c / frequency).to('mm')
@@ -179,7 +179,11 @@ def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
     metadata['vaxis'] = 0 # keep it this way if you think the (post-downsample/transposed) input data is (l, b, v)
     metadata['wcs'] = datacube_dt_wcs
 
-    catalog = astrodendro.ppv_catalog(d, metadata)
+    if compute_catalog:
+        catalog = astrodendro.ppv_catalog(d, metadata)
+    else:
+        catalog = None
+        return d, catalog, datacube_dt_header, metadata
 
     if catalog['flux'].unit.is_equivalent('Jy'):
         # Workaround because flux is computed wrong
