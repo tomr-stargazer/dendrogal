@@ -117,8 +117,9 @@ def make_2d_wcs_from_3d_wcs(input_wcs):
     new_wcs = wcs.wcs.WCS(header)
 
     return new_wcs
-    
-longitude_neighbors = astrodendro.dendrogram.periodic_neighbours((0, 1, 2))
+
+# After trial and error I found that axes=2 is the longitude axis when it comes to periodic_neighbors, despite what the docs say
+longitude_neighbors = astrodendro.dendrogram.periodic_neighbours(2)
 
 def cogal_downsampled_demo(**kwargs):
     return downsampled_demo('COGAL_all_mom.fits', 
