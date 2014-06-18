@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from wcsaxes import WCSAxes
 
 class IntegratedViewer(object):
-    def __init__(self, dendrogram, hub, wcs=None):
+    def __init__(self, dendrogram, hub, alignment='horizontal', wcs=None, cmap=plt.cm.gray):
 
         if dendrogram.data.ndim != 3:
             raise ValueError(
@@ -27,10 +27,19 @@ class IntegratedViewer(object):
 
         self.selected_contours = {} # selection_id -> (contour, contour) tuple
 
-        self.fig = plt.figure(figsize=(10, 4.4))
+        if alignment == 'horizontal':
+            figsize = (10, 4.4)
+            ax_lb_limits = [0.1, 0.05, 0.8, 0.4]
+            ax_lv_limits = [0.1, 0.5, 0.8, 0.5]
+        elif alignment == 'vertical':
+            figsize = (8, 6)
+            ax_lb_limits = [0.1, 0.1, 0.375, 0.8]
+            ax_lv_limits = [0.55, 0.1, 0.375, 0.8]
+        else:
+            raise ValueError("`alignment` must be 'horizontal' or 'vertical'")
 
-        ax_lb_limits = [0.1, 0.05, 0.8, 0.4]
-        ax_lv_limits = [0.1, 0.5, 0.8, 0.5]
+        self.fig = plt.figure(figsize=figsize)
+        self.cmap = cmap
 
         if wcs is not None:
             ax_lb = WCSAxes(self.fig, ax_lb_limits, wcs=wcs)
@@ -64,10 +73,10 @@ class IntegratedViewer(object):
         len_v, len_l, len_b = self.datacube.shape
 
         self.image_lb = self.ax_lb.imshow(np.log10(self.array_lb+1), origin='lower', 
-            interpolation='nearest', cmap=plt.cm.gray)
+            interpolation='nearest', cmap=self.cmap)
 
         self.image_lv = self.ax_lv.imshow(np.log10(self.array_lv+1), origin='lower', 
-            interpolation='nearest', cmap=plt.cm.gray, aspect=2.5)
+            interpolation='nearest', cmap=self.cmap, aspect=2.5)
 
         # Trim the top and bottom of the l, v plot for cosmetic reasons
         crop_factor = np.round(len_v/5)
