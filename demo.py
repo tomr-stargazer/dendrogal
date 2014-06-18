@@ -130,10 +130,26 @@ def cogal_resampled2_demo(downsample_factor=1, transpose_tuple=(0,1,2), **kwargs
     return downsampled_demo('COGAL_all_mom_downsampled_by_2.fits', transpose_tuple=transpose_tuple, 
                             downsample_factor=downsample_factor, neighbours=longitude_neighbors, **kwargs)
 
-def cogal_resampled_demo(resample, downsample_factor=1, transpose_tuple=(0,1,2), **kwargs):
+def cogal_resampled_demo(resample, downsample_factor=1, transpose_tuple=(0,1,2), min_npix=None, **kwargs):
     return downsampled_demo('COGAL_all_mom_downsampled_by_{0}.fits'.format(resample), 
                             transpose_tuple=transpose_tuple, downsample_factor=downsample_factor,
-                            neighbours=longitude_neighbors, **kwargs)
+                            neighbours=longitude_neighbors, min_npix=min_npix or 2000//resample, **kwargs)
+
+def cogal_local_demo(**kwargs):
+    return downsampled_demo('COGAL_local_mom.fits', downsample_factor=2, neighbours=longitude_neighbors)
+
+def cogal_local_resampled_demo(resample, downsample_factor=1, transpose_tuple=(0,1,2), min_npix=None, **kwargs):
+    return downsampled_demo('COGAL_local_mom_downsampled_by_{0}.fits'.format(resample), 
+                            transpose_tuple=transpose_tuple, downsample_factor=downsample_factor,
+                            neighbours=longitude_neighbors, min_npix=min_npix or 2000//resample, **kwargs)
+
+def cogal_deep_demo(**kwargs):
+    return downsampled_demo('COGAL_deep_mom.fits', downsample_factor=2, neighbours=longitude_neighbors)
+
+def cogal_deep_resampled_demo(resample, downsample_factor=1, transpose_tuple=(0,1,2), min_npix=None, **kwargs):
+    return downsampled_demo('COGAL_deep_mom_downsampled_by_{0}.fits'.format(resample), 
+                            transpose_tuple=transpose_tuple, downsample_factor=downsample_factor,
+                            neighbours=longitude_neighbors, min_npix=min_npix or 2000//resample, **kwargs)
 
 def small_demo(**kwargs):
     return downsampled_demo('DHT17_Quad2_bw_mom.fits', **kwargs)
