@@ -11,7 +11,8 @@ import matplotlib.pyplot as plt
 from wcsaxes import WCSAxes
 
 class IntegratedViewer(object):
-    def __init__(self, dendrogram, hub, alignment='horizontal', wcs=None, cmap=plt.cm.gray):
+    def __init__(self, dendrogram, hub, alignment='horizontal', wcs=None, cmap=plt.cm.gray,
+                 clip_velocity=None):
 
         if dendrogram.data.ndim != 3:
             raise ValueError(
@@ -59,6 +60,14 @@ class IntegratedViewer(object):
         array_lv[(array_lv < 0) | np.isinf(array_lv) | np.isnan(array_lv)] = 0
         self.array_lv = array_lv
 
+        if clip_velocity is None:
+            if np.shape(array_lv)[0]*2.5 > np.shape(array_lb)[0]:
+                self.clip_velocity = True
+            else:
+                self.clip_velocity = False
+        else:
+            self.clip_velocity = clip_velocity
+
         self._draw_plot()
         self.hub.add_callback(self.update_selection)
         self.fig.canvas.mpl_connect('button_press_event', self.select_from_map)
@@ -79,8 +88,9 @@ class IntegratedViewer(object):
             interpolation='nearest', cmap=self.cmap, aspect=2.5)
 
         # Trim the top and bottom of the l, v plot for cosmetic reasons
-        crop_factor = np.round(len_v/5)
-        self.ax_lv.set_ylim(crop_factor, len_v - crop_factor)
+        if self.clip_velocity:
+            crop_factor = np.round(len_v/5)
+            self.ax_lv.set_ylim(crop_factor, len_v - crop_factor)
 
         self.fig.canvas.draw()
 
