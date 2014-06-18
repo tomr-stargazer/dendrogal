@@ -54,6 +54,9 @@ class IntegratedViewer(object):
         self.hub.add_callback(self.update_selection)
         self.fig.canvas.mpl_connect('button_press_event', self.select_from_map)
 
+        # If things are already selected in the hub, go select them!
+        for selection_id in self.hub.selections:
+            self.update_selection(selection_id)
 
     def _draw_plot(self):
     	""" Create an image to plot things onto. """
