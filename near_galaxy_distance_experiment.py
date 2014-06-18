@@ -43,7 +43,11 @@ def assign_local_distance(lookup, catalog, reset=True):
 
 		size_difference = np.abs(catalog['radius'] - lookup[key]['radius'])
 
-		match_index = (size_difference == np.min(size_difference[nearby_indices])) & nearby_indices
+		valid_aspect_ratio = catalog['major_sigma'] / catalog['minor_sigma'] < 10
+
+		valid_indices = nearby_indices & valid_aspect_ratio
+
+		match_index = (size_difference == np.min(size_difference[valid_indices])) & valid_indices
 
 		print "Match! name: {0} to idx: {1}".format(key, catalog[match_index]['_idx'].data[0])
 
