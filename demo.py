@@ -118,11 +118,21 @@ def make_2d_wcs_from_3d_wcs(input_wcs):
 
     return new_wcs
     
-def cogal_downsampled_demo(**kwargs):
-    return downsampled_demo('COGAL_all_mom.fits', **kwargs)
+longitude_neighbors = astrodendro.dendrogram.periodic_neighbours((0, 1, 2))
 
-def cogal_resampled2_demo(downsample_factor=1, **kwargs):
-    return downsampled_demo('COGAL_all_mom_downsampled_by_2.fits', downsample_factor=downsample_factor, **kwargs)
+def cogal_downsampled_demo(**kwargs):
+    return downsampled_demo('COGAL_all_mom.fits', 
+                            neighbours=longitude_neighbors,
+                            **kwargs)
+
+def cogal_resampled2_demo(downsample_factor=1, transpose_tuple=(0,1,2), **kwargs):
+    return downsampled_demo('COGAL_all_mom_downsampled_by_2.fits', transpose_tuple=transpose_tuple, 
+                            downsample_factor=downsample_factor, neighbours=longitude_neighbors, **kwargs)
+
+def cogal_resampled_demo(resample, downsample_factor=1, transpose_tuple=(0,1,2), **kwargs):
+    return downsampled_demo('COGAL_all_mom_downsampled_by_{0}.fits'.format(resample), 
+                            transpose_tuple=transpose_tuple, downsample_factor=downsample_factor,
+                            neighbours=longitude_neighbors, **kwargs)
 
 def small_demo(**kwargs):
     return downsampled_demo('DHT17_Quad2_bw_mom.fits', **kwargs)
@@ -137,7 +147,8 @@ def ophiuchus_demo(**kwargs):
     return downsampled_demo('DHT37_Ophiuchus_mom.fits', **kwargs)
 
 def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
-                     min_value=0.01, min_delta=0.005, min_npix=2000, resample=False, compute_catalog=True):
+                     min_value=0.01, min_delta=0.005, min_npix=2000, 
+                     neighbours=None, resample=False, compute_catalog=True):
 
     df = downsample_factor
     tt = transpose_tuple
@@ -158,7 +169,7 @@ def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
     d = astrodendro.Dendrogram.compute(
         datacube_dt,
         min_value=min_value, min_delta=min_delta,  #these are arbitrary
-        min_npix=min_npix//df**3, verbose=True)
+        min_npix=min_npix//df**3, verbose=True, neighbours=neighbours)
 
     v_scale = datacube_dt_header['cdelt3']
     v_unit = u.km / u.s
