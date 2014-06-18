@@ -96,7 +96,10 @@ class IntegratedViewer(object):
             ix = int(round(event.xdata))
             iy = int(round(event.ydata))
 
-            iz = np.where(self.datacube[:, iy, ix] == np.nanmax(self.datacube[:, iy, ix]))[0][0]
+            try:
+                iz = np.where(self.datacube[:, iy, ix] == np.nanmax(self.datacube[:, iy, ix]))[0][0]
+            except IndexError:
+                iz = 0
 
         elif event.inaxes is self.ax_lv:
 
@@ -104,7 +107,10 @@ class IntegratedViewer(object):
             ix = int(round(event.xdata))
             iz = int(round(event.ydata))
 
-            iy = np.where(self.datacube[iz, :, ix] == np.nanmax(self.datacube[iz, :, ix]))[0][0]
+            try:
+                iy = np.where(self.datacube[iz, :, ix] == np.nanmax(self.datacube[iz, :, ix]))[0][0]
+            except IndexError:
+                iy = 0
 
         else:
             return
