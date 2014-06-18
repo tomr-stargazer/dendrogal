@@ -10,6 +10,7 @@ from __future__ import division
 
 import numpy as np
 
+import astropy
 from astropy import units as u
 from astropy import constants as c
 
@@ -25,8 +26,14 @@ test_lookup = {'Orion': {'l':210.78199346*u.deg,
 	                       'distance':250*u.pc} 
 	           }
 
-def assign_distance_thingy(lookup, catalog):
-	""" Takes a dict of stuff and assigns distances. """
+def assign_local_distance(lookup, catalog, reset=True):
+	""" Takes a dict of local cloud information and assigns distances. """
+
+	if 'Distance' not in catalog.colnames:
+		distance_column = astropy.table.Column(data=np.nan*np.ones(len(catalog))*u.pc, name='Distance')  # shape=(2,)
+		catalog.add_column(distance_column)
+	if reset:
+		catalog['Distance'] *= np.nan
 
 	# for each item in thing: pick a subset of the catalog closest
 	for key in lookup:
@@ -36,11 +43,14 @@ def assign_distance_thingy(lookup, catalog):
 
 		size_difference = np.abs(catalog['radius'] - lookup[key]['radius'])
 
-		match = catalog[nearby_indices][ size_difference[nearby_indices] == np.min(size_difference[nearby_indices]) ]
+		match_index = (size_difference == np.min(size_difference[nearby_indices])) & nearby_indices
 
-		print "Match! name: {0} to idx: {1}".format(key, match['_idx'].data[0])
+		print "Match! name: {0} to idx: {1}".format(key, catalog[match_index]['_idx'].data[0])
 
-		# Eventually our goal is to assign that DISTANCE to the match, but let's not get ahead of ourselves
+		catalog['Distance'][match_index] = lookup[key]['distance']
+
+		print "Matched distance: {0}".format(catalog['Distance'][match_index].data)
+
 
 
 
