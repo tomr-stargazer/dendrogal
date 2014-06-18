@@ -121,6 +121,9 @@ def make_2d_wcs_from_3d_wcs(input_wcs):
 def cogal_downsampled_demo(**kwargs):
     return downsampled_demo('COGAL_all_mom.fits', **kwargs)
 
+def cogal_resampled2_demo(downsample_factor=1, **kwargs):
+    return downsampled_demo('COGAL_all_mom_downsampled_by_2.fits', downsample_factor=downsample_factor, **kwargs)
+
 def small_demo(**kwargs):
     return downsampled_demo('DHT17_Quad2_bw_mom.fits', **kwargs)
 
@@ -134,7 +137,7 @@ def ophiuchus_demo(**kwargs):
     return downsampled_demo('DHT37_Ophiuchus_mom.fits', **kwargs)
 
 def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
-                     min_value=0.01, min_delta=0.005, min_npix=2000, resample=False, compute_catalog=True, input_units=u.K):
+                     min_value=0.01, min_delta=0.005, min_npix=2000, resample=False, compute_catalog=True):
 
     df = downsample_factor
     tt = transpose_tuple
@@ -151,13 +154,6 @@ def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
     beam_size = 1/8 * u.deg
     frequency = 115 * u.GHz
 
-    # Convert the data from kelvin to jansky-per-beam
-    # (These parameters will soon be outdated once the Kelvin compute_flux fix is merged!)
-    # omega_beam = np.pi * (0.5 * beam_size)**2 # Beam width is 1/8 degree
-    # K_to_Jy = u.K.to(u.Jy, equivalencies=
-    #                  u.brightness_temperature(omega_beam, frequency))
-    # datacube_dt_jansky_perbeam = datacube_dt * K_to_Jy 
-
     print "computing dendrogram: ..."
     d = astrodendro.Dendrogram.compute(
         datacube_dt,
@@ -168,18 +164,18 @@ def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
     v_unit = u.km / u.s
     l_scale = datacube_dt_header['cdelt1']
     b_scale = datacube_dt_header['cdelt2']
-    
+
     metadata = {}
-    # metadata['data_unit'] = u.Jy / u.beam # According to A. Ginsburg
-    metadata['data_unit'] = input_units
+    metadata['data_unit'] = u.K
     metadata['spatial_scale'] = b_scale * u.deg
     metadata['velocity_scale'] = v_scale * v_unit
-    metadata['wavelength'] = (c.c / frequency).to('mm')
+    metadata['wavelength'] = frequency # formerly: (c.c / frequency).to('mm') but now compute_flux can handle frequency in spectral equivalency
     metadata['beam_major'] = beam_size
     metadata['beam_minor'] = beam_size    
     metadata['vaxis'] = 0 # keep it this way if you think the (post-downsample/transposed) input data is (l, b, v)
     metadata['wcs'] = datacube_dt_wcs
 
+    print "computing catalog: ..."
     if compute_catalog:
         catalog = astrodendro.ppv_catalog(d, metadata)
     else:
