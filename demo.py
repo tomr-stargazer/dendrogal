@@ -153,11 +153,11 @@ def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
     df = downsample_factor
     tt = transpose_tuple
 
-    print "loading data: ..."
+    print "\n** loading data from {0}: ...\n".format(data_path+data_file)
     datacube, datacube_header = getdata(data_path+data_file, memmap=True,
                                         header=True)
 
-    print "transposing, downsampling, and unit-converting data: ..."
+    print "\n** transposing {0} and downsampling ({1}) data: ...\n".format(tt, df)
     datacube_dt, datacube_dt_header = \
       downsample_and_transpose_data_and_header(datacube, datacube_header, df, tt, resample=resample)
     datacube_dt_wcs = wcs.wcs.WCS(datacube_dt_header)
@@ -165,7 +165,7 @@ def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
     beam_size = 1/8 * u.deg
     frequency = 115 * u.GHz
 
-    print "computing dendrogram: ..."
+    print "\n** computing dendrogram on data with dimensions {} and n_pixels {:,}: ...\n".format(np.shape(datacube_dt), np.size(datacube_dt))
     d = astrodendro.Dendrogram.compute(
         datacube_dt,
         min_value=min_value, min_delta=min_delta,  #these are arbitrary
@@ -186,7 +186,7 @@ def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
     metadata['vaxis'] = 0 # keep it this way if you think the (post-downsample/transposed) input data is (l, b, v)
     metadata['wcs'] = datacube_dt_wcs
 
-    print "computing catalog: ..."
+    print "\n** computing catalog for {:,} structures: ...\n".format(len(d))
     if compute_catalog:
         catalog = astrodendro.ppv_catalog(d, metadata)
     else:
