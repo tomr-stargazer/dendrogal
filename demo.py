@@ -278,7 +278,7 @@ def write_cogal_demo_to_file(**kwargs):
 
     return None
 
-def resample_transpose_and_save(data_file, downsample_factor=2, transpose_tuple=(2,0,1), output_path=None, clobber=False, **kwargs):
+def resample_transpose_and_save(data_file, downsample_factor=2, transpose_tuple=(2,0,1), output_path=None, clobber=True, **kwargs):
 
     df = downsample_factor
     tt = transpose_tuple
@@ -287,9 +287,16 @@ def resample_transpose_and_save(data_file, downsample_factor=2, transpose_tuple=
     datacube, datacube_header = getdata(data_path+data_file, memmap=True,
                                         header=True)
 
-    print "transposing, downsampling, and unit-converting data: ..."
+    print "SHAPE of input data: {0}".format(np.shape(datacube))
+
+    print "transposing and resampling data: ..."
     datacube_dt, datacube_dt_header = \
       downsample_and_transpose_data_and_header(datacube, datacube_header, df, tt, resample=True)
+
+    print "SHAPE of output data: {0}".format(np.shape(datacube_dt))
+    expected_shape = [x/df for x in np.shape(datacube)]
+    expected_shape = expected_shape[tt[0]], expected_shape[tt[1]], expected_shape[tt[2]]
+    print "EXPECTED SHAPE of output data: {0}".format(expected_shape)
 
     print "saving data: ..."
     output_path = output_path or "{0}{1}_downsampled_by_{2}.fits".format(data_path, data_file.rstrip('.fits'), df)
@@ -302,7 +309,7 @@ def resample_transpose_and_save(data_file, downsample_factor=2, transpose_tuple=
             fits.writeto(output_path, datacube_dt, datacube_dt_header)
         else:
             print "File not saved: {0}".format(e)
-            return
+            return datacube, datacube_header, datacube_dt, datacube_dt_header
 
     print "Resampled file saved to {0}".format(output_path)
 
