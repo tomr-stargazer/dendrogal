@@ -18,6 +18,7 @@ import astropy.constants as c
 
 from astropy import wcs
 from astropy.io.fits import getdata, getheader
+import astropy.io.fits as fits
 
 from astrodendro.scatter import Scatter
 from astrodendro_analysis.integrated_viewer import IntegratedViewer
@@ -269,6 +270,24 @@ def write_cogal_demo_to_file(**kwargs):
     pickle.dump(metadata, open(savepath+metadata_fname, 'wb'))
 
     return None
+
+def resample_transpose_and_save(data_file, downsample_factor=2, transpose_tuple=(2,0,1), output_path=None, **kwargs):
+
+    df = downsample_factor
+    tt = transpose_tuple
+
+    print "loading data: ..."
+    datacube, datacube_header = getdata(data_path+data_file, memmap=True,
+                                        header=True)
+
+    print "transposing, downsampling, and unit-converting data: ..."
+    datacube_dt, datacube_dt_header = \
+      downsample_and_transpose_data_and_header(datacube, datacube_header, df, tt, resample=True)
+
+    print "saving data: ..."
+    output_path = output_path or "{0}{1}_downsampled_by_{2}".format(data_path, data_file.rstrip('.fits'), df)
+
+    fits.writeto(output_path, datacube_dt, datacube_dt_header)
 
 # I noticed that "loaded" dendrograms tend not to respond well to click events... 
 # the branches seem to lose their self._dendrogram attachments and everything breaks.
