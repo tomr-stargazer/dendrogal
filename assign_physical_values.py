@@ -69,6 +69,36 @@ def assign_size_mass_alpha_pressure(catalog):
 
     return size.to('pc'), mass, virial_parameter.decompose(), pressure_by_boltzmann.to('K cm-3')
 
+def assign_galactocentric_coordinates(catalog, galactic_center_distance=8.340*u.kpc):
+    """
+    Assigns galactocentric coordinates. 
+
+    Assumes an R_0 = 8340 pc, re: Reid et al. 2013
+
+    This function is derived from the IDL code http://www.astro.virginia.edu/~dln5q/research/idl/lbd2xyz.pro
+    by D. Nidever,
+    translated into python/astropy
+
+    """
+
+    if 'Distance' not in catalog.colnames:
+        try:
+            catalog['Distance'] = catalog['D_k']
+        except Exception:
+            raise ValueError("Catalog must have distance!")
+
+    R_0 = u.Quantity(galactic_center_distance, u.kpc)
+
+    distance = catalog['Distance'].data * catalog['Distance'].unit
+    lrad = (catalog['x_cen'] * u.deg).to(u.rad).value
+    brad = (catalog['y_cen'] * u.deg).to(u.rad).value
+
+    x = distance * np.sin(0.5*np.pi - brad) *np.cos(lrad) - R_0
+    y = distance * np.sin(0.5*np.pi - brad) *np.sin(lrad)
+    z = distance * np.cos(0.5*np.pi - brad) 
+
+    return x.to('kpc'), y.to('kpc'), z.to('kpc')
+
     """
     astropy.table.Column(
         data=catalog['radius'] * (catalog['Distance']*1000) * 3600, 
