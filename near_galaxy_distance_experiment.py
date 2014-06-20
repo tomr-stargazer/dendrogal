@@ -47,13 +47,16 @@ def assign_local_distance(lookup, catalog, reset=True):
 
 		valid_indices = nearby_indices & valid_aspect_ratio
 
-		match_index = (size_difference == np.min(size_difference[valid_indices])) & valid_indices
+		try:
+			match_index = (size_difference == np.min(size_difference[valid_indices])) & valid_indices
 
-		print "Match! name: {0} to idx: {1}".format(key, catalog[match_index]['_idx'].data[0])
+			print "Match! name: {0} to idx: {1}".format(key, catalog[match_index]['_idx'].data[0])
 
-		catalog['Distance'][match_index] = lookup[key]['distance']
+			catalog['Distance'][match_index] = lookup[key]['distance']
 
-		print "Matched distance: {0}".format(catalog['Distance'][match_index].data)
+			print "Matched distance: {0}".format(catalog['Distance'][match_index].data)
+		except ValueError, e:
+			print "No match! name: {0} had {1}".format(key, e)
 
 
 

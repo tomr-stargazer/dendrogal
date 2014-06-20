@@ -46,7 +46,7 @@ def variable_distance_analysis(demo_function, map_idx_distance, **kwargs):
 		idx = key
 		distance = map_idx_distance[key]
 
-		trunk = [structure for structure in d.all_structures if structure.idx == idx][0]
+		trunk = d[idx]
 		indices = [structure.idx for structure in trunk.descendants]
 
 		distance_array[np.in1d(catalog['_idx'], indices)] = distance
