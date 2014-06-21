@@ -42,9 +42,8 @@ def variable_distance_analysis(demo_function, map_idx_distance, **kwargs):
 
 	distance_array = np.ones_like(catalog['_idx']) * np.nan
 
-	for key in map_idx_distance.keys():
-		idx = key
-		distance = map_idx_distance[key]
+	for idx in map_idx_distance.keys():
+		distance = map_idx_distance[idx]
 
 		trunk = d[idx]
 		indices = [structure.idx for structure in trunk.descendants]
