@@ -168,6 +168,9 @@ table2 = {
 	          'mass':0.03},	   
 }
 
+for key in table2:
+	table2[key]['mass'] *= 1e5
+
 def convert_dame_table_to_standard_form(table):
 
 	for key in table:
