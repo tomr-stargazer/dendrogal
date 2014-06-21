@@ -33,7 +33,7 @@ test_lookup = {'Orion': {'l':210.78199346*u.deg,
 	                       'distance':250*u.pc} 
 	           }
 
-def assign_local_distance(lookup, catalog, reset=True):
+def assign_local_distance(lookup, catalog, reset=True, literature_mass=False):
 	""" Takes a dict of local cloud information and assigns distances. """
 
 	if 'Distance' not in catalog.colnames:
@@ -41,6 +41,11 @@ def assign_local_distance(lookup, catalog, reset=True):
 		catalog.add_column(distance_column)
 	if reset:
 		catalog['Distance'] *= np.nan
+
+	if 'literature_mass' not in catalog.colnames and literature_mass:
+		lit_mass_column = astropy.table.Column(data=np.nan*np.ones(len(catalog))*u.pc, name='literature_mass')  # shape=(2,)
+		catalog.add_column(lit_mass_column)
+
 
 	# for each item in thing: pick a subset of the catalog closest
 	for key in lookup:
@@ -60,6 +65,8 @@ def assign_local_distance(lookup, catalog, reset=True):
 			print "Match! name: {0} to idx: {1}".format(key, catalog[match_index]['_idx'].data[0])
 
 			catalog['Distance'][match_index] = lookup[key]['distance']
+			if literature_mass:
+				catalog['literature_mass'][match_index] = lookup[key]['mass']
 
 			print "Matched distance: {0}".format(catalog['Distance'][match_index].data)
 		except ValueError, e:
@@ -74,7 +81,7 @@ def near_galaxy_distance_demo(resample=2):
 
 	dame_standard_form = convert_dame_table_to_standard_form(table2)
 
-	assign_local_distance(dame_standard_form, catalog)
+	assign_local_distance(dame_standard_form, catalog, literature_mass=True)
 
 	x, y, z = assign_galactocentric_coordinates(catalog, galactic_center_distance=0)
 
@@ -94,7 +101,7 @@ def near_galaxy_distance_demo(resample=2):
 		"# d, catalog, x, y = near_galaxy_distance_demo(resample=2) \n"
 		"dv = d.viewer()\n"
 		"iv = IntegratedViewer(d, dv.hub, wcs=y['wcs'].sub([wcs.WCSSUB_CELESTIAL]), cmap='gray_r')\n"
-		"dsd = Scatter(d, dv.hub, catalog, 'x_galactocentric', 'y_galactocentric')")
+		"dsd = Scatter(d, dv.hub, catalog, 'y_galactocentric', 'x_galactocentric')")
 
 	return d, catalog, header, metadata
 
