@@ -68,3 +68,32 @@ def assign_local_distance(lookup, catalog, reset=True):
 
 
 
+def near_galaxy_distance_demo(resample=2):
+
+	d, catalog, header, metadata = demo.cogal_local_resampled_demo(resample=resample, min_npix=50)
+
+	dame_standard_form = convert_dame_table_to_standard_form(table2)
+
+	assign_local_distance(dame_standard_form, catalog)
+
+	x, y, z = assign_galactocentric_coordinates(catalog, galactic_center_distance=0)
+
+	catalog['x_galactocentric'] = x
+	catalog['y_galactocentric'] = y
+	catalog['z_galactocentric'] = z
+
+	s, m, v, p = assign_size_mass_alpha_pressure(catalog)
+
+	catalog['size'] = astropy.table.Column(data=s, name='size')
+	catalog['mass'] = astropy.table.Column(data=m, name='mass')
+	catalog['virial'] = astropy.table.Column(data=v, name='virial')
+	catalog['pressure'] = astropy.table.Column(data=p, name='pressure')	
+
+	return d, catalog, header, metadata
+
+
+
+
+
+
+
