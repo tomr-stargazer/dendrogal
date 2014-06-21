@@ -45,8 +45,8 @@ def assign_local_distance(lookup, catalog, reset=True):
 	# for each item in thing: pick a subset of the catalog closest
 	for key in lookup:
 
-		nearby_indices = ((np.abs(catalog['x_cen'] - lookup[key]['l'].value) < lookup[key]['radius'].value) &
-		                  (np.abs(catalog['y_cen'] - lookup[key]['b'].value) < lookup[key]['radius'].value) )
+		nearby_indices = ((np.abs(catalog['x_cen'] - lookup[key]['l'].value) < lookup[key]['radius'].value/2) &
+		                  (np.abs(catalog['y_cen'] - lookup[key]['b'].value) < lookup[key]['radius'].value/2) )
 
 		size_difference = np.abs(catalog['radius'] - lookup[key]['radius'])
 
