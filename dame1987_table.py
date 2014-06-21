@@ -174,12 +174,15 @@ def convert_dame_table_to_standard_form(table):
 
 		row = table[key]
 
+		if (row['l_min'] > 270) and (row['l_max'] < 90):
+			row['l_max'] += 360
+
 		radius = np.sqrt((row['l_max']-row['l_min'])*
 			             (row['b_max']-row['b_min']) )
 
 		table[key]['radius'] = radius * u.deg
 
-		l_cen = (row['l_max'] + row['l_min'])/2
+		l_cen = (row['l_max'] + row['l_min'])/2 % 360
 		b_cen = (row['b_max'] + row['b_min'])/2		
 
 		table[key]['l'] = l_cen * u.deg
