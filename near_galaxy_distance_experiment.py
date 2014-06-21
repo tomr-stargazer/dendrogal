@@ -89,6 +89,13 @@ def near_galaxy_distance_demo(resample=2):
 	catalog['virial'] = astropy.table.Column(data=v, name='virial')
 	catalog['pressure'] = astropy.table.Column(data=p, name='pressure')	
 
+	print("\n# Run these commands:\n"
+		"# (these assume you have called this function like following: )\n"
+		"# d, catalog, x, y = near_galaxy_distance_demo(resample=2) \n"
+		"dv = d.viewer()\n"
+		"iv = IntegratedViewer(d, dv.hub, wcs=y['wcs'].sub([wcs.WCSSUB_CELESTIAL]), cmap='gray_r')\n"
+		"dsd = Scatter(d, dv.hub, catalog, 'x_galactocentric', 'y_galactocentric')")
+
 	return d, catalog, header, metadata
 
 
