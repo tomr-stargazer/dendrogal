@@ -34,12 +34,7 @@ def brand_blitz_kinematic_distance(longitude, velocity, galaxy_parameters=brand_
 	"""
 	l = np.radians(longitude) % 2*np.pi
 
-#	if ~keyword_set(radians) then l=longitude/!radeg else l=longitude
-#	l=(l mod (2*!dpi))
-#	if(l < 0) then l += 2 * !dpi
-
-
-	a1=1.0077
+	a1=1
 	a2=0
 	a3=0
 
@@ -48,7 +43,7 @@ def brand_blitz_kinematic_distance(longitude, velocity, galaxy_parameters=brand_
 	vo=240 # aka theta_0
 
 	r = (np.arange(2000) + 1) / 2000 * 2 * ro
-	root=np.sin(l) * vo * (a1 * (r/ro)**(a2-1) + a3 * (r/ro)**(-1) - 1) - velocity
+	root = np.sin(l) * vo * (a1 * (r/ro)**(a2-1) + a3 * (r/ro)**(-1) - 1) - velocity
 
 	#find the zero crossing
 	root *= np.roll(root,1)
@@ -58,7 +53,6 @@ def brand_blitz_kinematic_distance(longitude, velocity, galaxy_parameters=brand_
 	hit = np.where(root < 0)
 
 	if len(hit[0]) < 1:
-		raise ValueError()
 		print 'Cannot determine galactocentric distance'
 		print 'returned 0 (NaN) solutions'
 		return [np.nan, np.nan]
@@ -89,8 +83,8 @@ def brand_blitz_kinematic_distance(longitude, velocity, galaxy_parameters=brand_
 
 	else:
 
-	   rmin=ro*np.cos(l)
-	   dr=np.sqrt(r**2-(ro*np.sin(l))**2)
+	   rmin = ro*np.cos(l)
+	   dr = np.sqrt(r**2-(ro*np.sin(l))**2)
 	   if ~np.isfinite(dr):
 	      print 'motion cannot be reproduced via galactic rotation'
 	      print 'returned 0 (NaN) solutions'
