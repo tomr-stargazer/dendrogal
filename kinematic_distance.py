@@ -16,6 +16,47 @@ import astropy.constants as c
 
 brand_blitz_parameters = dict()
 
+def make_blitz_distance_column(catalog, nearfar='near'):
+    """ Makes a Blitz distance column. """
+
+    nearfar_dict = {'near': 0, 'far': 1}
+
+    distance_list = []
+
+    for row in catalog:
+    	blitz_output = brand_blitz_kinematic_distance(row['x_cen'], row['v_cen'])
+
+    	# Sometimes the "near" distance is geometrically negative - obviously, use the far one.
+    	if blitz_output[0] < 0:
+    		if blitz_output[1] < 0:
+    			blitz_output = [np.nan, np.nan]
+    		else:
+    			blitz_output[0] = blitz_output[1]
+
+    	distance_list.append(blitz_output[nearfar_dict[nearfar]])
+
+    distance_column = astropy.table.Column(
+        data=distance_list, 
+        name="Distance")
+
+    distance_column.units = u.kpc    
+    return distance_column
+
+def assign_blitz_distances(catalog, nearfar='near'):
+    # let's pretend these are in... parsecs.
+    distance_column = astropy.table.Column(
+        data=make_blitz_distance_column(catalog, nearfar), 
+        name="Distance")
+
+    distance_column.units = u.kpc
+    catalog.add_column(distance_column)
+
+    # misleading to return it, since it's modified in-place
+    return catalog
+
+
+
+
 def brand_blitz_kinematic_distance(longitude, velocity, galaxy_parameters=brand_blitz_parameters):
 	"""
 	Computes a kdist for a given (l,b) pair.
