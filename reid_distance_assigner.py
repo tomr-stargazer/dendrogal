@@ -7,6 +7,7 @@ Hopefully I can figure out how to do this in a non-boneheaded way.
 
 from __future__ import division
 
+import os
 import subprocess
 from subprocess import Popen, PIPE, STDOUT
 
@@ -17,8 +18,10 @@ from astropy.coordinates import Galactic
 import astropy.units as u
 import astropy.constants as c
 
+executable_path = os.path.expanduser('~/Documents/Code/mark_reid_kdist/revised_kinematic_distance')
 
-def test_reid_distances():
+
+def test_reid_distances(executable_path=executable_path):
 
     test_string = "test    010203.04 121314.5 -10 1"
 
@@ -27,7 +30,7 @@ def test_reid_distances():
     f.close()
 
     p = Popen(
-        ['/Users/tsrice/Documents/Code/mark_reid_kdist/revised_kinematic_distance'],
+        [executable_path],
         shell = False, stdin=PIPE, stdout=PIPE)
 
     output, error = p.communicate()
@@ -51,7 +54,7 @@ def test_reid_distances():
     print kd_output
     
 
-def make_reid_distance_column(catalog, nearfar='near'):
+def make_reid_distance_column(catalog, nearfar='near', executable_path=executable_path):
     """ Makes a reid distance column. 
 
     Input: ppv_catalog output. """
@@ -85,7 +88,7 @@ def make_reid_distance_column(catalog, nearfar='near'):
     f.close()
 
     p = Popen(
-        ['/Users/tsrice/Documents/Code/mark_reid_kdist/revised_kinematic_distance'],
+        [executable_path],
         shell = False, stdin=PIPE, stdout=PIPE)
         
     output, error = p.communicate()
