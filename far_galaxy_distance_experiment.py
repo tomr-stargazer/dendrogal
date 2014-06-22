@@ -15,18 +15,19 @@ from astropy import constants as c
 
 import demo
 from reid_distance_assigner import make_reid_distance_column
+from kinematic_distance import make_blitz_distance_column
 from assign_physical_values import assign_galactocentric_coordinates, assign_size_mass_alpha_pressure
 from astrodendro_analysis.integrated_viewer import IntegratedViewer
 from astropy.wcs import wcs
 from astrodendro.scatter import Scatter
 
 
-def far_galaxy_distance_demo(resample=2):
+def far_galaxy_distance_demo(resample=2, **kwargs):
 
-	d, catalog, header, metadata = demo.cogal_deep_resampled_demo(resample=resample, min_npix=50)
+	d, catalog, header, metadata = demo.cogal_deep_resampled_demo(resample=resample, min_npix=50, **kwargs)
 
-	reid = make_reid_distance_column(catalog)
-	catalog['Distance'] = reid['D_k']        
+	blitz = make_blitz_distance_column(catalog)
+	catalog['Distance'] = blitz
 
 	x, y, z = assign_galactocentric_coordinates(catalog, galactic_center_distance=0)
 
