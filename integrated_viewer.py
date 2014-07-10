@@ -170,9 +170,9 @@ class IntegratedViewer(object):
                 self.selected_contours[selection_id] = (
                     self.ax_lb.contour(
                         mask_lb, colors=self.hub.colors[selection_id],
-                        linewidths=2, levels=[0.5], alpha=0.75, zorder=struct.height), 
+                        linewidths=5, levels=[0.5], alpha=0.9, zorder=struct.height), 
                     self.ax_lv.contour(
                         mask_lv, colors=self.hub.colors[selection_id],
-                        linewidths=2, levels=[0.5], alpha=0.75, zorder=struct.height) )
+                        linewidths=5, levels=[0.5], alpha=0.9, zorder=struct.height) )
 
         self.fig.canvas.draw()
