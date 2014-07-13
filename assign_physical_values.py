@@ -58,12 +58,17 @@ def assign_size_mass_alpha_pressure(catalog):
     sigma_v = catalog['v_rms'].data * catalog['v_rms'].unit
 
     luminosity = flux_kelvin_kms_deg2.to(u.K * u.km/u.s * u.steradian) * distance**2 / (1 * u.steradian)
-    mass = 4.4 * luminosity.to(u.K * u.km/u.s * u.pc**2).value * u.M_sun
+
+    # X_2 is the ratio between the assumed X_CO value, and the nominal value 2e20 cm-2 (K km s-1)-1 
+    X2 = 1.0
+
+    mass = 4.4 * X2 * luminosity.to(u.K * u.km/u.s * u.pc**2).value * u.M_sun
 
     eta = 1.9
 
     virial_parameter = 5 * eta * sigma_v**2 * size / (mass * c.G)
 
+    # Pressure is calculated as a kinetic energy density: mass density times velocity squared
     pressure = mass * sigma_v**2 / size**3
     pressure_by_boltzmann = pressure / c.k_B
 

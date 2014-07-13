@@ -75,6 +75,7 @@ def perseus_analysis():
 	return variable_distance_analysis(perseus_demo, perseus_map, downsample_factor=1, min_npix=20)
 
 def L1448_analysis():
+	""" Focuses just on the emission unambiguously associated with Perseus. Misses some mutual enveloping gas. """
 	return variable_distance_analysis(perseus_demo, {417: 250}, downsample_factor=1, min_npix=20)
 
 alyssa_perseus_map = {966: 250}
@@ -84,6 +85,10 @@ def alyssa_perseus_analysis():
 
 def ophiuchus_analysis(downsample_factor=1, min_npix=20):
 	return fixed_distance_analysis(ophiuchus_demo, 125, downsample_factor=downsample_factor, min_npix=min_npix)
+
+def central_ophiuchus_analysis():
+	""" Focuses just on the central major cloud in this datacube """
+	return variable_distance_analysis(ophiuchus_demo, {12: 125}, downsample_factor=1, min_npix=20)
 
 orion_map_idx_distance = {47: 450, 58: 450, 158: 800} # Orion A, Orion B, Monoceros
 def orion_analysis():
