@@ -53,6 +53,27 @@ def resample_3d(array, factor):
 
     return array4
 
+def recenter_wcs_header(input_header, central_value=0):
+    """ 
+    Sets the header CRVAL on zero if it's not already. 
+
+    A quick-and-dirty implementation.
+
+    """
+
+    new_header = input_header.copy()
+
+    # in principle we could iterate through dimensions but.... not yet
+    if input_header['CRVAL1'] != central_value:
+        # how do we figure out where it hits zero? Use CDELT1 and do some math?
+        degrees_correction = central_value - input_header['CRVAL1']
+        pixels_correction = degrees_correction / input_header['CDELT1']
+
+        new_header['CRVAL1'] = central_value
+        new_header['CRPIX1'] = input_header['CRPIX1'] + pixels_correction
+
+    return new_header
+
 
 def downsample_and_transpose_data_and_header(input_data, input_header, 
                                              downsample_factor=4, 
@@ -95,7 +116,7 @@ def downsample_and_transpose_data_and_header(input_data, input_header,
         new_header['crpix'+str(tt[1]+1)] = (input_header['crpix2'] - 1)//df + 1
         new_header['crpix'+str(tt[2]+1)] = (input_header['crpix3'] - 1)//df + 1
 
-    return new_data, new_header
+    return new_data, recenter_wcs_header(new_header)
 
 def make_2d_wcs_from_3d_wcs(input_wcs):
     """ Turns a PPV WCS object into a PP WCS object by modifying its header representation. """
