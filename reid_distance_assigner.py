@@ -21,7 +21,7 @@ import astropy.constants as c
 executable_path = os.path.expanduser('~/Documents/Code/mark_reid_kdist/revised_kinematic_distance')
 
 
-def test_reid_distances(executable_path=executable_path):
+def test_reid_distances(executable_path=executable_path, verbose=True):
 
     test_string = "test    010203.04 121314.5 -10 1"
 
@@ -35,10 +35,11 @@ def test_reid_distances(executable_path=executable_path):
 
     output, error = p.communicate()
 
-    print output
-    print error
+    if verbose:
+        print output
+        print error
 
-    lines_of_data = [x for x in output.split('\n') if '!' not in x]
+    lines_of_data = [x for x in output.split('\n') if '!' not in x and x != '']
 
     kd_output = astropy.table.Table.read(lines_of_data, format='ascii')
     
@@ -51,7 +52,21 @@ def test_reid_distances(executable_path=executable_path):
     kd_output.rename_column('col7', 'error_D_k_plus')
     kd_output.rename_column('col8', 'error_D_k_minus')
     
-    print kd_output
+    if verbose:
+        print kd_output, lines_of_data
+
+    return kd_output
+
+try:
+    reid_test_output = test_reid_distances(verbose=False)
+
+    assert type(reid_test_output) == astropy.table.table.Table
+    assert len(reid_test_output) == 1
+    assert len(reid_test_output.colnames) == 8
+    assert reid_test_output['D_k'][0] == 0.41
+except Exception, e:
+    print e
+    raise ImportError("Reid distances cannot be imported: unit tests failed!")
     
 
 def make_reid_distance_column(catalog, nearfar='near', executable_path=executable_path):
@@ -82,6 +97,8 @@ def make_reid_distance_column(catalog, nearfar='near', executable_path=executabl
         row_string = name+" "+rastring+" "+destring+" "+vstring+" "+fstring+"\n"
 
         source_file_string += row_string
+
+        # row_string.abcdasd()
 
     f = open('source_file.dat', 'w')
     f.write(source_file_string)
