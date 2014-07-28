@@ -22,12 +22,16 @@ from astropy.wcs import wcs
 from astrodendro.scatter import Scatter
 
 
-def far_galaxy_distance_demo(resample=2, **kwargs):
+def far_galaxy_distance_demo(resample=2, distance='reid', **kwargs):
 
 	d, catalog, header, metadata = demo.cogal_deep_resampled_demo(resample=resample, min_npix=50, **kwargs)
 
-	blitz = make_blitz_distance_column(catalog)
-	catalog['Distance'] = blitz
+	if distance != 'reid':
+		blitz = make_blitz_distance_column(catalog)
+		catalog['Distance'] = blitz
+	else:
+		reid_distance = make_reid_distance_column(catalog)
+		catalog['Distance'] = reid_distance['D_k']
 
 	x, y, z = assign_galactocentric_coordinates(catalog, galactic_center_distance=0)
 
@@ -50,5 +54,6 @@ def far_galaxy_distance_demo(resample=2, **kwargs):
 		"dsd = Scatter(d, dv.hub, catalog, 'y_galactocentric', 'x_galactocentric')")
 
 	return d, catalog, header, metadata
+
 
 
