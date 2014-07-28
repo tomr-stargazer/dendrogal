@@ -74,8 +74,8 @@ def make_reid_distance_column(catalog, nearfar='near', executable_path=executabl
         rhh, rmm, rss = galactic_coord.fk5.ra.hms
         ddd, dmm, dss = galactic_coord.fk5.dec.dms
 
-        rastring = "%02i%02i%5.2f" % (rhh, rmm, rss)
-        destring = "%+03i%02i%5.2f" % (ddd, np.abs(dmm), np.abs(dss))
+        rastring = "%02i%02i%05.2f" % (rhh, rmm, rss)
+        destring = "%+03i%02i%05.2f" % (ddd, np.abs(dmm), np.abs(dss))
         vstring = "%7.1f" % row['v_cen']
         fstring = str(nearfar_dict[nearfar])
 
@@ -97,7 +97,15 @@ def make_reid_distance_column(catalog, nearfar='near', executable_path=executabl
     print error
 
 
-    lines_of_data = [x for x in output.split('\n') if '!' not in x]
+    lines_of_data = [x for x in output.split('\n') if '!' not in x and x != '']
+
+
+    # Sometimes the output is poorly formatted such that columns run up against each other. Let's sanitize those columns.
+    for i in range(len(lines_of_data)):
+        line = lines_of_data[i]
+        if len(line.split()) != 8:
+            tuple_split = tuple(line.split()[0:5])
+            lines_of_data[i] = "  {0} {1} {2}  {3} {4}    0.00   0.00  0.00".format(*tuple_split)
 
     kd_output = astropy.table.Table.read(lines_of_data, format='ascii')
     
