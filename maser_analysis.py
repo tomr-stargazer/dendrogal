@@ -28,7 +28,9 @@ def put_masers_in_dendrogram(dendrogram, catalog, header, metadata):
 
 	y_wcs =  metadata['wcs']
 
-	for coordinate, velocity in zip(maser_coordinates.galactic, maser_table['VLSR']):
+	structure_maser_map = {} # map structure_id -> list of masers
+
+	for coordinate, velocity, maser_name in zip(maser_coordinates.galactic, maser_table['VLSR'], maser_table['Name']):
 
 		l_px, b_px, v_px = y_wcs.wcs_world2pix(coordinate.l, coordinate.b, velocity, 1)
 
@@ -39,13 +41,15 @@ def put_masers_in_dendrogram(dendrogram, catalog, header, metadata):
 
 			print structure
 
+			try:
+				structure_maser_map[structure.idx].append(maser_name)
+			except KeyError:
+				structure_maser_map[structure.idx] = [maser_name]
+
+
 		except Exception, e:
 
 			print e
 
+	return structure_maser_map
 
-
-# indices = (self.slice, iy, ix)
-
-# # Select the structure
-# structure = 
