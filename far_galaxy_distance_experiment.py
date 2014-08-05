@@ -22,9 +22,9 @@ from astropy.wcs import wcs
 from astrodendro.scatter import Scatter
 
 
-def far_galaxy_distance_demo(resample=2, distance='reid', nearfar='near', **kwargs):
+def far_galaxy_distance_demo(resample=2, distance='reid', nearfar='near', min_npix=50, **kwargs):
 
-	d, catalog, header, metadata = demo.cogal_deep_resampled_demo(resample=resample, min_npix=50, **kwargs)
+	d, catalog, header, metadata = demo.cogal_deep_resampled_demo(resample=resample, min_npix=min_npix, **kwargs)
 
 	if distance != 'reid':
 		blitz = make_blitz_distance_column(catalog)
