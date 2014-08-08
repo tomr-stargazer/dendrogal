@@ -77,7 +77,7 @@ def recenter_wcs_header(input_header, central_value=0):
 
 def downsample_and_transpose_data_and_header(input_data, input_header, 
                                              downsample_factor=4, 
-                                             transpose_tuple=(2,0,1), resample=False):
+                                             transpose_tuple=(2,0,1), resample=False, recenter=True):
     
     df = downsample_factor
     tt = transpose_tuple
@@ -116,7 +116,12 @@ def downsample_and_transpose_data_and_header(input_data, input_header,
         new_header['crpix'+str(tt[1]+1)] = (input_header['crpix2'] - 1)//df + 1
         new_header['crpix'+str(tt[2]+1)] = (input_header['crpix3'] - 1)//df + 1
 
-    return new_data, recenter_wcs_header(new_header)
+    if recenter:
+        return_header = recenter_wcs_header(new_header)
+    else:
+        return_header = new_header
+
+    return new_data, return_header
 
 def make_2d_wcs_from_3d_wcs(input_wcs):
     """ Turns a PPV WCS object into a PP WCS object by modifying its header representation. """
@@ -189,7 +194,7 @@ def ophiuchus_demo(**kwargs):
 
 def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
                      min_value=0.01, min_delta=0.005, min_npix=2000, 
-                     neighbours=None, resample=False, compute_catalog=True):
+                     neighbours=None, resample=False, compute_catalog=True, recenter=True):
 
     df = downsample_factor
     tt = transpose_tuple
@@ -200,7 +205,7 @@ def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
 
     print "\n** transposing {0} and downsampling ({1}) data: ...\n".format(tt, df)
     datacube_dt, datacube_dt_header = \
-      downsample_and_transpose_data_and_header(datacube, datacube_header, df, tt, resample=resample)
+      downsample_and_transpose_data_and_header(datacube, datacube_header, df, tt, resample=resample, recenter=recenter)
     datacube_dt_wcs = wcs.wcs.WCS(datacube_dt_header)
 
     beam_size = 1/8 * u.deg
