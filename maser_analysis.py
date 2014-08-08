@@ -7,6 +7,7 @@ import os
 
 from astropy.coordinates import SkyCoord
 from astropy.table import Table
+import astropy.units
 
 table_path = os.path.expanduser("~/Dropbox/Grad School/Research/Milkyway/tables/")
 
@@ -19,6 +20,8 @@ ra_tuple = (maser_table['RAh'], maser_table['RAm'], maser_table['RAs'])
 dec_tuple = (signed_degrees, maser_table['DEm'], maser_table['DEs'])
 
 maser_coordinates = SkyCoord(ra=ra_tuple, dec=dec_tuple, unit=('hour', 'deg'))
+
+maser_parallax_distances = astropy.units.Quantity(maser_table['plx']).to('pc', astropy.units.equivalencies.parallax())
 
 # Code to figure out what structure a maser thing is on!
 
