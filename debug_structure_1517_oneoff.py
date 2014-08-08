@@ -154,8 +154,7 @@ def properties_1451():
     return indices, values
 
 indices, values = properties_1517()
-
-
+in1451, va1451 = properties_1451()
 
 def compute_the_things(indices=indices, values=values, shape_tuple=shape_tuple, metadata=metadata, statistic=PPVStatistic):
 
