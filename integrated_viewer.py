@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 from wcsaxes import WCSAxes
 
 class IntegratedViewer(object):
-    def __init__(self, dendrogram, hub, alignment='horizontal', wcs=None, cmap=plt.cm.gray,
+    def __init__(self, dendrogram, hub, alignment='horizontal', cmap=plt.cm.gray,
                  clip_velocity=None):
 
         if dendrogram.data.ndim != 3:
@@ -42,11 +42,11 @@ class IntegratedViewer(object):
         self.fig = plt.figure(figsize=figsize)
         self.cmap = cmap
 
-        if wcs is not None:
-            ax_lb = WCSAxes(self.fig, ax_lb_limits, wcs=wcs, slices=('x', 'y', 1))
+        if self.dendrogram.wcs is not None:
+            ax_lb = WCSAxes(self.fig, ax_lb_limits, wcs=self.dendrogram.wcs, slices=('x', 'y', 1))
             self.ax_lb = self.fig.add_axes(ax_lb)
 
-            ax_lv = WCSAxes(self.fig, ax_lv_limits, wcs=wcs, slices=('x', 1, 'y'))
+            ax_lv = WCSAxes(self.fig, ax_lv_limits, wcs=self.dendrogram.wcs, slices=('x', 1, 'y'))
             self.ax_lv = self.fig.add_axes(ax_lv)
         else:
             self.ax_lb = self.fig.add_axes(ax_lb_limits)
