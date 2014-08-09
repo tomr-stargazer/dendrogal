@@ -217,7 +217,7 @@ def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
     d = astrodendro.Dendrogram.compute(
         datacube_dt,
         min_value=min_value, min_delta=min_delta,  #these are arbitrary
-        min_npix=min_npix//df**3, verbose=True, neighbours=neighbours)
+        min_npix=min_npix//df**3, verbose=True, neighbours=neighbours, wcs=datacube_dt_wcs)
 
     v_scale = datacube_dt_header['cdelt3']
     v_unit = u.km / u.s
