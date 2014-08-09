@@ -208,7 +208,7 @@ def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
       downsample_and_transpose_data_and_header(datacube, datacube_header, df, tt, resample=resample, recenter=recenter)
     datacube_dt_wcs = wcs.wcs.WCS(datacube_dt_header)
 
-    datacube_dt_wcs.wcs.bounds_check(False)
+    datacube_dt_wcs.wcs.bounds_check(pix2world=False)
 
     beam_size = 1/8 * u.deg
     frequency = 115 * u.GHz
