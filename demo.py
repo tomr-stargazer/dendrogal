@@ -200,6 +200,12 @@ def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
     df = downsample_factor
     tt = transpose_tuple
 
+    print("\n ** Downsampled Demo Parameters:"
+          "\n    downsample_factor={0}"
+          "\n    transpose_tuple={1}"
+          "\n    min_value={2}"
+          "\n    min_delta={3}"
+          "\n    min_npix={4}\n".format(downsample_factor, transpose_tuple, min_value, min_delta, min_npix))
 
     beginning = datetime.datetime.now()
     beginning_string = datetime.datetime.strftime(beginning,"%Y-%m-%d %H:%M:%S")
