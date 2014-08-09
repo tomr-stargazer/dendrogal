@@ -170,8 +170,8 @@ def cogal_local_resampled_demo(resample, downsample_factor=1, transpose_tuple=(0
                             transpose_tuple=transpose_tuple, downsample_factor=downsample_factor,
                             neighbours=longitude_neighbors, min_npix=min_npix or 2000//resample, **kwargs)
 
-def cogal_deep_demo(**kwargs):
-    return downsampled_demo('COGAL_deep_mom.fits', downsample_factor=2, neighbours=longitude_neighbors)
+def cogal_deep_demo(downsample_factor=2, mom_interp='mom', **kwargs):
+    return downsampled_demo('COGAL_deep_{0}.fits'.format(mom_interp), downsample_factor=downsample_factor, neighbours=longitude_neighbors, **kwargs)
 
 def cogal_deep_resampled_demo(resample, downsample_factor=1, transpose_tuple=(0,1,2), min_npix=None, **kwargs):
     return downsampled_demo('COGAL_deep_mom_downsampled_by_{0}.fits'.format(resample), 
