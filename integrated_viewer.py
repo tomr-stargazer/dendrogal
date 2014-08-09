@@ -43,11 +43,11 @@ class IntegratedViewer(object):
         self.cmap = cmap
 
         if wcs is not None:
-            ax_lb = WCSAxes(self.fig, ax_lb_limits, wcs=wcs)
+            ax_lb = WCSAxes(self.fig, ax_lb_limits, wcs=wcs, slices=('x', 'y', 1))
             self.ax_lb = self.fig.add_axes(ax_lb)
-            # ax_lv = WCSAxes(self.fig, self.ax_lv_limits, wcs=wcs)
-            # self.ax_lv = self.fig.add_axes(ax_lv)
-            self.ax_lv = self.fig.add_axes(ax_lv_limits)             #temporary
+
+            ax_lv = WCSAxes(self.fig, ax_lv_limits, wcs=wcs, slices=('x', 1, 'y'))
+            self.ax_lv = self.fig.add_axes(ax_lv)
         else:
             self.ax_lb = self.fig.add_axes(ax_lb_limits)
             self.ax_lv = self.fig.add_axes(ax_lv_limits)
