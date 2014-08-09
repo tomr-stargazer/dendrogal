@@ -249,7 +249,7 @@ def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
 
     print "\n** computing catalog for {:,} structures: ...\n".format(len(d))
     if compute_catalog:
-        catalog = astrodendro.ppv_catalog(d, metadata)
+        catalog = astrodendro.ppv_catalog(d, metadata, verbose=True)
     else:
         catalog = None
         return d, catalog, datacube_dt_header, metadata
