@@ -9,6 +9,7 @@ from __future__ import division
 
 import pickle
 import os.path
+import datetime
 import numpy as np
 
 import astropy
@@ -199,6 +200,12 @@ def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
     df = downsample_factor
     tt = transpose_tuple
 
+
+    beginning = datetime.datetime.now()
+    beginning_string = datetime.datetime.strftime(beginning,"%Y-%m-%d %H:%M:%S")
+
+    print("\n ** Beginning at: {0}".format(beginning_string))
+
     print "\n** loading data from {0}: ...\n".format(data_path+data_file)
     datacube, datacube_header = getdata(data_path+data_file, memmap=True,
                                         header=True)
@@ -253,6 +260,14 @@ def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
         flux_kelvin_kms_deg2 = flux_kelvin * metadata['velocity_scale'] * area_exact
 
         catalog.add_column(astropy.table.Column(data=flux_kelvin_kms_deg2, name='flux_kelvin_kms_deg2'))
+
+    end = datetime.datetime.now()
+    end_string = datetime.datetime.strftime(end,"%Y-%m-%d %H:%M:%S")
+
+    print("\n ** Ending at: {0}".format(end_string))
+
+    time_elapsed = (end - beginning)
+    print "\n ** Time elapsed: {0}".format(time_elapsed)
 
     return d, catalog, datacube_dt_header, metadata
 
