@@ -22,6 +22,8 @@ from astrodendro.analysis import PPVStatistic, ScalarStatistic
 header = astropy.io.fits.header.Header.fromfile("debug_structure_1517_header.fits")
 header_wcs = wcs.wcs.WCS(header)
 
+header_wcs.wcs.bounds_check(False)
+
 v_scale = header['cdelt3']
 v_unit = u.km / u.s
 l_scale = header['cdelt1']
