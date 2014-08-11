@@ -43,10 +43,10 @@ class IntegratedViewer(object):
         self.cmap = cmap
 
         if self.dendrogram.wcs is not None:
-            ax_lb = WCSAxes(self.fig, ax_lb_limits, wcs=self.dendrogram.wcs, slices=('x', 'y', 1))
+            ax_lb = WCSAxes(self.fig, ax_lb_limits, wcs=self.dendrogram.wcs, slices=('x', 'y', 0))
             self.ax_lb = self.fig.add_axes(ax_lb)
 
-            ax_lv = WCSAxes(self.fig, ax_lv_limits, wcs=self.dendrogram.wcs, slices=('x', 1, 'y'))
+            ax_lv = WCSAxes(self.fig, ax_lv_limits, wcs=self.dendrogram.wcs, slices=('x', 0, 'y'))
             self.ax_lv = self.fig.add_axes(ax_lv)
         else:
             self.ax_lb = self.fig.add_axes(ax_lb_limits)
