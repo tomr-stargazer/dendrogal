@@ -25,7 +25,7 @@ datacube_dt, datacube_dt_header = \
 	downsample_and_transpose_data_and_header(datacube, datacube_header, 1, (2,0,1), resample=False, recenter=True)
 datacube_dt_wcs = wcs.wcs.WCS(datacube_dt_header)
 
-datacube_dt_wcs.wcs.bounds_check(pix2world=False)
+datacube_dt_wcs.wcs.bounds_check(pix2world=False, world2pix=False)
 
 fig = plt.figure(figsize=(13,3.5))
 ax_image_limits = [0.1, 0.1, 0.8, 0.8]
