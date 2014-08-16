@@ -57,7 +57,7 @@ def stash_function_generator(hub, origin=2, destination=3, checkpoint=True):
         # checkpoint system... slow but saves my butt
         if checkpoint:
             filename="{2}/{0}:{1}".format(selection_ID_dictionary[name], name, 'checkpoint')
-            save_template_cube(make_template_cube(selection_dictionary, selection_ID_dictionary), None, filename=filename)
+            save_template_cube(make_template_cube(selection_dictionary, selection_ID_dictionary), None, filename=filename, verbose=False)
             save_template_information(selection_dictionary, selection_ID_dictionary, filename=filename)
 
     return stash_selection, selection_dictionary, selection_ID_dictionary
@@ -88,7 +88,7 @@ def make_template_cube(selection_dictionary, selection_ID_dictionary):
 
     return cube
 
-def save_template_cube(cube, header, clobber=True, filename='template', output_path=None):
+def save_template_cube(cube, header, clobber=True, filename='template', output_path=None, verbose=True):
 
     output_path = output_path or "{0}templates/{1}.fits".format(dropbox_path, filename)
 
@@ -102,7 +102,8 @@ def save_template_cube(cube, header, clobber=True, filename='template', output_p
             print "File not saved: {0}".format(e)
             return cube, header
 
-    print "Template file saved to {0}".format(output_path)
+    if verbose:
+        print "Template file saved to {0}".format(output_path)
 
     return output_path
 
