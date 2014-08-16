@@ -43,8 +43,8 @@ class CartoonDualViewer(object):
 
         if alignment == 'horizontal':
             figsize = (15, 9)
-            ax_integrated_limits = [0.05, 0.05, 0.66, 0.5]
-            ax_cartoon_limits = [0.05, 0.55, 0.66, 0.5]
+            ax_integrated_limits = [0.025, 0.05, 0.6, 0.5]
+            ax_cartoon_limits = [0.025, 0.55, 0.6, 0.5]
         elif alignment == 'vertical':
             figsize = (8, 6)
             ax_integrated_limits = [0.1, 0.1, 0.375, 0.8]
@@ -76,7 +76,7 @@ class CartoonDualViewer(object):
         self.array_lb = array_lb
 
         # all stolen from astrodendro.viewer
-        self.ax_dendrogram = self.fig.add_axes([0.75, 0.1, 0.25, 0.6])
+        self.ax_dendrogram = self.fig.add_axes([0.65, 0.1, 0.35, 0.6])
         self.ax_dendrogram.add_collection(self.lines)
 
         self.selected_label = {} # map selection IDs -> text objects
