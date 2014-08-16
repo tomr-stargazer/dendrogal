@@ -4,12 +4,16 @@ Little functions that help manage dendrogram selections.
 """
 
 from __future__ import division
+import os
 
 import random
 
 import numpy as np
 
 import astrodendro
+import astropy.io.fits as fits
+
+dropbox_path = os.path.expanduser("~/Dropbox/Grad School/Research/Milkyway/")
 
 # some of these will wanna be function generators
 
@@ -77,4 +81,20 @@ def make_template_cube(selection_dictionary, selection_ID_dictionary):
 
     return cube
 
+def save_template_cube(cube, header, clobber=True, filename='template', output_path=None):
 
+    output_path = output_path or "{0}templates/{1}.fits".format(dropbox_path, filename)
+
+    try:
+        fits.writeto(output_path, cube, header)
+    except IOError, e:
+        if clobber:
+            os.remove(output_path)
+            fits.writeto(output_path, cube, header)
+        else:
+            print "File not saved: {0}".format(e)
+            return cube, header
+
+    print "Template file saved to {0}".format(output_path)
+
+    return output_path
