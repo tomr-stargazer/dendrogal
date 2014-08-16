@@ -50,12 +50,12 @@ def overlay_lb_cartoon(ax, wcs_object=None, **kwargs):
 	left2, a = wcs_object.all_world2pix(0, 0, 0) 
 	right2, a = wcs_object.all_world2pix(0, 0, 0)
 
-	print left2,
+	# print left2,
 
 	left2 -= 206.50549450549448*px_per_degree
 	right2 += (-190.87912087912053+360)*px_per_degree
 
-	print left2, right2
+	# print left2, right2
 
 	# extents = [left, right, bottom, top]
 	extents = [-106, 1483.6, bottom, top]
