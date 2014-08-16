@@ -5,6 +5,7 @@ Little functions that help manage dendrogram selections.
 
 from __future__ import division
 import os
+import pickle
 
 import random
 
@@ -30,7 +31,7 @@ def transfer_function_generator(hub, origin=1, destination=2):
 
     return transfer_between_selections
 
-def stash_function_generator(hub, origin=2, destination=3):
+def stash_function_generator(hub, origin=2, destination=3, checkpoint=True):
 
     selection_dictionary = {}
     selection_ID_dictionary = {}
@@ -52,6 +53,12 @@ def stash_function_generator(hub, origin=2, destination=3):
         except KeyError:
             hub.select(destination, hub.selections[origin], subtree=False)            
         hub.select(origin, None)
+
+        # checkpoint system... slow but saves my butt
+        if checkpoint:
+            filename="{2}/{0}:{1}".format(selection_ID_dictionary[name], name, 'checkpoint')
+            save_template_cube(make_template_cube(selection_dictionary, selection_ID_dictionary), None, filename=filename)
+            save_template_information(selection_dictionary, selection_ID_dictionary, filename=filename)
 
     return stash_selection, selection_dictionary, selection_ID_dictionary
 
@@ -98,3 +105,17 @@ def save_template_cube(cube, header, clobber=True, filename='template', output_p
     print "Template file saved to {0}".format(output_path)
 
     return output_path
+
+def save_template_information(selection_dictionary, selection_ID_dictionary, filename='pickled_dict', output_path=None):
+
+    output_path = output_path or "{0}templates/{1}".format(dropbox_path, filename)
+
+    selection_idx_dictionary = {}
+    for key in selection_dictionary.keys():
+        selection_idx_dictionary[key] = [struct.idx for struct in selection_dictionary[key]]
+
+    with open(output_path+"_idx", 'w') as handle:
+        pickle.dump(selection_idx_dictionary, handle)
+
+    with open(output_path+"_ID", 'w') as handle:
+        pickle.dump(selection_ID_dictionary, handle)
