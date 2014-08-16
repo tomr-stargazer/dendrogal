@@ -51,4 +51,30 @@ def stash_function_generator(hub, origin=2, destination=3):
 
     return stash_selection, selection_dictionary, selection_ID_dictionary
 
+# Now I need "data dump" functions.
+
+def make_template_cube(selection_dictionary, selection_ID_dictionary):
+
+    if len(selection_dictionary.keys()) < 1:
+        raise ValueError("Empty selection dictionary!")
+
+    cube = np.zeros_like(selection_dictionary[random.choice(selection_dictionary.keys())][0].get_mask(), dtype=int)
+
+    for key in selection_dictionary.keys():
+
+        print key
+
+        selection = selection_dictionary[key]
+        ID = selection_ID_dictionary[key]
+
+        key_cube = np.zeros_like(cube)
+
+        for struct in selection:
+
+            key_cube[struct.indices(subtree=True)] = ID
+
+        cube += key_cube
+
+    return cube
+
 
