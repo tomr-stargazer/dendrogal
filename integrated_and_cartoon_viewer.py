@@ -14,8 +14,6 @@ from wcsaxes import WCSAxes
 
 from overlay_dame_cartoon import overlay_lb_cartoon
 
-figure(figsize=(11,9))
-
 class CartoonDualViewer(object):
     def __init__(self, dendrogram, hub, alignment='horizontal', cmap=plt.cm.gray,
                  clip_velocity=None):
@@ -97,7 +95,7 @@ class CartoonDualViewer(object):
         self.image_integrated = self.ax_integrated.imshow(np.log10(self.array_lb+1), origin='lower', 
             interpolation='nearest', cmap=self.cmap)
 
-        self.image_cartoon = overlay_lb_cartoon(self.ax_cartoon, wcs_object=self.wcs)[0]
+        self.image_cartoon = overlay_lb_cartoon(self.ax_cartoon)[0]
 
         # Trim the top and bottom of the l, v plot for cosmetic reasons
         # if self.clip_velocity:
@@ -123,7 +121,7 @@ class CartoonDualViewer(object):
 
         input_key = event.button
 
-        if event.inaxes is self.ax_integrated:
+        if event.inaxes is self.ax_integrated or event.inaxes is self.ax_cartoon:
 
             # Find pixel co-ordinates of click
             ix = int(round(event.xdata))
@@ -133,18 +131,6 @@ class CartoonDualViewer(object):
                 iz = np.where(self.datacube[:, iy, ix] == np.nanmax(self.datacube[:, iy, ix]))[0][0]
             except IndexError:
                 iz = 0
-
-        elif event.inaxes is self.ax_cartoon:
-
-            # Find pixel co-ordinates of click
-            ix = int(round(event.xdata))
-            iz = int(round(event.ydata))
-
-            try:
-                iy = np.where(self.datacube[iz, :, ix] == np.nanmax(self.datacube[iz, :, ix]))[0][0]
-            except IndexError:
-                iy = 0
-
         else:
             return
 
@@ -184,7 +170,7 @@ class CartoonDualViewer(object):
                         mask_lb, colors=self.hub.colors[selection_id],
                         linewidths=5, levels=[0.5], alpha=0.9, zorder=struct.height), 
                     self.ax_cartoon.contour(
-                        mask_lv, colors=self.hub.colors[selection_id],
+                        mask_lb, colors=self.hub.colors[selection_id],
                         linewidths=5, levels=[0.5], alpha=0.9, zorder=struct.height) )
 
         self.fig.canvas.draw()
