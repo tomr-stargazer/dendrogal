@@ -60,7 +60,7 @@ def overlay_lb_cartoon(ax, wcs_object=None, **kwargs):
 	# extents = [left, right, bottom, top]
 	extents = [-106, 1483.6, bottom, top]
 	
-	ax.imshow(lb_cartoon_image, zorder=0.05, extent=extents, **kwargs)
+	image = ax.imshow(lb_cartoon_image, zorder=0.05, extent=extents, **kwargs)
 	
-	return extents, wcs_object	
+	return image, extents, wcs_object
 
