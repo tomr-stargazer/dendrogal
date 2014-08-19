@@ -286,9 +286,9 @@ class CartoonDualViewer(object):
         if len(structures) <= 1:
             label_text = "Selected structure: {0}".format(structure.idx)
         elif len(structures) <=3:
-            label_text = "Selected structures: {0}".format(', '.join([str(structure.idx) for structure in structures]))
+            label_text = "Selected structures: {0}".format(', '.join([str(struct.idx) for struct in structures]))
         else:
-            label_text = "Selected structures: {0}...".format(', '.join([str(structure.idx) for structure in structures[:3]]))
+            label_text = "Selected structures: {0}...".format(', '.join([str(struct.idx) for struct in structures[:3]]))
 
         self.selected_label[selection_id].set_text(label_text)
 
