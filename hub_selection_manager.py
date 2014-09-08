@@ -193,6 +193,7 @@ def load_template(filename, input_path=None, dv=None, selection_key=3, verbose=T
 
 # from stack overflow: stackoverflow.com/questions/16216078/test-for-membership-in-a-2d-numpy-array
 def inNd(a, b, **kwargs):
+    """ Test whether each element of an N-D array is also present in a second array. """
     a = np.asarray(a, order='C')
     b = np.asarray(b, order='C')
 
@@ -201,4 +202,10 @@ def inNd(a, b, **kwargs):
 
     return np.in1d(a, b, **kwargs)
 
+def inNd_indices(a, b, **kwargs):
+    """ Properly feeds `struct.indices` and `np.where` output into `inNd()` """
 
+    a = np.vstack(a).T
+    b = np.vstack(b).T
+
+    return inNd(a, b, **kwargs)
