@@ -122,6 +122,14 @@ def save_template_information(selection_dictionary, selection_ID_dictionary, fil
     with open(output_path+"_ID", 'w') as handle:
         pickle.dump(selection_ID_dictionary, handle)
 
+def save_template(selection_dictionary, selection_ID_dictionary, header, **kwargs):
+    """ Convenience function - combines `make_template_cube`, `save_template_cube`, and `save_template_information` """
+
+    cube = make_template_cube(selection_dictionary, selection_ID_dictionary)
+
+    save_template_cube(cube, header, **kwargs)
+    save_template_information(selection_dictionary, selection_ID_dictionary, **kwargs)
+
 def load_template_cube(filename='template', input_path=None):
     """ Inverts save_template_cube """
 
