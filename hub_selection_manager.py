@@ -209,3 +209,40 @@ def inNd_indices(a, b, **kwargs):
     b = np.vstack(b).T
 
     return inNd(a, b, **kwargs)
+
+def reconstruct_selections_from_template(dendrogram, filename, input_path=None, **kwargs):
+    """ Loads a template, compares it against a dendrogram / dataset, and then assigns structures to template regions """
+
+    # currently assumes input data dimensions match template data dimensions
+
+    (template_cube, template_header, 
+        selection_idx_dictionary, 
+        selection_ID_dictionary) = load_template(filename=filename, input_path=input_path, verbose=False, **kwargs)
+
+    new_selection_dictionary = {} # name -> structures
+
+    # for each template region...
+    for key, value in selection_ID_dictionary.items():
+
+        print "solving for {0}".format(key)
+        region_indices = np.where(template_cube == value)
+
+        new_selection_dictionary[key] = []
+
+        for i in range(len(dendrogram)):
+
+            struct = dendrogram[i]
+            struct_indices = struct.indices(subtree=True)
+
+            overlap_of_region = inNd_indices(region_indices, struct_indices)
+
+            if overlap_of_region.any():
+
+                # check if MOST of the structure is in the region
+                overlap_of_struct = inNd_indices(struct_indices, region_indices)
+
+                if np.sum(overlap_of_struct) > 0.9*len(overlap_of_struct):
+                    # add it to the dict
+                    new_selection_dictionary[key].append(struct)
+
+    return template_cube, template_header, new_selection_dictionary, selection_ID_dictionary
