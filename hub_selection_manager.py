@@ -12,6 +12,7 @@ import random
 import numpy as np
 
 import astrodendro
+from astropy.io.fits import getdata, getheader
 import astropy.io.fits as fits
 
 dropbox_path = os.path.expanduser("~/Dropbox/Grad School/Research/Milkyway/")
@@ -120,3 +121,67 @@ def save_template_information(selection_dictionary, selection_ID_dictionary, fil
 
     with open(output_path+"_ID", 'w') as handle:
         pickle.dump(selection_ID_dictionary, handle)
+
+def load_template_cube(filename='template', input_path=None):
+    """ Inverts save_template_cube """
+
+    input_path = input_path or "{0}templates/{1}.fits".format(dropbox_path, filename)
+
+    cube, header = getdata(input_path, memmap=True, header=True)
+
+    return cube, header
+
+def _load_template_information(filename='pickled_dict', input_path=None):
+    """ Inverts save_template_information """
+
+    input_path = input_path or "{0}templates/{1}".format(dropbox_path, filename)
+
+    with open(input_path+"_idx", 'r') as handle:
+        selection_idx_dictionary = pickle.load(handle)
+
+    with open(input_path+"_ID", 'r') as handle:
+        selection_ID_dictionary = pickle.load(handle)
+
+    return selection_idx_dictionary, selection_ID_dictionary
+
+def load_template(filename, input_path=None, dv=None, selection_key=3):
+    """ Combines _load_template_information and load_template_cube """
+
+    cube, header = load_template_cube(filename=filename, input_path=input_path)
+    selection_idx_dictionary, selection_ID_dictionary = _load_template_information(filename=filename, input_path=input_path)
+
+    if dv is not None:
+        hub = dv.hub
+        dendrogram = dv.dendrogram
+
+        # Beware: no checks are performed to ensure that `dendrogram`
+        # is the original dendrogram the template was compiled from
+
+        selection_dictionary = {}
+        # build the selection from structures
+        for key, idx_list in selection_idx_dictionary.items():
+
+            selection = []
+            for idx in idx_list:
+                selection.append(dendrogram[idx])
+            # selection = dendrogram[idx]
+            selection_dictionary[key] = selection
+
+            # select all of these guys
+            try:
+                joint_selection = set([x for x in selection+hub.selections[selection_key] if x is not None])
+                hub.select(selection_key, list(joint_selection), subtree=False)
+            except KeyError:
+                hub.select(selection_key, selection, subtree=False)            
+
+        return cube, header, selection_dictionary, selection_ID_dictionary
+
+    else:
+        print ("If you provide a `dv` keyword, the template can be "
+                "loaded into the current viewer")
+
+        return cube, header, selection_idx_dictionary, selection_ID_dictionary
+
+
+
+
