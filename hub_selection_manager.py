@@ -190,6 +190,14 @@ def load_template(filename, input_path=None, dv=None, selection_key=3):
 
         return cube, header, selection_idx_dictionary, selection_ID_dictionary
 
+# from stack overflow: stackoverflow.com/questions/16216078/test-for-membership-in-a-2d-numpy-array
+def inNd(a, b, **kwargs):
+    a = np.asarray(a, order='C')
+    b = np.asarray(b, order='C')
 
+    a = a.ravel().view((np.str, a.itemsize * a.shape[1]))
+    b = b.ravel().view((np.str, b.itemsize * b.shape[1]))
+
+    return np.in1d(a, b, **kwargs)
 
 
