@@ -152,7 +152,7 @@ def _load_template_information(filename='pickled_dict', input_path=None):
 
     return selection_idx_dictionary, selection_ID_dictionary
 
-def load_template(filename, input_path=None, dv=None, selection_key=3):
+def load_template(filename, input_path=None, dv=None, selection_key=3, verbose=True):
     """ Combines _load_template_information and load_template_cube """
 
     cube, header = load_template_cube(filename=filename, input_path=input_path)
@@ -185,8 +185,9 @@ def load_template(filename, input_path=None, dv=None, selection_key=3):
         return cube, header, selection_dictionary, selection_ID_dictionary
 
     else:
-        print ("If you provide a `dv` keyword, the template can be "
-                "loaded into the current viewer")
+        if verbose:
+            print ("If you provide a `dv` keyword, the template can be "
+                   "loaded into the current viewer")
 
         return cube, header, selection_idx_dictionary, selection_ID_dictionary
 
