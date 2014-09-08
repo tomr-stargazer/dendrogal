@@ -401,3 +401,32 @@ def load_demo_from_file(override=False):
 def quantify_column(column):
 
     return (column.data * column.unit)
+
+def reduce_selection_to_principal_branches(structures):
+    """
+    Remove all degenerate structures in a list 
+
+    (i.e., structures that are descendants of other structures) 
+
+    """
+
+    structure_set = set(structures)
+
+    # sort by size
+    structures_by_descendants = sorted(structures, key=lambda k: len(k.descendants))
+
+    # from smallest to largest:
+    for little_struct, i in zip(structures_by_descendants, range(len(structures_by_descendants))):
+
+        # ask from largest to smallest:
+        for big_struct in structures_by_descendants[:i:-1]: # backwards, and skip everyone smaller than little_struct
+
+            # "are you my ancestor?" (# wait, why isn't there an "ancestors" property?)
+            if little_struct in big_struct.descendants: 
+
+                # if so, remove the little guy
+                structure_set.remove(little_struct)
+                # and stop asking
+                break 
+
+    return list(structure_set)
