@@ -42,7 +42,11 @@ def traverse_recursively(catalog, structure, depth, function):
 	me = "{1}{0}\n".format(function(structure, catalog), tabs)
 
 	if len(structure.children) == 2:
-		return me + traverse_recursively(catalog, structure.children[0], depth+1, function) + traverse_recursively(catalog, structure.children[1], depth+1, function)
+		try:
+			return me + traverse_recursively(catalog, structure.children[0], depth+1, function) + traverse_recursively(catalog, structure.children[1], depth+1, function)
+		except IndexError as e:
+			print "  glitch at {0}: {1}  ".format(structure.idx, e)
+			return me
 	else:
 		return me
 
@@ -59,7 +63,7 @@ def struct_printer(struct, catalog):
 	distance = catalog['Distance'][row][0]
 	mass = catalog['mass'][row][0]
 
-	return "name: {0}, l: {1:.2f}, b: {2:.2f}, v: {3:.2f} km/s,  size: {4:.2f} deg, distance: {5:.2f} pc, mass: {6:.2f} Msun".format(struct.idx, l, b, v, size, distance, mass)
+	return "name: {0}, l: {1:.2f}, b: {2:.2f}, v: {3:.2f} km/s,  size: {4:.2f} deg, distance: {5:.2f} pc, mass: {6:.1e} Msun".format(struct.idx, l, b, v, size, distance, mass)
 
 def traverse_and_print_catalog(catalog, columns, structures):
 
