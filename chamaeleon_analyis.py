@@ -10,6 +10,8 @@ import numpy as np
 import astropy.units as u
 import astropy.constants as c
 
+from astrodendro.scatter import Scatter
+
 from demo import chamaeleon_demo, reduce_selection_to_principal_branches
 from assign_physical_values import assign_size_mass_alpha_pressure
 
@@ -35,7 +37,6 @@ def load_chamaeleon_catalog_from_template():
 	catalog['Distance'] = np.ones(len(catalog)) * 160 * u.pc
 	catalog['size'], catalog['mass'], catalog['alpha'], catalog['pressure'] = assign_size_mass_alpha_pressure(catalog)
 	catalog['filling_factor'] = catalog['area_exact'] / catalog['area_ellipse']
-
 
 	return d, catalog, header, metadata, template_cube, template_header, new_selection_dictionary, selection_ID_dictionary
 
