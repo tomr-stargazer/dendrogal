@@ -59,11 +59,13 @@ def struct_printer(struct, catalog):
 	b = catalog['y_cen'][row][0]
 	v = catalog['v_cen'][row][0]
 
-	size = catalog['radius'][row][0]
+	radius = catalog['radius'][row][0]
+	size = catalog['size'][row][0]
 	distance = catalog['Distance'][row][0]
 	mass = catalog['mass'][row][0]
+	linewidth = catalog['v_rms'][row][0]
 
-	return "name: {0}, l: {1:.2f}, b: {2:.2f}, v: {3:.2f} km/s,  size: {4:.2f} deg, distance: {5:.2f} pc, mass: {6:.1e} Msun".format(struct.idx, l, b, v, size, distance, mass)
+	return "name: {0}, l: {1:.2f}, b: {2:.2f}, v: {3:.2f} km/s,  radius: {4:.2f} deg, linewidth: {8:.2f} km/s, distance: {5:.2f} pc, size: {7:.2f} pc, mass: {6:.1e} Msun".format(struct.idx, l, b, v, radius, distance, mass, size, linewidth)
 
 def traverse_and_print_catalog(catalog, columns, structures):
 
