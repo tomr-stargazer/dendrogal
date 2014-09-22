@@ -63,6 +63,15 @@ def stash_function_generator(hub, origin=2, destination=3, checkpoint=True):
 
     return stash_selection, selection_dictionary, selection_ID_dictionary
 
+def restore_selections_from_dictionary(hub, selection_dictionary, destination=3):
+
+    # build a thing from all of the previous selections
+    selection_list = []
+    for key, value in selection_dictionary.items():
+        selection_list.extend(value)
+
+    hub.select(destination, selection_list, subtree=False)
+
 # Now I need "data dump" functions.
 
 def make_template_cube(selection_dictionary, selection_ID_dictionary):
