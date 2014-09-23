@@ -10,6 +10,7 @@ import pickle
 import random
 
 import numpy as np
+import astropy.units as u
 
 import astrodendro
 from astropy.io.fits import getdata, getheader
@@ -64,6 +65,7 @@ def stash_function_generator(hub, origin=2, destination=3, checkpoint=True):
     return stash_selection, selection_dictionary, selection_ID_dictionary
 
 def restore_selections_from_dictionary(hub, selection_dictionary, destination=3):
+    """ Useful if you mis-click and ruin your green selection. """
 
     # build a thing from all of the previous selections
     selection_list = []
@@ -255,3 +257,24 @@ def reconstruct_selections_from_template(dendrogram, filename, input_path=None, 
                     new_selection_dictionary[key].append(struct)
 
     return template_cube, template_header, new_selection_dictionary, selection_ID_dictionary
+
+
+def assign_region_dict_distances(catalog, selection_dictionary, distance_dictionary):
+    """ Assigns distances on a region-by-region basis in a catalog. """
+
+    # assuming that the two dicts have comparable keys:
+
+    distances = np.ones(len(catalog)) * u.pc * np.nan
+
+    for key in selection_dictionary.keys():
+
+        # turn the structures into IDXs and mark them in the catalog
+        structures = selection_dictionary[key]
+        distance = distance_dictionary[key]
+        IDXs = np.array([structure.idx for structure in structures])
+
+        distances[IDXs] = u.Quantity(distance, u.pc)
+
+    return distances
+
+
