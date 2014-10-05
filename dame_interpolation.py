@@ -62,7 +62,7 @@ def interpolate_datacube(data, spectrum_axis=2, lon_axis=1, lat_axis=0):
 	""" 
 	Interpolate missing values in a datacube according to Dame's prescription.
 
-	Default: assumes (v, l, b) cube.
+	Default: assumes (b, l, v) cube.
 
 	"""
 
