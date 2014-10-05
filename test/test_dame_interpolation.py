@@ -10,6 +10,8 @@ from __future__ import division
 import numpy as np
 from numpy.testing import assert_allclose
 
+from astropy.io.fits import getdata
+
 from ..dame_interpolation import interpolate_spectrum, interpolate_single, interpolate_double, interpolate_datacube
 
 def test_interpolate_single():
@@ -71,5 +73,13 @@ def test_interpolate_datacube():
 
 	assert_allclose(interpolate_datacube(data), expected)
 
+def test_interpolation_against_data():
 
+	raw_data = getdata("DHT03_RCrA_raw.fits")
+	dame_interpolated_data = getdata("DHT03_RCrA_interp.fits")
+
+	my_interpolated_data = interpolate_datacube(raw_data)
+
+	# tolerance chosen by trial-and-error
+	assert_allclose(dame_interpolated_data, my_interpolated_data, atol=1e-3)
 
