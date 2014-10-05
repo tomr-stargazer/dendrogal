@@ -48,26 +48,26 @@ def test_interpolate_spectrum():
 
 def test_interpolate_datacube():
 
-	expected = np.arange(60, dtype='float').reshape(5,4,3)
+	expected = np.arange(60, dtype='float').reshape(3,4,5)
 	# should not be interpolated ever
 	expected[0,0,0] = np.nan
 
 	data = np.copy(expected)
 
 	# these should be interpolated velocity-wise
-	data[2,1,1] = np.nan
-	data[3,1,1] = np.nan
+	data[1,1,2] = np.nan
+	data[1,1,3] = np.nan
 
-	data[1,2,0] = np.nan
+	data[0,2,1] = np.nan
 
 	# these should be interpolated spatially
-	data[4,2,2] = np.nan
+	data[2,2,4] = np.nan
 
-	data[0,3,1] = np.nan
+	data[1,3,0] = np.nan
 
 	data[0,2,0] = np.nan
 
-	data[2,2,1] = np.nan # will only work if velocity gets interpolated first	
+	data[1,2,2] = np.nan # will only work if velocity gets interpolated first	
 
 	assert_allclose(interpolate_datacube(data), expected)
 

@@ -58,7 +58,7 @@ def interpolate_spectrum(array):
 	return interpolate_double(intermediate_array)
 
 
-def interpolate_datacube(data, spectrum_axis=0, lon_axis=1, lat_axis=2):
+def interpolate_datacube(data, spectrum_axis=2, lon_axis=1, lat_axis=0):
 	""" 
 	Interpolate missing values in a datacube according to Dame's prescription.
 
@@ -75,22 +75,22 @@ def interpolate_datacube(data, spectrum_axis=0, lon_axis=1, lat_axis=2):
 	for l_i in range(new_data.shape[lon_axis]):
 		for b_i in range(new_data.shape[lat_axis]):
 
-			old_spectrum = new_data[:, l_i, b_i]
-			new_data[:,l_i, b_i] = interpolate_spectrum(old_spectrum)
+			old_spectrum = new_data[b_i, l_i, :]
+			new_data[b_i, l_i, :] = interpolate_spectrum(old_spectrum)
 
 	# interpolate each longitude slice
 	for v_i in range(new_data.shape[spectrum_axis]):
 		for b_i in range(new_data.shape[lat_axis]):
 
-			old_lon_slice = new_data[v_i, :, b_i]
-			new_data[v_i, :, b_i] = interpolate_single(old_lon_slice)
+			old_lon_slice = new_data[b_i, :, v_i]
+			new_data[b_i, :, v_i] = interpolate_single(old_lon_slice)
 
 	# interpolate each latitude slice
 	for v_i in range(new_data.shape[spectrum_axis]):
 		for l_i in range(new_data.shape[lon_axis]):
 
-			old_lat_slice = new_data[v_i, l_i, :]
-			new_data[v_i, l_i, :] = interpolate_single(old_lat_slice)
+			old_lat_slice = new_data[:, l_i, v_i]
+			new_data[:, l_i, v_i] = interpolate_single(old_lat_slice)
 
 	return new_data
 
