@@ -30,7 +30,7 @@ hurt_image = imread(hurt_image_location)
 # galactic_y_extent = [-18378.6, 18269.7] # "y" axis runs through 90 degrees l and 270 degrees l
 # galactic_x_extent = [25057.8, -11329.5] # "x" axis runs through Galactic Center and Anticenter
 
-def underlay_hurt_galaxy(fig=None, units=u.pc, **kwargs):
+def underlay_hurt_galaxy(fig=None, units=u.pc, zorder=-10, **kwargs):
 
 	px_between_sun_and_galactic_center = 115.8
 	distance_between_sun_and_galactic_center = 8340 * u.pc
@@ -46,7 +46,7 @@ def underlay_hurt_galaxy(fig=None, units=u.pc, **kwargs):
 	extents = [element.to(units).value for element in galactic_y_extent+galactic_x_extent]
 
 	fig = fig or plt.figure()
-	plt.imshow(hurt_image, zorder=-10, extent=extents, **kwargs)
+	plt.imshow(hurt_image, zorder=zorder, extent=extents, **kwargs)
 
 	plt.show()
 
