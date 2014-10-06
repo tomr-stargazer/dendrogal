@@ -25,7 +25,7 @@ from astrodendro.scatter import Scatter
 def secondquad_distance_demo(downsample=1, distance='reid', nearfar='near', min_npix=20, min_value=0.05, min_delta=0.3, **kwargs):
 
     d, catalog, header, metadata = demo.secondquad_demo_mominterp(downsample_factor=downsample, 
-        min_npix=min_npix, min_value=min_value, min_delta=min_delta, **kwargs)
+        min_npix=min_npix, min_value=min_value, min_delta=min_delta, recenter=False, **kwargs)
 
     if distance != 'reid':
         blitz = make_blitz_distance_column(catalog)
@@ -49,10 +49,10 @@ def secondquad_distance_demo(downsample=1, distance='reid', nearfar='near', min_
 
     # disqualify!
 
-    disqualified = ((catalog['mass'] > 1e8) & 
-                    (catalog['mass'] < 5e3) & 
-                    (catalog['major_sigma'] > 10) & 
-                    (catalog['v_rms'] > 30) & 
+    disqualified = ((catalog['mass'] > 1e8) | 
+                    (catalog['mass'] < 5e3) | 
+                    (catalog['major_sigma'] > 10) | 
+                    (catalog['v_rms'] > 30) | 
                     (catalog['size'] > 1000) )
 
     catalog['Distance'][disqualified] = np.nan
