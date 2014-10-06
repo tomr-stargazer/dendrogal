@@ -61,4 +61,12 @@ def create_intermom_file(filename, memmap=False, clobber=False):
 
     return
 
+def create_intermom_folder(path=data_path, **kwargs):
 
+    file_list = os.listdir(path)
+
+    mom_files = [x for x in file_list if 'mom.fits' in x]
+
+    for filename in mom_files:
+
+        create_intermom_file(path+filename, **kwargs)
