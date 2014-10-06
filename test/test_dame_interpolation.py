@@ -28,6 +28,7 @@ def test_interpolate_double():
 
 	expected = np.arange(10, dtype='float')
 	expected[0] = np.nan
+	expected[2] = np.nan
 
 	data = np.copy(expected)
 	data[5] = np.nan
