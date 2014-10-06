@@ -76,8 +76,8 @@ def test_interpolate_datacube():
 
 def test_interpolation_against_data():
 
-	raw_data = getdata("DHT03_RCrA_raw.fits")
-	dame_interpolated_data = getdata("DHT03_RCrA_interp.fits")
+	raw_data = getdata("test/DHT03_RCrA_raw.fits")
+	dame_interpolated_data = getdata("test/DHT03_RCrA_interp.fits")
 
 	my_interpolated_data = interpolate_datacube(raw_data)
 
