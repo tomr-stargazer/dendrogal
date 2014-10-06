@@ -27,9 +27,11 @@ from dame_interpolation import interpolate_datacube
 
 data_path = os.path.expanduser("~/Dropbox/College/Astro99/DATA/")
 
-def create_intermom_file(filename, memmap=False, clobber=True):
+def create_intermom_file(filename, memmap=False, clobber=False):
 
     beginning = datetime.datetime.now()
+
+    print "Beginning {0} at {1}".format(filename, datetime.datetime.strftime(beginning,"%Y-%m-%d %H:%M:%S"))
 
     if "mom.fits" not in filename:
         raise ValueError("This function is only intended for files ending in *mom.fits")
@@ -55,7 +57,7 @@ def create_intermom_file(filename, memmap=False, clobber=True):
 
     end = datetime.datetime.now()
     time_elapsed = (end - beginning)
-    print "Time elapsed for {1}: {0} {2}".format(time_elapsed, new_filename.lstrip('DHT').rstrip("_mominterp.fits"), clobber_string)
+    print "Time elapsed for {1}: {0} {2}".format(time_elapsed, new_filename.lstrip('DHT').replace("_mominterp.fits", ""), clobber_string)
 
     return
 
