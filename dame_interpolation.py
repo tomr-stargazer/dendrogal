@@ -69,13 +69,16 @@ def interpolate_datacube(data, spectrum_axis=2, lon_axis=1, lat_axis=0):
 	if len(data.shape) != 3:
 		raise ValueError("`data` must have dimensions=3")
 
+	if (spectrum_axis != 2) or (lon_axis != 1) or (lat_axis != 0):
+		raise NotImplementedError("Function can't yet handle different axis permutations")
+
 	new_data = np.copy(data)
 
 	# interpolate each spectrum, fix in-place
 	for l_i in range(new_data.shape[lon_axis]):
 		for b_i in range(new_data.shape[lat_axis]):
 
-			old_spectrum = new_data[b_i, l_i, :]
+			old_spectrum = new_data[b_i, l_i, :] # In principle, the order of [b, l, :] should be dependent on spectrum_axis and the like. But I don't know how to do that.
 			new_data[b_i, l_i, :] = interpolate_spectrum(old_spectrum)
 
 	# interpolate each longitude slice
