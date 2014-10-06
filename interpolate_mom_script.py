@@ -36,20 +36,22 @@ def create_intermom_file(filename, memmap=False, clobber=True):
 
     data, header = getdata(filename, memmap=memmap, header=True)
 
-    new_data = interpolate_datacube(data)
-
     new_filename = filename.rstrip("mom.fits") + "mominterp.fits"
 
     clobber_string = ""
+    if os.path.isfile(new_filename) and clobber:
+        clobber_string = "(clobbered)"
+    elif os.path.isfile(new_filename):
+        print "{0} not saved: clobber=False".format(new_filename)
+        return
+
+    new_data = interpolate_datacube(data)
+
     try:
-        fits.writeto(new_filename, new_data, header)        
+        fits.writeto(new_filename, new_data, header, clobber=clobber)        
     except IOError, e:
-        if clobber:
-            os.remove(new_filename)
-            fits.writeto(new_filename, new_data, header)
-            clobber_string = "(clobbered)"
-        else:
-            print "File not saved: {0}".format(e)
+        print "File not saved: {0}".format(e)
+        return
 
     end = datetime.datetime.now()
     time_elapsed = (end - beginning)
