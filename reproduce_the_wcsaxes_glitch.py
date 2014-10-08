@@ -13,6 +13,11 @@ from astropy.io.fits import getdata
 
 from wcsaxes import WCSAxes
 
+data_path = os.path.expanduser("~/Dropbox/College/Astro99/DATA/") # Alter this if you're not Tom Rice
+
+data_file = 'COGAL_local_mom.fits'
+
+
 def downsample_and_transpose_data_and_header(input_data, input_header, 
                                              downsample_factor=4, 
                                              transpose_tuple=(2,0,1), resample=False, recenter=True):
@@ -82,9 +87,6 @@ def recenter_wcs_header(input_header, central_value=0):
 
     return new_header
 
-data_path = os.path.expanduser("~/Dropbox/College/Astro99/DATA/")
-
-data_file = 'COGAL_local_mom.fits'
 
 datacube, datacube_header = getdata(data_path+data_file, memmap=True,
 	header=True)
