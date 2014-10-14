@@ -208,6 +208,9 @@ def secondquad_demo(**kwargs):
 def secondquad_demo_mominterp(**kwargs):
     return downsampled_demo("DHT17_Quad2_bw_mominterp.fits", **kwargs)
 
+def thirdquad_demo_mominterp(**kwargs):
+    return downsampled_demo("DHT31_Quad3_mominterp.fits", **kwargs)
+
 
 def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
                      min_value=0.01, min_delta=0.005, min_npix=2000, 
