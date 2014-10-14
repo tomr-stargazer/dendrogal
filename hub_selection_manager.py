@@ -64,6 +64,15 @@ def stash_function_generator(hub, origin=2, destination=3, checkpoint=True):
 
     return stash_selection, selection_dictionary, selection_ID_dictionary
 
+def intersection_function_generator(hub, input_a=1, input_b=2, destination=3):
+
+    def intersection_of_selections():
+
+        intersected_selection = set([x for x in hub.selections[input_a] if x is not None]).intersection(set([x for x in hub.selections[input_b] if x is not None]))
+        hub.select(destination, list(intersected_selection), subtree=False)
+
+    return intersection_of_selections
+
 def restore_selections_from_dictionary(hub, selection_dictionary, destination=3):
     """ Useful if you mis-click and ruin your green selection. """
 
