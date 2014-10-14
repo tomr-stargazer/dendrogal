@@ -1,3 +1,6 @@
+test/*.fits
+*.fits
+
 *.py[cod]
 
 # C extensions
