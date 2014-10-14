@@ -53,7 +53,9 @@ def secondquad_distance_demo(downsample=1, distance='reid', nearfar='near', min_
                     (catalog['mass'] < 5e3) | 
                     (catalog['major_sigma'] > 10) | 
                     (catalog['v_rms'] > 30) | 
-                    (catalog['size'] > 1000) )
+                    (catalog['size'] > 1000) |
+                    (np.abs(catalog['v_cen']) < 13) |
+                    (catalog['area_exact'] > 50) )
 
     catalog['Distance'][disqualified] = np.nan
     catalog['v_rms'][disqualified] = np.nan
