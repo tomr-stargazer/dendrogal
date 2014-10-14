@@ -184,6 +184,9 @@ def small_demo(**kwargs):
 def orion_demo(**kwargs):
     return downsampled_demo('DHT27_Orion_mom.fits', **kwargs)
 
+def orion_demo_mominterp(**kwargs):
+    return downsampled_demo('DHT27_Orion_mominterp.fits', **kwargs)
+
 def chamaeleon_demo(**kwargs):
     return downsampled_demo('DHT34_Chamaeleon_mom.fits', **kwargs)
 

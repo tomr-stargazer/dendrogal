@@ -8,7 +8,7 @@ from __future__ import division
 import astropy.units as u
 import astropy.constants as c
 
-from demo import orion_demo, reduce_selection_to_principal_branches
+from demo import orion_demo, reduce_selection_to_principal_branches, orion_demo_mominterp
 # def orion_demo(**kwargs):
 #     return downsampled_demo('DHT27_Orion_mom.fits', **kwargs)
 
@@ -22,7 +22,7 @@ filename = 'Orion_detail'
 
 def load_orion_catalog_from_template():
 
-    d, catalog, header, metadata = orion_demo(downsample_factor=1, resample=False, recenter=False, min_npix=10, min_value=0.1, min_delta=0.1)
+    d, catalog, header, metadata = orion_demo_mominterp(downsample_factor=1, resample=False, recenter=False, min_npix=10, min_value=0.1, min_delta=0.1)
 
     (template_cube, template_header, new_selection_dictionary, 
         selection_ID_dictionary) = reconstruct_selections_from_template(d, filename)
