@@ -85,7 +85,7 @@ plt.plot(catalog2['size'][gmc2_ids], catalog2['v_rms'][gmc2_ids], 'ro')
 plt.plot(xs, ys, '--')
 
 plt.figure()
-number_in_bin_q2, bin_edges, ch = plt.hist(np.log10(catalog['mass'][reduced_ids]), cumulative=-1, log=True, bins=20)
+number_in_bin_q2, bin_edges, ch = plt.hist(np.log10(catalog2['mass'][gmc2_ids]), cumulative=-1, log=True, bins=20)
 bin_centers_q2 = (bin_edges[1:] + bin_edges[:-1])/2.
 plt.clf()
 plt.plot(bin_centers_q2, number_in_bin_q2, 'ko' )
@@ -103,7 +103,7 @@ dv_3 = d3.viewer()
 selection3_ids = ( (catalog3['v_rms'] < 2*orion_fit_constant * catalog3['size']**orion_fit_power) &
     (catalog3['v_rms'] > 1/3 * orion_fit_constant * catalog3['size']**orion_fit_power) &
     (catalog3['mass'] > 5e4) )
-selection3 = [d[idx] for idx in catalog3['_idx'][selection3_ids]]
+selection3 = [d3[idx] for idx in catalog3['_idx'][selection3_ids]]
 
 gmc_selection3 = reduce_selection_to_principal_branches(selection3)
 gmc3_ids = [struct.idx for struct in gmc_selection3]
@@ -126,7 +126,7 @@ plt.plot(catalog3['size'][gmc3_ids], catalog3['v_rms'][gmc3_ids], 'ro')
 plt.plot(xs, ys, '--')
 
 plt.figure()
-number_in_bin_q3, bin_edges, ch = plt.hist(np.log10(catalog['mass'][reduced_ids]), cumulative=-1, log=True, bins=20)
+number_in_bin_q3, bin_edges, ch = plt.hist(np.log10(catalog3['mass'][gmc3_ids]), cumulative=-1, log=True, bins=20)
 bin_centers_q3 = (bin_edges[1:] + bin_edges[:-1])/2.
 plt.clf()
 plt.plot(bin_centers_q3, number_in_bin_q3, 'ko' )
