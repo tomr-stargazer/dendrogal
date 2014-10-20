@@ -202,6 +202,9 @@ def ophiuchus_demo(**kwargs):
 def firstquad_demo(**kwargs):
     return downsampled_demo("DHT08_Quad1_mom.fits", **kwargs)
 
+def firstquad_demo_mominterp(**kwargs):
+    return downsampled_demo("DHT08_Quad1_mominterp.fits", **kwargs)
+
 def secondquad_demo(**kwargs):
     return downsampled_demo("DHT17_Quad2_bw_mom.fits", **kwargs)
 
