@@ -123,7 +123,7 @@ ys_3 = quad3_fit_constant * xs**quad3_fit_power
 
 plt.figure()
 plt.plot(catalog3['size'][gmc3_ids], catalog3['v_rms'][gmc3_ids], 'ro')
-plt.plot(xs, ys, '--')
+plt.plot(xs, ys_3, '--')
 
 plt.figure()
 number_in_bin_q3, bin_edges, ch = plt.hist(np.log10(catalog3['mass'][gmc3_ids]), cumulative=-1, log=True, bins=20)
