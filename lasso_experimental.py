@@ -19,6 +19,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 from numpy import nonzero
 from numpy.random import rand
+import numpy as np
 
 class Datum(object):
     colorin = colorConverter.to_rgba('red')
@@ -55,6 +56,9 @@ class LassoManager(object):
         facecolors = self.collection.get_facecolors()
         p = path.Path(verts)
         ind = p.contains_points(self.xys)
+
+        print ind 
+        
         for i in range(len(self.xys)):
             if ind[i]:
                 facecolors[i] = Datum.colorin
@@ -74,7 +78,9 @@ class LassoManager(object):
 
 if __name__ == '__main__':
 
-    data = [Datum(*xy) for xy in rand(100, 2)]
+    data = [Datum(*xy) for xy in rand(5, 2)]
+
+    data[0].x = np.nan
 
     ax = plt.axes(xlim=(0,1), ylim=(0,1), autoscale_on=False)
 
