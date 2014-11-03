@@ -12,7 +12,7 @@ from wcsaxes import WCSAxes
 
 class IntegratedViewer(object):
     def __init__(self, dendrogram, hub, alignment='horizontal', cmap=plt.cm.gray,
-                 clip_velocity=None):
+                 clip_velocity=None, aspect=2.5):
 
         if dendrogram.data.ndim != 3:
             raise ValueError(
@@ -72,6 +72,8 @@ class IntegratedViewer(object):
         else:
             self.clip_velocity = clip_velocity
 
+        self.aspect = aspect
+
         self._draw_plot()
         self.hub.add_callback(self.update_selection)
         self.fig.canvas.mpl_connect('button_press_event', self.select_from_map)
@@ -89,7 +91,7 @@ class IntegratedViewer(object):
             interpolation='nearest', cmap=self.cmap)
 
         self.image_lv = self.ax_lv.imshow(np.log10(self.array_lv+1), origin='lower', 
-            interpolation='nearest', cmap=self.cmap, aspect=2.5)
+            interpolation='nearest', cmap=self.cmap, aspect=self.aspect)
 
         # Trim the top and bottom of the l, v plot for cosmetic reasons
         if self.clip_velocity:
