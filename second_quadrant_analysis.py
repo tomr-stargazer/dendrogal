@@ -201,5 +201,5 @@ def firstquad_distance_demo(downsample=1, distance='reid', min_npix=20, min_valu
         "iv = IntegratedViewer(d, dv.hub, wcs=y['wcs'].sub([wcs.WCSSUB_CELESTIAL]), cmap='gray_r')\n"
         "dsd = Scatter(d, dv.hub, catalog, 'y_galactocentric', 'x_galactocentric')")
 
-    return d, catalog, header, metadata
+    return d, catalog, header, metadata, near_distance_table, far_distance_table
 
