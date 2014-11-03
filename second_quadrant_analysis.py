@@ -151,7 +151,7 @@ def firstquad_distance_demo(downsample=1, distance='reid', min_npix=20, min_valu
     quad2_fit_constant = 0.48293812090592952
     quad2_fit_power = 0.56796770148326814
 
-    expected_size =  (1/quad2_fit_constant * catalog['v_rms'])**(1/quad2_fit_power) * u.pc
+    expected_size =  (1/quad2_fit_constant * catalog['v_rms'].data)**(1/quad2_fit_power) * u.pc
 
     use_near_distance = (np.abs(near_size - expected_size) <= np.abs(far_size - expected_size))
     use_far_distance = (np.abs(near_size - expected_size) > np.abs(far_size - expected_size))
