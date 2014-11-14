@@ -14,7 +14,7 @@ from astrodendro.scatter import Scatter
 # Part 1. Orion complex: 3 GMCs
 
 from wilson_orion_analysis import load_orion_catalog_from_template
-from second_quadrant_analysis import secondquad_distance_demo, thirdquad_distance_demo
+from quadrant_analysis import secondquad_distance_demo, thirdquad_distance_demo
 from demo import reduce_selection_to_principal_branches
 
 orion_output = load_orion_catalog_from_template()
