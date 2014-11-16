@@ -54,6 +54,31 @@ def resample_3d(array, factor):
 
     return array4
 
+def resample_3d_variable(array, x_factor, y_factor, z_factor):
+
+    nx, ny, nz = np.shape(array)
+
+    nx_new = nx // x_factor
+    ny_new = ny // y_factor
+    nz_new = nz // z_factor    
+
+    array2 = np.zeros((nx_new, ny, nz))
+    for i in range(nx_new):
+        array2[i, :, :] = np.nanmean(array[i * x_factor:(i + 1) * x_factor, :, :], axis=0)
+    del array
+
+    array3 = np.zeros((nx_new, ny_new, nz))
+    for j in range(ny_new):
+        array3[:, j, :] = np.nanmean(array2[:, j * y_factor:(j + 1) * y_factor, :], axis=1)
+    del array2
+
+    array4 = np.zeros((nx_new, ny_new, nz_new))
+    for k in range(nz_new):
+        array4[:, :, k] = np.nanmean(array3[:, :, k * z_factor:(k + 1) * z_factor], axis=2)
+    del array3
+
+    return array4
+
 def recenter_wcs_header(input_header, central_value=0):
     """ 
     Sets the header CRVAL on zero if it's not already. 
