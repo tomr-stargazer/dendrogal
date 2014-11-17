@@ -108,18 +108,28 @@ def downsample_and_transpose_data_and_header(input_data, input_header,
     df = downsample_factor
     tt = transpose_tuple
 
-    if resample and df > 1:
+    # this bit is to support resample_3d_variable
+    if type(df) is not int:
+        if len(df) != len(input_data.shape):
+            raise ValueError("downsample_factor invalid")
+
+        new_data = resample_3d_variable(input_data, *df).transpose(*tt)
+        df = tuple(df[i] for i in tt)
+
+    elif resample and df > 1:
         new_data = resample_3d(input_data, df).transpose(*tt)
+        df = (df, df, df)
     else:
         # Someday I may improve this with something less crude.
         new_data = input_data[::df, ::df, ::df].transpose(*tt)
+        df = (df, df, df)
 
     new_header = input_header.copy()
 
     # let's transpose. and downsample.
-    new_header['naxis'+str(tt[0]+1)] = input_header['naxis1'] // df
-    new_header['naxis'+str(tt[1]+1)] = input_header['naxis2'] // df
-    new_header['naxis'+str(tt[2]+1)] = input_header['naxis3'] // df    
+    new_header['naxis'+str(tt[0]+1)] = input_header['naxis1'] // df[0]
+    new_header['naxis'+str(tt[1]+1)] = input_header['naxis2'] // df[1]
+    new_header['naxis'+str(tt[2]+1)] = input_header['naxis3'] // df[2] 
 
     new_header['ctype'+str(tt[0]+1)] = input_header['ctype1']
     new_header['ctype'+str(tt[1]+1)] = input_header['ctype2']
@@ -129,18 +139,18 @@ def downsample_and_transpose_data_and_header(input_data, input_header,
     new_header['crval'+str(tt[1]+1)] = input_header['crval2']
     new_header['crval'+str(tt[2]+1)] = input_header['crval3']
 
-    new_header['cdelt'+str(tt[0]+1)] = input_header['cdelt1'] * df
-    new_header['cdelt'+str(tt[1]+1)] = input_header['cdelt2'] * df
-    new_header['cdelt'+str(tt[2]+1)] = input_header['cdelt3'] * df
+    new_header['cdelt'+str(tt[0]+1)] = input_header['cdelt1'] * df[0]
+    new_header['cdelt'+str(tt[1]+1)] = input_header['cdelt2'] * df[1]
+    new_header['cdelt'+str(tt[2]+1)] = input_header['cdelt3'] * df[2]
 
     if resample:
-        new_header['crpix'+str(tt[0]+1)] = (input_header['crpix1'] - 1)//df
-        new_header['crpix'+str(tt[1]+1)] = (input_header['crpix2'] - 1)//df
-        new_header['crpix'+str(tt[2]+1)] = (input_header['crpix3'] - 1)//df
+        new_header['crpix'+str(tt[0]+1)] = (input_header['crpix1'] - 1)//df[0]
+        new_header['crpix'+str(tt[1]+1)] = (input_header['crpix2'] - 1)//df[1]
+        new_header['crpix'+str(tt[2]+1)] = (input_header['crpix3'] - 1)//df[2]
     else:
-        new_header['crpix'+str(tt[0]+1)] = (input_header['crpix1'] - 1)//df + 1
-        new_header['crpix'+str(tt[1]+1)] = (input_header['crpix2'] - 1)//df + 1
-        new_header['crpix'+str(tt[2]+1)] = (input_header['crpix3'] - 1)//df + 1
+        new_header['crpix'+str(tt[0]+1)] = (input_header['crpix1'] - 1)//df[0] + 1
+        new_header['crpix'+str(tt[1]+1)] = (input_header['crpix2'] - 1)//df[1] + 1
+        new_header['crpix'+str(tt[2]+1)] = (input_header['crpix3'] - 1)//df[2] + 1
 
     if recenter:
         return_header = recenter_wcs_header(new_header)
@@ -242,7 +252,8 @@ def thirdquad_demo_mominterp(**kwargs):
 
 def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
                      min_value=0.01, min_delta=0.005, min_npix=2000, 
-                     neighbours=None, resample=False, compute_catalog=True, recenter=True):
+                     neighbours=None, resample=False, compute_catalog=True, recenter=True,
+                     data_path=data_path):
 
     df = downsample_factor
     tt = transpose_tuple
@@ -277,7 +288,7 @@ def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
     d = astrodendro.Dendrogram.compute(
         datacube_dt,
         min_value=min_value, min_delta=min_delta,  #these are arbitrary
-        min_npix=min_npix//df**3, verbose=True, neighbours=neighbours, wcs=datacube_dt_wcs)
+        min_npix=min_npix, verbose=True, neighbours=neighbours, wcs=datacube_dt_wcs)
 
     v_scale = datacube_dt_header['cdelt3']
     v_unit = u.km / u.s
