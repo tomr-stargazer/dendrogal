@@ -16,6 +16,8 @@ from astropy import wcs
 from astropy.io.fits import getdata, getheader
 import astropy.io.fits as fits
 
+from demo import resample_3d_variable
+
 data_path = os.path.expanduser("~/Dropbox/Grad School/Research/Milkyway/FCRAO_data/")
 
 # test_load 
@@ -26,4 +28,8 @@ def test_load(data_file="grs-35-cube.fits"):
                                         header=True)
 
     return datacube, datacube_header
+
+
+spatial_ratio = 20.325203100862584
+spectral_ratio = 3.05920142439195
 
