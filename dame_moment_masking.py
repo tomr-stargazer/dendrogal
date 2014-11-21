@@ -66,8 +66,8 @@ def moment_mask(cube, rms_noise, velocity_smoothing=2, spatial_smoothing=2, clip
 
     mask_cube[smooth_cube > clipping_level] = 1
 
-    ns = 2
-    nv = 2
+    ns = spatial_smoothing
+    nv = velocity_smoothing
 
     for dx in range(-ns+1, ns):
 
@@ -75,11 +75,12 @@ def moment_mask(cube, rms_noise, velocity_smoothing=2, spatial_smoothing=2, clip
 
             for dv in range(-nv+1, nv):
 
-                rolled_smooth_cube = roll_cube(smooth_cube, (dx, dy, dv))
+                rolled_smooth_cube = roll_cube(smooth_cube, (dv, dx, dy)) # assumes data has been transposed (2, 0, 1)
 
                 mask_cube[rolled_smooth_cube > clipping_level] = 1
 
     # T_M (v, x, y)
     moment_masked_cube = mask_cube * cube
 
-    return moment_masked_cube, mask_cube, smooth_cube, clipping_level
+    return moment_masked_cube
+    # , mask_cube, smooth_cube, clipping_level
