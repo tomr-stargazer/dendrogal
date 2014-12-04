@@ -178,7 +178,7 @@ def firstquad_distance_demo(downsample=1, distance='reid', min_npix=20, min_valu
 
     # disqualify!
 
-    disqualified = ((catalog['mass'] > 1e8) | 
+    disqualified = ((catalog['mass'] > 1e7) | 
                     (catalog['mass'] < 5e3) | 
                     (catalog['major_sigma'] > 10) | 
                     (catalog['v_rms'] > 30) | 
