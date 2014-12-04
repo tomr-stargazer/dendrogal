@@ -24,6 +24,8 @@ from FITS_tools.cube_regrid import gsmooth_cube
 
 from demo import resample_3d_variable, downsampled_demo, downsample_and_transpose_data_and_header
 from dame_moment_masking import moment_mask
+from assign_physical_values import assign_size_mass_alpha_pressure
+
 
 data_path = os.path.expanduser("~/Dropbox/College/Astro99/DATA/")
 
@@ -80,8 +82,69 @@ def downsample_addnoise_and_momentmask(datacube, header, downsample_factor, rms_
     return moment_masked_cube, downsampled_header
 
 
+def dendrogram_downaddmom_cube(*args, **kwargs):
+
+    datacube_dt, datacube_dt_header = downsample_addnoise_and_momentmask(*args)
+    datacube_dt_wcs = wcs.wcs.WCS(datacube_dt_header)
+
+    beam_size = 1/8 * u.deg
+    frequency = 115 * u.GHz
+
+    d = astrodendro.Dendrogram.compute(datacube_dt, wcs=datacube_dt_wcs, **kwargs)
+
+    v_scale = datacube_dt_header['cdelt3']
+    v_unit = u.km / u.s
+    l_scale = datacube_dt_header['cdelt1']
+    b_scale = datacube_dt_header['cdelt2']
+
+    metadata = {}
+    metadata['data_unit'] = u.K
+    metadata['spatial_scale'] = b_scale * u.deg
+    metadata['velocity_scale'] = v_scale * v_unit
+    metadata['wavelength'] = frequency 
+    metadata['beam_major'] = beam_size
+    metadata['beam_minor'] = beam_size    
+    metadata['vaxis'] = 0 # keep it this way if you think the (post-downsample/transposed) input data is (l, b, v)
+    metadata['wcs'] = datacube_dt_wcs
+
+    catalog = astrodendro.ppv_catalog(d, metadata, verbose=True)
+
+    flux = u.Quantity(catalog['flux'])
+    area_exact = catalog['area_exact'].unit*catalog['area_exact'].data
+
+    # average brightness temperature integrated over area_exact
+    flux_kelvin = flux.to('K', equivalencies=u.brightness_temperature(area_exact, frequency))
+    # flux integrated over area and velocity
+    flux_kelvin_kms_deg2 = flux_kelvin * metadata['velocity_scale'] * area_exact
+
+    catalog.add_column(astropy.table.Column(data=flux_kelvin_kms_deg2, name='flux_kelvin_kms_deg2'))
+
+    return d, catalog, datacube_dt_header, metadata
 
 
+def many_distance_experiment():
 
+    raw_data, raw_header = getdata(data_path+data_file, header=True)
 
+    distance_multiplier_list = []
+    dendrogram_list = []
+    catalog_list = []
+
+    for i in range(2,40):
+        d, catalog, header, metadata = dendrogram_downaddmom_cube(raw_data, raw_header, i, 0.18, 
+            min_value=0.05, min_delta=0.1, min_npix=50, verbose=True)
+
+        catalog['Distance'] = np.ones(len(catalog)) * 450 * u.pc
+
+        s, m, v, p = assign_size_mass_alpha_pressure(catalog)
+        catalog['size'] = s
+        catalog['mass'] = m
+        catalog['virial'] = v
+        catalog['pressure'] = p
+
+        distance_multiplier_list.append(i)
+        dendrogram_list.append(d)
+        catalog_list.append(catalog)
+
+    return distance_multiplier_list, dendrogram_list, catalog_list
 
