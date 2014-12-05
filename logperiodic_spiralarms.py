@@ -81,9 +81,28 @@ def convert_galactic_polar_to_solar_polar(beta, radii, solar_radius=8.34):
 
     solar_d = (solar_x**2 + solar_y**2)**(1/2)
     solar_l = np.arctan( (solar_y)/(solar_x) ).to(u.deg) - 90 * u.deg
+
+    # we constrain solar_d to be positive, so sometimes the angle needs to wrap around halfway
     solar_l[solar_x >= 0] += 180 * u.deg
 
+    # make negative angles wrap until they're positive
+    while (solar_l < 0).any():
+        solar_l[solar_l < 0] += 360 * u.deg
+
     return solar_d, solar_l
+
+
+def arm_distance(solar_d_array, solar_l_arry, longitude):
+
+    longitude = u.Quantity(longitude, u.deg)
+
+    angular_separation = np.abs(longitude - solar_l_arry)
+
+    if angular_separation.min() > 1*u.deg:
+        return np.nan
+
+    return solar_d_array[ angular_separation == angular_separation.min() ][0]
+
 
 
 # fig = plt.figure()
