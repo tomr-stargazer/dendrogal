@@ -54,7 +54,7 @@ def moment_mask(cube, rms_noise, velocity_smoothing=2, spatial_smoothing=2, clip
     # cube : T (v, x, y)
 
     # T_s (v, x, y)
-    smooth_cube = gsmooth_cube(cube, [spatial_smoothing,spatial_smoothing, velocity_smoothing], kernelsize_mult=1)
+    smooth_cube = gsmooth_cube(cube, [velocity_smoothing, spatial_smoothing, spatial_smoothing], kernelsize_mult=1)
 
     smoothed_rms_noise = 1/np.sqrt(spatial_smoothing*spatial_smoothing*velocity_smoothing) * rms_noise
 
