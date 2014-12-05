@@ -45,7 +45,7 @@ def logperiodic(reference_radius, reference_azimuth, pitch_angle, azimuth):
     beta = u.Quantity(azimuth, u.deg)
 
     lnR = np.log(Rref/u.kpc) - (beta - betaref).to(u.rad).value * np.tan(psi)
-    spiral_radius = np.exp(lnR)
+    spiral_radius = np.exp(lnR) * u.kpc
 
     return spiral_radius
 
@@ -55,17 +55,36 @@ local_arm = partial(logperiodic, 8.4, 8.9, 12.8)
 perseus_arm = partial(logperiodic, 9.9, 14.2, 9.4)
 outer_arm = partial(logperiodic, 13, 18.6, 13.8)
 
-scutum_angles = np.arange(3, 101)
-sagittarius_angles = np.arange(-2, 68)
-local_angles = np.arange(-8, 27)
-perseus_angles = np.arange(-21, 88)
-outer_angles = np.arange(-6, 56)
+scutum_angles = np.arange(3, 101, 0.125)
+sagittarius_angles = np.arange(-2, 68, 0.125)
+local_angles = np.arange(-8, 27, 0.125)
+perseus_angles = np.arange(-21, 88, 0.125)
+outer_angles = np.arange(-6, 56, 0.125)
 
 scutum_radii = scutum_arm(scutum_angles)
 sagittarius_radii = sagittarius_arm(sagittarius_angles)
 local_radii = local_arm(local_angles)
 perseus_radii =  perseus_arm( perseus_angles)
 outer_radii = outer_arm(outer_angles)
+
+def convert_galactic_polar_to_solar_polar(beta, radii, solar_radius=8.34):
+
+    rsun = u.Quantity(solar_radius, u.kpc)
+    radii = u.Quantity(radii, u.kpc)
+    beta = u.Quantity(beta, u.deg)
+
+    galactic_x = radii * np.sin(np.radians(beta))
+    galactic_y = radii * np.cos(np.radians(beta))
+
+    solar_x = galactic_x
+    solar_y = galactic_y - rsun
+
+    solar_d = (solar_x**2 + solar_y**2)**(1/2)
+    solar_l = np.arctan( (solar_y)/(solar_x) ).to(u.deg) - 90 * u.deg
+    solar_l[solar_x >= 0] += 180 * u.deg
+
+    return solar_d, solar_l
+
 
 # fig = plt.figure()
 
@@ -74,3 +93,5 @@ outer_radii = outer_arm(outer_angles)
 # plt.polar(np.radians(local_angles), local_radii)
 # plt.polar(np.radians(perseus_angles), perseus_radii)
 # plt.polar(np.radians(outer_angles), outer_radii)
+
+
