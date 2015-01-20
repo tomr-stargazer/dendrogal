@@ -23,7 +23,7 @@ executable_path = os.path.expanduser('~/Documents/Code/mark_reid_kdist/revised_k
 
 def test_reid_distances(executable_path=executable_path, verbose=True):
 
-    test_string = "test    010203.04 121314.5 -10 1"
+    test_string = "test    010203.04 121314.5 -10 1\n"
 
     f = open('source_file.dat', 'w')
     f.write(test_string)
