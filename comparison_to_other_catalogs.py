@@ -13,6 +13,7 @@ from __future__ import division
 
 import os.path
 
+import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse
 
@@ -25,7 +26,7 @@ dame86_catalog = table.Table.read(data_path+'Dame+86_catalog_sanitized.txt', for
 id_column = dame86_catalog['ID']
 vcen_column = [x.split(',')[1] for x in id_column]
 lcen_column = dame86_catalog['LII']
-sky_radius_column = dame86_catalog['R']/dame86_catalog['D']
+sky_radius_column = np.degrees(dame86_catalog['R']/(dame86_catalog['D']*1000))
 
 fig1 = plt.figure()
 
@@ -39,7 +40,7 @@ fig2 = plt.figure()
 ax = fig2.add_subplot(111)
 
 ells = [Ellipse(xy=zip(lcen_column, vcen_column)[i], 
-                width=sky_radius_column[i], height=dame86_catalog['DV'][i]) for i in range(len(dame86_catalog))]
+                width=2*sky_radius_column[i], height=dame86_catalog['DV'][i]) for i in range(len(dame86_catalog))]
 for e in ells:
     ax.add_artist(e)
     e.set_facecolor('none')

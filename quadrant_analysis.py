@@ -176,23 +176,6 @@ def firstquad_distance_demo(downsample=1, distance='reid', min_npix=20, min_valu
     catalog['virial'] = v
     catalog['pressure'] = p
 
-    # disqualify!
-
-    disqualified = ((catalog['mass'] > 1e7) | 
-                    (catalog['mass'] < 5e3) | 
-                    (catalog['major_sigma'] > 10) | 
-                    (catalog['v_rms'] > 30) | 
-                    (catalog['size'] > 1000) |
-                    # (np.abs(catalog['v_cen']) < 13) |
-                    # (np.abs(catalog['x_cen'] - 180) < 10) |
-                    (catalog['area_exact'] > 50) )
-
-    catalog['Distance'][disqualified] = np.nan
-    catalog['v_rms'][disqualified] = np.nan
-    catalog['size'][disqualified] = np.nan
-    catalog['virial'][disqualified] = np.nan
-    catalog['mass'][disqualified] = np.nan
-
 
     print("\n# Run these commands:\n"
         "# (these assume you have called this function like following: )\n"
