@@ -29,7 +29,7 @@ def compute_dendrogram(datacube, header, verbose=True,
         the minimum value to consider in the dataset - any value lower 
         than this will not be considered in the dendrogram. If you are 
         working with observations, it is likely that you will want to 
-        set this to the “detection level,” for example 3- or 5-sigma, 
+        set this to the "detection level," for example 3- or 5-sigma, 
         so that only significant values are included in the dendrogram. 
         By default, all values are used.
     min_delta : float 
@@ -58,7 +58,7 @@ def compute_dendrogram(datacube, header, verbose=True,
     """
 
     if min_value is None or min_delta is None or min_npix is None:
-        ValueError("Please provide min_value, min_delta, and min_npix!")
+        raise ValueError("Please provide min_value, min_delta, and min_npix!")
 
     datacube_wcs = wcs.wcs.WCS(header)
     datacube_wcs.wcs.bounds_check(pix2world=False)
