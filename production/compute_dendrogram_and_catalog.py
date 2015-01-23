@@ -73,4 +73,41 @@ def compute_dendrogram(datacube, header, verbose=True,
 
 def compute_catalog(d, header):
 
-    pass
+    beam_size = 8.5 * u.arcmin
+    frequency = 115 * u.GHz
+
+    # Remember: by this point, the data ought to be in (v, b, l), with FITS header order opposite that
+    if 'vel' not in header['ctype3'].lower():
+        raise ValueError("CTYPE3 must be velocity - check that the data were permuted correctly")
+        
+    v_scale = header['cdelt3']
+    v_unit = u.km / u.s
+    l_scale = header['cdelt1']
+    b_scale = header['cdelt2']
+
+    metadata = {}
+    metadata['data_unit'] = u.K
+    metadata['spatial_scale'] = b_scale * u.deg
+    metadata['velocity_scale'] = v_scale * v_unit
+    metadata['wavelength'] = frequency # formerly: (c.c / frequency).to('mm') but now compute_flux can handle frequency in spectral equivalency
+    metadata['beam_major'] = beam_size
+    metadata['beam_minor'] = beam_size    
+    metadata['vaxis'] = 0 # keep it this way if you think the (post-downsample/transposed) input data is (l, b, v)
+    metadata['wcs'] = d.wcs
+
+    catalog = astrodendro.ppv_catalog(d, metadata, verbose=True)
+
+    if catalog['flux'].unit.is_equivalent('Jy'):
+        # Workaround because flux is computed wrong (see https://github.com/dendrograms/astrodendro/issues/107)
+
+        flux = u.Quantity(catalog['flux'])
+        area_exact = u.Quantity(catalog['area_exact']) #.unit*catalog['area_exact'].data
+
+        # average brightness temperature integrated over area_exact
+        flux_kelvin = flux.to('K', equivalencies=u.brightness_temperature(area_exact, frequency))
+        # flux integrated over area and velocity
+        flux_kelvin_kms_sr = flux_kelvin * metadata['velocity_scale'] * area_exact.to(u.steradian)
+
+        catalog['flux_true'] = flux_kelvin_kms_sr
+
+    return catalog, metadata
