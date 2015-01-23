@@ -5,7 +5,6 @@ This file contains the production code to load & transform datacubes.
 from __future__ import division
 
 import pickle
-import os.path
 import datetime
 import numpy as np
 
@@ -18,7 +17,7 @@ from astropy import wcs
 from astropy.io.fits import getdata, getheader
 import astropy.io.fits as fits
 
-data_path = os.path.expanduser("~/Dropbox/College/Astro99/DATA/")
+from .config import data_path
 
 def load_data(filename):
     """
@@ -93,6 +92,10 @@ def permute_data_to_standard_order(datacube, header, permute_tuple=(2,0,1)):
     new_header['cdelt'+str(pt[0]+1)] = header['cdelt1']
     new_header['cdelt'+str(pt[1]+1)] = header['cdelt2']
     new_header['cdelt'+str(pt[2]+1)] = header['cdelt3']
+
+    new_header['crpix'+str(pt[0]+1)] = header['crpix1']
+    new_header['crpix'+str(pt[1]+1)] = header['crpix2']
+    new_header['crpix'+str(pt[2]+1)] = header['crpix3']
 
     return new_datacube, new_header
 
