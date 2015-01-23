@@ -55,6 +55,9 @@ def compute_dendrogram(datacube, header, verbose=True,
         silent, but for large dendrograms, it can be useful to have an 
         idea of how long the computation will take.
 
+    Returns
+    -------
+
     """
 
     if min_value is None or min_delta is None or min_npix is None:
@@ -72,14 +75,40 @@ def compute_dendrogram(datacube, header, verbose=True,
     return d
 
 def compute_catalog(d, header):
+    """
+    Computes a catalog on a dendrogram.
 
-    beam_size = 8.5 * u.arcmin
-    frequency = 115 * u.GHz
+    Parameters
+    ----------
+    d : astrodendro.dendrogram.Dendrogram
+        Dendrogram on which to compute a catalog
+    header : astropy.io.fits.header.Header
+        Header corresponding exactly to `d.data`. 
+        Used for unit and scaling information to calculate flux and 
+        world coordinates.
+
+    Returns
+    -------
+    catalog : astropy.table.table.Table
+        Catalog describing the structures in dendrogram `d`
+        using units provided in `header`.
+    metadata : dict
+        Explicitly lists unit properties used in `catalog`
+        
+    """
+
+    # rough average of North and South telescopes: 
+    # see Dame et al. 2001, p. 794. 
+    # "The Northern telescope... has a beamwidth of 8'.4 +/- 0'.2.... 
+    # The Southern telescope has nearly the same beamwidth to within 
+    # the uncertainties: 8'.8 +/- 0'.2"
+    beam_size = 8.5 * u.arcmin 
+    frequency = 115.27 * u.GHz # http://www.cv.nrao.edu/php/splat/
 
     # Remember: by this point, the data ought to be in (v, b, l), with FITS header order opposite that
     if 'vel' not in header['ctype3'].lower():
         raise ValueError("CTYPE3 must be velocity - check that the data were permuted correctly")
-        
+
     v_scale = header['cdelt3']
     v_unit = u.km / u.s
     l_scale = header['cdelt1']
