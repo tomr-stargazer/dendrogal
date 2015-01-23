@@ -17,7 +17,7 @@ from ..config import data_path
 
 def create_test_data():
 
-    filename = "test_data.fits"
+    filename = "production/test/test_data.fits"
 
     datacube = np.arange(120).reshape(4,5,6)
 
@@ -30,7 +30,7 @@ def create_test_data():
     header['ctype2'] = 'GLAT-CAR'
     header['ctype3'] = 'VELO-LSR'
 
-    writeto(open(data_path+filename, 'wb'), datacube, header=header)
+    writeto(open(filename, 'wb'), datacube, header=header)
 
 # maybe a little overkill... basically just testing the `getdata` function
 def test_load_data():
@@ -39,7 +39,7 @@ def test_load_data():
 
     expected_header = Header.fromstring("SIMPLE  =                    T / conforms to FITS standard                      BITPIX  =                   64 / array data type                                NAXIS   =                    3 / number of array dimensions                     NAXIS1  =                    6                                                  NAXIS2  =                    5                                                  NAXIS3  =                    4                                                  CTYPE1  = 'GLON-CAR'                                                            CTYPE2  = 'GLAT-CAR'                                                            CTYPE3  = 'VELO-LSR'                                                            CRVAL1  = ''                                                                    CRVAL2  = ''                                                                    CRVAL3  = ''                                                                    CDELT1  = ''                                                                    CDELT2  = ''                                                                    CDELT3  = ''                                                                    CRPIX1  = ''                                                                    CRPIX2  = ''                                                                    CRPIX3  = ''                                                                    END                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             ")
 
-    datacube, header = load_data("test_data.fits")
+    datacube, header = load_data("test_data.fits", data_path="production/test/")
 
     assert_allclose(datacube, expected_datacube)
     assert_equal(header, expected_header)

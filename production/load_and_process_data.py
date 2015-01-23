@@ -19,7 +19,7 @@ import astropy.io.fits as fits
 
 from .config import data_path
 
-def load_data(filename):
+def load_data(filename, data_path=data_path):
     """
     Loads a datacube (and its header) from disk using `astropy.io.fits.getdata`.
 
