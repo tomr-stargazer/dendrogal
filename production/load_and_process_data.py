@@ -76,26 +76,11 @@ def permute_data_to_standard_order(datacube, header, permute_tuple=(2,0,1)):
 
     new_header = header.copy()
 
-    # let's permute. and downsample.
-    new_header['naxis'+str(pt[0]+1)] = header['naxis1']
-    new_header['naxis'+str(pt[1]+1)] = header['naxis2']
-    new_header['naxis'+str(pt[2]+1)] = header['naxis3']
-
-    new_header['ctype'+str(pt[0]+1)] = header['ctype1']
-    new_header['ctype'+str(pt[1]+1)] = header['ctype2']
-    new_header['ctype'+str(pt[2]+1)] = header['ctype3']
-
-    new_header['crval'+str(pt[0]+1)] = header['crval1']
-    new_header['crval'+str(pt[1]+1)] = header['crval2']
-    new_header['crval'+str(pt[2]+1)] = header['crval3']
-
-    new_header['cdelt'+str(pt[0]+1)] = header['cdelt1']
-    new_header['cdelt'+str(pt[1]+1)] = header['cdelt2']
-    new_header['cdelt'+str(pt[2]+1)] = header['cdelt3']
-
-    new_header['crpix'+str(pt[0]+1)] = header['crpix1']
-    new_header['crpix'+str(pt[1]+1)] = header['crpix2']
-    new_header['crpix'+str(pt[2]+1)] = header['crpix3']
+    # let's permute.
+    for keyword in ['naxis', 'ctype', 'crval', 'cdelt', 'crpix']:
+        for i in range(3):
+            # replace each keyword's value at `i+1` with its value at `pt[i]+1`.
+            new_header['{0}{1}'.format(keyword, pt[i]+1)] = header['{0}{1}'.format(keyword, i+1)]
 
     return new_datacube, new_header
 
