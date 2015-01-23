@@ -21,36 +21,37 @@ import astropy.io.fits as fits
 data_path = os.path.expanduser("~/Dropbox/College/Astro99/DATA/")
 
 def load_data(filename):
-	"""
-	Loads a datacube into memory from disk using `astropy.io.fits.getdata`.
+    """
+    Loads a datacube (and its header) from disk using `astropy.io.fits.getdata`.
 
-	Parameters
-	----------
-	filename : str
-	    Name of the file within `data_path`.
-	    ex: "DHT17_Quad2_bw_mom.fits"
+    Assumes the data is in `data_path`. Uses memmap=True.
 
-	Returns
-	-------
-	datacube : np.ndarray
-	    The datacube inside `filename`. 
-	    DHT datacubes typically load in (b,l,v) order when using numpy.
-	header : astropy.io.fits.header.Header
+    Parameters
+    ----------
+    filename : str
+        Name of the file within `data_path`.
+        ex: "DHT17_Quad2_bw_mom.fits"
 
-	"""
+    Returns
+    -------
+    datacube : np.ndarray
+        The datacube inside `filename`. 
+        DHT datacubes typically load in (b,l,v) order when using numpy.
+    header : astropy.io.fits.header.Header
 
-	# memmap is set to True because large files can otherwise slow us down
-	datacube, header = getdata(data_path+filename, header=True, memmap=True)
+    """
 
-	return datacube, header
+    # memmap is set to True because large files can otherwise slow us down
+    datacube, header = getdata(data_path+filename, header=True, memmap=True)
 
 def transpose_data_to_standard_order(datacube, header):
+    return datacube, header
 
-	pass
+
 
 def interpolate_data():
-	pass
+    pass
 
 def moment_mask_data():
-	pass
+    pass
 
