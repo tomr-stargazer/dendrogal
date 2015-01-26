@@ -31,6 +31,13 @@ def test_size_linewidth_slope():
 	coefficient = output.beta[0]
 	exponent = output.beta[1]
 
+	coefficient_uncertainty = output.sd_beta[0]
+	exponent_uncertainty = output.sd_beta[1]
+
 	assert_equal(coefficient, expected_coefficient)
 	assert_equal(exponent, expected_exponent)
+
+	assert_allclose(coefficient_uncertainty, 0, atol=1e-7)
+	assert_allclose(exponent_uncertainty, 0, atol=1e-7)
+	
 
