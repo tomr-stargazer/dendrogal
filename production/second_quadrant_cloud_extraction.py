@@ -36,9 +36,9 @@ def disqualify(input_catalog):
     # narrow down how we select clouds
     disqualified = (
         (np.abs(catalog['v_cen']) < 25) |
-        (catalog['major_sigma'] > 10 * u.deg) |
+        (catalog['major_sigma'] > 2 * u.deg) |
         (catalog['area_exact'] > 50 * u.deg**2) |
-        (catalog['mass'] < 1e4 * u.solMass) )
+        (catalog['mass'] < 10**3.5 * u.solMass) )
 
     output_catalog = catalog[~disqualified]
 
