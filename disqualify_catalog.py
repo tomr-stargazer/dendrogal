@@ -1,3 +1,6 @@
+from __future__ import division
+import numpy as np
+
 def disqualify_and_return_copy(input_catalog):
 
     catalog = input_catalog.copy(copy_data=True)
