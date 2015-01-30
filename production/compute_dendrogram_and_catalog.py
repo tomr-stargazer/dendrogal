@@ -64,7 +64,7 @@ def compute_dendrogram(datacube, header, verbose=True,
         raise ValueError("Please provide min_value, min_delta, and min_npix!")
 
     datacube_wcs = wcs.wcs.WCS(header)
-    datacube_wcs.wcs.bounds_check(pix2world=False)
+    datacube_wcs.wcs.bounds_check(pix2world=False, world2pix=False)
 
     d = astrodendro.Dendrogram.compute(
         datacube, wcs=datacube_wcs, verbose=verbose,
