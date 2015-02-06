@@ -8,6 +8,7 @@ from __future__ import division
 import numpy as np
 
 from scipy.odr import RealData, Model, ODR
+from scipy.optimize import leastsq
 
 def powerlaw_function(B, x):
     return B[0] * (x**B[1])
@@ -74,6 +75,49 @@ def truncated_cloudmass_function(parameter_list, mass_array):
     return N_by_mass
 
 
+def cumulative_massfunction_fit(catalog, min_mass=1e5, bins=20):
+    """
+    Measures a catalog's mass function slope using .
+
+    ODR means "orthogonal distance regression", and is a way of fitting
+    models to data where both the x and y values have scatter.
+
+    Parameters
+    ----------
+    catalog : astropy.table.table.Table
+        Table containing columns for 'size' and 'v_rms'.
+
+    Returns
+    -------
+    odr_output : scipy.odr.odrpack.Output
+        Output of the scipy ODR routine. The fit parameters
+        are stored in odr_output.beta .
+
+    """
+
+    if 'mass' not in catalog.colnames:
+        raise ValueError("'mass' must be column in `catalog`!")
+
+    # make a reversely-summed histogram (the [::-1]'s ensure it's reversed properly)
+    hist, bin_edges = np.histogram( np.log10(catalog['mass']), range=[np.log10(min_mass), 7.5], bins=bins)
+    cum_hist = np.cumsum(hist[::-1])[::-1]
+    bin_centers = (bin_edges[1:] + bin_edges[:-1])/2.
+
+    initial_gamma = -2
+    initial_M_0 = sorted(catalog['mass'])[-2] # skip the biggest, go for second biggest
+    initial_N_0 = len(np.where(catalog['mass'] > 2**(1/(initial_gamma+1))*initial_M_0)[0])
+
+    print "initial guess gamma: {0}".format(initial_gamma)
+    print "initial guess M_0: {0}".format(initial_M_0)
+    print "initial guess N_0: {0}".format(initial_N_0)
+
+    initial_parameters = [initial_M_0, initial_N_0, initial_gamma]
+
+    errfunc = lambda p, x, y: truncated_cloudmass_function(p, x) - y # Distance to the target function
+
+    fit = leastsq(errfunc, initial_parameters, args=(10**bin_centers, cum_hist))
+
+    return fit
 
 
 
