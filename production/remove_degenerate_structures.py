@@ -49,3 +49,10 @@ def reduce_catalog(d, catalog):
     smaller_catalog = catalog[np.in1d(catalog['_idx'], smaller_idx_list)]
 
     return smaller_catalog
+
+def catalog_from_selection(struct_list, catalog):
+
+    selected_ids = [struct.idx for struct in struct_list]
+    selected_catalog = catalog[ np.in1d(catalog['_idx'], selected_ids)]
+
+    return selected_catalog
