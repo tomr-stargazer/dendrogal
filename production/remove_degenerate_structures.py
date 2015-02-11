@@ -56,3 +56,9 @@ def catalog_from_selection(struct_list, catalog):
     selected_catalog = catalog[ np.in1d(catalog['_idx'], selected_ids)]
 
     return selected_catalog
+
+def selection_from_catalog(d, catalog):
+
+    struct_list = [d[idx] for idx in catalog['_idx']]
+
+    return struct_list
