@@ -130,12 +130,25 @@ def extract_low_velocity_clouds(input_catalog):
 
 #     return smaller_catalog
 
-def export_firstquad_catalog(d, catalog):
+def export_firstquad_catalog(args=None):
     """ 
     Uses the above functions to create a "polished" and "final" cloud catalog from this quadrant.
 
     """
 
-    pass
+    if args is None:
+        d, catalog, header, metadata = first_quad_dendrogram()
+    else:
+        d, catalog, header, metadata = args
+
+    negative_v_catalog = extract_negative_velocity_clouds(catalog)
+    positive_v_catalog = extract_positive_velocity_clouds(catalog)
+    low_v_catalog = extract_low_velocity_clouds(catalog)
+
+    composite_unreduced_catalog = astropy.table.vstack([negative_v_catalog, positive_v_catalog, low_v_catalog])
+
+    composite_reduced_catalog = reduce_catalog(d, composite_unreduced_catalog)
+
+    return composite_reduced_catalog
 
 
