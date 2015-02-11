@@ -19,7 +19,7 @@ from ..catalog_tree_stats import compute_tree_stats
 
 def first_quad_dendrogram():
     datacube, header = permute_data_to_standard_order(*load_data("DHT08_Quad1_mominterp.fits"))
-    d = compute_dendrogram(datacube, header, min_value=0.18, min_delta=0.18/2, min_npix=100)
+    d = compute_dendrogram(datacube, header, min_value=0.18, min_delta=0.18/2, min_npix=50)
     catalog, metadata = compute_catalog(d, header)
 
     # DISTANCE assignment
@@ -64,7 +64,7 @@ def distance_disambiguator(catalog):
     return best_distance
 
 
-def disqualify_from_bottom(input_catalog):
+def extract_negative_velocity_clouds(input_catalog):
 
     catalog = input_catalog.copy(copy_data=True)
 
@@ -77,27 +77,65 @@ def disqualify_from_bottom(input_catalog):
 
     return output_catalog
 
-def disqualify_from_top(input_catalog):
+def extract_positive_velocity_clouds(input_catalog):
+    """
+    This is a way to get things in the positive-velocity part of the map, excluding local stuff.
+    """
 
     catalog = input_catalog.copy(copy_data=True)
 
     # narrow down how we select clouds
     disqualified = (
         (catalog['v_cen'] < 20) |
-        (catalog['mass'] < 10**3.5 * u.solMass) |
-        (np.abs(catalog['fractional_gain'] - 0.5) > 0.05)
+        (catalog['mass'] < 10**3.5 * u.solMass) # |
+        # (np.abs(catalog['fractional_gain'] - 0.5) > 0.05)
         )
 
-    output_catalog = catalog[~disqualified]
+    qualified = (
+        (catalog['n_descendants'] < 10) & 
+        (catalog['n_descendants'] > 1) &
+        (catalog['fractional_gain'] < 0.81))
+
+    output_catalog = catalog[~disqualified & qualified]
 
     return output_catalog
 
-def prune_catalog(d, catalog):
-    new_catalog = disqualify(catalog)
+def extract_low_velocity_clouds(input_catalog):
+    """
+    Get the near-zero velocity Perseus arm clouds.
 
-    smaller_catalog = reduce_catalog(d, new_catalog)
+    """
 
-    return smaller_catalog
+    catalog = input_catalog.copy(copy_data=True)
 
+    disqualified = (
+        (catalog['v_cen'] < -5) |
+        (catalog['v_cen'] > 20) |
+        (catalog['n_descendants'] > 10) |
+        (catalog['mass'] < 10**3.5 * u.solMass) |
+        (np.abs(catalog['y_cen'] > 1)) )
+
+    qualified = (
+        (catalog['distance'] > 9.8) & 
+        (catalog['distance'] < 14))
+
+    output_catalog = catalog[~disqualified & qualified]
+
+    return output_catalog
+
+# def prune_catalog(d, catalog):
+#     new_catalog = disqualify(catalog)
+
+#     smaller_catalog = reduce_catalog(d, new_catalog)
+
+#     return smaller_catalog
+
+def export_firstquad_catalog(d, catalog):
+    """ 
+    Uses the above functions to create a "polished" and "final" cloud catalog from this quadrant.
+
+    """
+
+    pass
 
 
