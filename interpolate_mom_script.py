@@ -24,30 +24,49 @@ from astrodendro_analysis.reid_distance_assigner import make_reid_distance_colum
 from astrodendro_analysis.assign_physical_values import assign_size_mass_alpha_pressure
 
 from dame_interpolation import interpolate_datacube
+from dame_moment_masking import moment_mask
 
 data_path = os.path.expanduser("~/Dropbox/College/Astro99/DATA/")
 
-def create_intermom_file(filename, memmap=False, clobber=False):
+def create_intermom_file(filename, memmap=False, clobber=False, rms_noise=None):
 
     beginning = datetime.datetime.now()
 
     print "Beginning {0} at {1}".format(filename, datetime.datetime.strftime(beginning,"%Y-%m-%d %H:%M:%S"))
 
-    if "mom.fits" not in filename:
-        raise ValueError("This function is only intended for files ending in *mom.fits")
+    if "_mom.fits" in filename:
 
-    data, header = getdata(filename, memmap=memmap, header=True)
+        data, header = getdata(filename, memmap=memmap, header=True)
 
-    new_filename = filename.rstrip("mom.fits") + "mominterp.fits"
+        new_filename = filename.rstrip("mom.fits") + "mominterp.fits"
 
-    clobber_string = ""
-    if os.path.isfile(new_filename) and clobber:
-        clobber_string = "(clobbered)"
-    elif os.path.isfile(new_filename):
-        print "{0} not saved: clobber=False".format(new_filename)
-        return
+        clobber_string = ""
+        if os.path.isfile(new_filename) and clobber:
+            clobber_string = "(clobbered)"
+        elif os.path.isfile(new_filename):
+            print "{0} not saved: clobber=False".format(new_filename)
+            return
 
-    new_data = interpolate_datacube(data)
+        new_data = interpolate_datacube(data)
+
+    elif "_interp.fits" in filename: 
+        data, header = getdata(filename, memmap=memmap, header=True)
+
+        if rms_noise is None:
+            raise ValueError("Please provide an rms_noise.")
+        new_filename = filename.rstrip("interp.fits") + "mominterp.fits"
+
+        clobber_string = ""
+        if os.path.isfile(new_filename) and clobber:
+            clobber_string = "(clobbered)"
+        elif os.path.isfile(new_filename):
+            print "{0} not saved: clobber=False".format(new_filename)
+            return
+
+        new_data = moment_mask(data, rms_noise)
+
+    else:
+        raise ValueError("This function is only intended for files ending in *mom.fits or *interp.fits")
 
     try:
         fits.writeto(new_filename, new_data, header, clobber=clobber)        
