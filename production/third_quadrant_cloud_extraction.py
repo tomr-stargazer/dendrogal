@@ -58,5 +58,22 @@ def prune_catalog(d, catalog):
 
     return smaller_catalog
 
+def export_thirdquad_catalog(args=None):
+    """ 
+    Uses the above functions to create a "polished" and "final" cloud catalog from this quadrant.
+
+    """
+
+    if args is None:
+        d, catalog, header, metadata = third_quad_dendrogram()
+    else:
+        d, catalog, header, metadata = args
+
+    cloud_catalog = extract_clouds(catalog)
+
+    reduced_cloud_catalog = reduce_catalog(d, cloud_catalog)
+
+    return reduced_cloud_catalog
+
 
 
