@@ -1,5 +1,10 @@
 """ This script combines the four quadrants. """
 
+from __future__ import division
+
+import numpy as np
+import astropy
+
 from .first_quadrant_cloud_extraction import export_firstquad_catalog
 from .second_quadrant_cloud_extraction import export_secondquad_catalog
 from .third_quadrant_cloud_extraction import export_thirdquad_catalog
@@ -25,3 +30,5 @@ def extract_and_combine_catalogs(args=[None]*4):
     fourth_cat['quadrant'] = 4*np.ones(len(fourth_cat))
 
     total_table = astropy.table.vstack([first_cat, second_cat, third_cat, fourth_cat])
+
+    return total_table
