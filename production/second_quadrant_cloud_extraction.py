@@ -35,7 +35,7 @@ def second_quad_dendrogram():
     return d, catalog, header, metadata
 
 
-def disqualify(input_catalog):
+def extract_clouds(input_catalog):
 
     catalog = input_catalog.copy(copy_data=True)
 
@@ -55,7 +55,7 @@ def disqualify(input_catalog):
     return output_catalog
 
 def prune_catalog(d, catalog):
-    new_catalog = disqualify(catalog)
+    new_catalog = extract_clouds(catalog)
 
     smaller_catalog = reduce_catalog(d, new_catalog)
 
