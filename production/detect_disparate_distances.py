@@ -51,15 +51,13 @@ def detect_disparate_distances(d, catalog):
                 fail_struct_and_ancestors(struct, disparate, fails=fails)
 
                 # for debugging/analysis - remove when code is complete?
-                if len(descendant_idx_list) < 15:
+                if len(descendant_idx_list) < 15 and counter < 10:
                     print "Struct {0} has {3} descendants. Distance max/min: {1} and {2}".format(
                         struct.idx, max(descendant_distance_list), 
                         min(descendant_distance_list), len(descendant_idx_list))
                     print " (distance ratio: {0:.3f})".format(
                         max(descendant_distance_list)/min(descendant_distance_list))
                     counter+=1
-                    if counter > 10:    
-                        return
 
             else:
                 disparate[struct.idx] = passes
