@@ -35,16 +35,31 @@ def detect_disparate_distances(d, catalog):
     # if you're a single feature you pass
     disparate[catalog['n_descendants'] == 0] = passes
 
+    # for debugging/analysis - remove when code is complete?
+    counter=0
+
     for i, struct in enumerate(d):
 
         if disparate[struct.idx] == unchecked:
 
-            # THIS DOESN'T WORK AS DESIRED WE HAVE TO FIX IT
+            # THIS DOESN'T WORK AS DESIRED WE HAVE TO FIX IT 
+            # Actually, works as desired in 4th quadrant.
             descendant_idx_list = [x.idx for x in struct.descendants]
             descendant_distance_list = catalog['distance'][np.in1d(catalog['_idx'], descendant_idx_list)]
 
             if max(descendant_distance_list) >= 2*min(descendant_distance_list):
                 fail_struct_and_ancestors(struct, disparate, fails=fails)
+
+                # for debugging/analysis - remove when code is complete?
+                if len(descendant_idx_list) < 15:
+                    print "Struct {0} has {3} descendants. Distance max/min: {1} and {2}".format(
+                        struct.idx, max(descendant_distance_list), 
+                        min(descendant_distance_list), len(descendant_idx_list))
+                    print " (distance ratio: {0:.3f})".format(
+                        max(descendant_distance_list)/min(descendant_distance_list))
+                    counter+=1
+                    if counter > 10:    
+                        return
 
             else:
                 disparate[struct.idx] = passes
