@@ -13,6 +13,7 @@ from .load_and_process_data import load_data, permute_data_to_standard_order
 from .compute_dendrogram_and_catalog import compute_dendrogram, compute_catalog
 from .calculate_distance_dependent_properties import assign_properties
 from .remove_degenerate_structures import reduce_catalog
+from .detect_disparate_distances import detect_disparate_distances
 
 from ..reid_distance_assigner import make_reid_distance_column
 from ..catalog_tree_stats import compute_tree_stats
@@ -31,6 +32,9 @@ def first_quad_dendrogram():
 
     # assignment of tree statistic properties
     compute_tree_stats(catalog, d)
+
+    # note disparate distances
+    catalog['disparate'] = detect_disparate_distances(d, catalog)
 
     return d, catalog, header, metadata
 
@@ -71,7 +75,9 @@ def extract_negative_velocity_clouds(input_catalog):
     # narrow down how we select clouds
     disqualified = (
         (catalog['v_cen'] > -5) |
-        (catalog['mass'] < 10**3.5 * u.solMass) )
+        (catalog['mass'] < 10**3.5 * u.solMass) | 
+        (catalog['disparate'] == 0)
+        )
 
     output_catalog = catalog[~disqualified]
 
@@ -87,7 +93,8 @@ def extract_positive_velocity_clouds(input_catalog):
     # narrow down how we select clouds
     disqualified = (
         (catalog['v_cen'] < 20) |
-        (catalog['mass'] < 10**3.5 * u.solMass) # |
+        (catalog['mass'] < 10**3.5 * u.solMass) |
+        (catalog['disparate'] == 0)        
         # (np.abs(catalog['fractional_gain'] - 0.5) > 0.05)
         )
 
