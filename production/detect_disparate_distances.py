@@ -30,7 +30,7 @@ def detect_disparate_distances(d, catalog):
     fails = 0
     unchecked = 10
 
-    disparate = np.ones(len(catalog)) * unchecked
+    disparate = np.ones(len(catalog), dtype=np.int) * unchecked
 
     # if you're a single feature you pass
     disparate[catalog['n_descendants'] == 0] = passes
