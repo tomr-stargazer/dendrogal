@@ -139,4 +139,15 @@ def compute_catalog(d, header):
 
         catalog['flux_true'] = flux_kelvin_kms_sr
 
+        background_flux_array = np.zeros_like(catalog['flux_true'])
+        # do a clipping -- 
+        # this uses the approximation that any given structure's background is well-represented by its lowest-valued pixel, which can get messy sometimes.
+        for i, row in enumerate(catalog):
+            background_kelvins = d[i].vmin * u.K
+            background_flux = background_kelvins * d[i].get_npix() * metadata['velocity_scale'] * metadata['spatial_scale']**2
+
+            background_flux_array[i] = background_flux.to(u.K * u.km/u.s * u.steradian).value
+
+        catalog['flux_clipped'] = catalog['flux_true'] - background_flux_array
+
     return catalog, metadata
