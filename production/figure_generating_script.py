@@ -21,6 +21,7 @@ from ..integrated_viewer import IntegratedViewer
 
 from .first_quadrant_cloud_extraction import first_quad_dendrogram, export_firstquad_catalog
 from .second_quadrant_cloud_extraction import second_quad_dendrogram, export_secondquad_catalog
+from .third_quadrant_cloud_extraction import third_quad_dendrogram, export_thirdquad_catalog
 from ..comparison_to_other_catalogs import plot_dame_ellipses_on_integrated_viewer
 from .remove_degenerate_structures import reduce_catalog, selection_from_catalog
 from .map_figures import make_quadrant_lbv_map, make_quadrant_topdown_map
@@ -94,7 +95,7 @@ def second_quadrant_figures(args=None, save=True):
 
     cloud_selection = selection_from_catalog(d, cloud_catalog)
 
-    iv_secondquad = make_quadrant_lbv_map(cloud_catalog, d, alignment='horizontal', aspect=2)
+    iv_secondquad = make_quadrant_lbv_map(cloud_catalog, d, alignment='horizontal', aspect=2, vscale=1.3)
     iv_secondquad.fig.set_figheight(5.7)
     iv_secondquad.fig.set_figwidth(10)
     iv_secondquad.fig.canvas.draw()
@@ -110,11 +111,49 @@ def second_quadrant_figures(args=None, save=True):
 
     topdown_2q.savefig(output_path+'quad2_topdown.pdf', bbox_inches='tight')
 
-    cmf_2q = plot_cmf(cloud_catalog)[0]
+    cmf_2q = plot_cmf(cloud_catalog, min_mass=1e4)[0]
     cmf_2q.savefig(output_path+"quad2_cmf.pdf", bbox_inches='tight')
 
     size_linewidth_2q = plot_size_linewidth_fit(cloud_catalog)[0]
     plt.xlim(3, 115)
     plt.ylim(0.55, 29)
     size_linewidth_2q.savefig(output_path+"quad2_size_linewidth.pdf", bbox_inches='tight')
+
+def third_quadrant_figures(args=None, save=True):
+    """ Creates the figures for the third quadrant and saves them. """
+
+    # if args is None, the dendrogram will be computed fresh
+    if args is None:
+        d, catalog, header, metadata = third_quad_dendrogram()
+        args = (d, catalog, header, metadata)
+    else:
+        d, catalog, header, metadata = args
+
+    cloud_catalog = export_thirdquad_catalog(args=args)
+
+    cloud_selection = selection_from_catalog(d, cloud_catalog)
+
+    iv_thirdquad = make_quadrant_lbv_map(cloud_catalog, d, alignment='horizontal', aspect=2, vscale=1.3)
+    iv_thirdquad.fig.set_figheight(5.7)
+    iv_thirdquad.fig.set_figwidth(10)
+    iv_thirdquad.fig.canvas.draw()
+    iv_thirdquad.fig.savefig(output_path+'quad3_map.pdf', bbox_inches='tight')
+
+    topdown_3q = make_quadrant_topdown_map(cloud_catalog, loc='lower right')
+    topdown_3q.set_figwidth(6)
+    topdown_3q.set_figheight(8)
+    topdown_3q.axes[0].set_xlim(-11.4, 1.6)
+    topdown_3q.axes[0].set_ylim(5.3, -6.7)
+    topdown_3q.axes[0].set_xlabel("Solar-centric $y$ (kpc)")
+    topdown_3q.axes[0].set_ylabel("Solar-centric $x$ (kpc)")
+
+    topdown_3q.savefig(output_path+'quad3_topdown.pdf', bbox_inches='tight')
+
+    cmf_3q = plot_cmf(cloud_catalog, min_mass=1e4)[0]
+    cmf_3q.savefig(output_path+"quad3_cmf.pdf", bbox_inches='tight')
+
+    size_linewidth_3q = plot_size_linewidth_fit(cloud_catalog)[0]
+    plt.xlim(3, 115)
+    plt.ylim(0.55, 29)
+    size_linewidth_3q.savefig(output_path+"quad3_size_linewidth.pdf", bbox_inches='tight')    
 
