@@ -22,6 +22,7 @@ from ..integrated_viewer import IntegratedViewer
 from .first_quadrant_cloud_extraction import first_quad_dendrogram, export_firstquad_catalog
 from .second_quadrant_cloud_extraction import second_quad_dendrogram, export_secondquad_catalog
 from .third_quadrant_cloud_extraction import third_quad_dendrogram, export_thirdquad_catalog
+from .fourth_quadrant_cloud_extraction import fourth_quad_dendrogram, export_fourthquad_catalog
 from ..comparison_to_other_catalogs import plot_dame_ellipses_on_integrated_viewer
 from .remove_degenerate_structures import reduce_catalog, selection_from_catalog
 from .map_figures import make_quadrant_lbv_map, make_quadrant_topdown_map
@@ -156,4 +157,42 @@ def third_quadrant_figures(args=None, save=True):
     plt.xlim(3, 115)
     plt.ylim(0.55, 29)
     size_linewidth_3q.savefig(output_path+"quad3_size_linewidth.pdf", bbox_inches='tight')    
+
+def fourth_quadrant_figures(args=None, save=True):
+    """ Creates the figures for the fourth quadrant and saves them. """
+
+    # if args is None, the dendrogram will be computed fresh
+    if args is None:
+        d, catalog, header, metadata = fourth_quad_dendrogram()
+        args = (d, catalog, header, metadata)
+    else:
+        d, catalog, header, metadata = args
+
+    cloud_catalog = export_fourthquad_catalog(args=args)
+
+    cloud_selection = selection_from_catalog(d, cloud_catalog)
+
+    iv_fourthquad = make_quadrant_lbv_map(cloud_catalog, d, alignment='horizontal', aspect=1/2, vscale=1.3)
+    iv_fourthquad.fig.set_figheight(8)
+    iv_fourthquad.fig.set_figwidth(8)
+    iv_fourthquad.fig.canvas.draw()
+    iv_fourthquad.fig.savefig(output_path+'quad4_map.pdf', bbox_inches='tight')
+
+    topdown_4q = make_quadrant_topdown_map(cloud_catalog, loc='lower right')
+    topdown_4q.set_figwidth(6)
+    topdown_4q.set_figheight(8)
+    topdown_4q.axes[0].set_xlim(-13.1, 5.1)
+    topdown_4q.axes[0].set_ylim(17.6, -0.05)
+    topdown_4q.axes[0].set_xlabel("Solar-centric $y$ (kpc)")
+    topdown_4q.axes[0].set_ylabel("Solar-centric $x$ (kpc)")
+
+    topdown_4q.savefig(output_path+'quad4_topdown.pdf', bbox_inches='tight')
+
+    cmf_4q = plot_cmf(cloud_catalog)[0]
+    cmf_4q.savefig(output_path+"quad4_cmf.pdf", bbox_inches='tight')
+
+    size_linewidth_4q = plot_size_linewidth_fit(cloud_catalog)[0]
+    plt.xlim(3, 115)
+    plt.ylim(0.55, 29)
+    size_linewidth_4q.savefig(output_path+"quad4_size_linewidth.pdf", bbox_inches='tight')    
 
