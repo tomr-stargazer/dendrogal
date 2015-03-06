@@ -19,12 +19,12 @@ import astropy.constants as c
 
 from ..integrated_viewer import IntegratedViewer
 
-# first quadrant figures
 from .first_quadrant_cloud_extraction import first_quad_dendrogram, export_firstquad_catalog
+from .second_quadrant_cloud_extraction import second_quad_dendrogram, export_secondquad_catalog
 from ..comparison_to_other_catalogs import plot_dame_ellipses_on_integrated_viewer
 from .remove_degenerate_structures import reduce_catalog, selection_from_catalog
 from .map_figures import make_quadrant_lbv_map, make_quadrant_topdown_map
-from .plot_catalog_measurements import plot_cmf, plot_size_linewidth
+from .plot_catalog_measurements import plot_cmf, plot_size_linewidth_fit
 
 
 output_path = os.path.expanduser("~/Dropbox/Grad School/Research/Milkyway/paper/")
@@ -60,7 +60,7 @@ def first_quadrant_figures(args=None, save=True):
     iv_firstquad.fig.set_figheight(5.7)
     iv_firstquad.fig.set_figwidth(10)
     iv_firstquad.fig.canvas.draw()
-    iv_firstquad.fig.savefig(output_path+'quad1_map.pdf')
+    iv_firstquad.fig.savefig(output_path+'quad1_map.pdf', bbox_inches='tight')
 
     topdown_1q = make_quadrant_topdown_map(cloud_catalog)
     topdown_1q.set_figwidth(6)
@@ -70,15 +70,15 @@ def first_quadrant_figures(args=None, save=True):
     topdown_1q.axes[0].set_xlabel("Solar-centric $y$ (kpc)")
     topdown_1q.axes[0].set_ylabel("Solar-centric $x$ (kpc)")
 
-    topdown_1q.savefig(output_path+'quad1_topdown.pdf')
+    topdown_1q.savefig(output_path+'quad1_topdown.pdf', bbox_inches='tight')
 
     cmf_1q = plot_cmf(cloud_catalog)[0]
-    cmf_1q.savefig(output_path+"quad1_cmf.pdf")
+    cmf_1q.savefig(output_path+"quad1_cmf.pdf", bbox_inches='tight')
 
-    size_linewidth_1q = plot_size_linewidth(cloud_catalog)
-    plt.xlim(7, 115)
+    size_linewidth_1q = plot_size_linewidth_fit(cloud_catalog)[0]
+    plt.xlim(3, 115)
     plt.ylim(0.55, 29)
-    size_linewidth_1q.savefig(output_path+"quad1_size_linewith.pdf")
+    size_linewidth_1q.savefig(output_path+"quad1_size_linewidth.pdf", bbox_inches='tight')
 
 def second_quadrant_figures(args=None, save=True):
     """ Creates the figures for the second quadrant and saves them. """
@@ -94,27 +94,27 @@ def second_quadrant_figures(args=None, save=True):
 
     cloud_selection = selection_from_catalog(d, cloud_catalog)
 
-    iv_firstquad = make_quadrant_lbv_map(cloud_catalog, d, alignment='horizontal')
-    iv_firstquad.fig.set_figheight(5.7)
-    iv_firstquad.fig.set_figwidth(10)
-    iv_firstquad.fig.canvas.draw()
-    iv_firstquad.fig.savefig(output_path+'quad2_map.pdf')
+    iv_secondquad = make_quadrant_lbv_map(cloud_catalog, d, alignment='horizontal', aspect=2)
+    iv_secondquad.fig.set_figheight(5.7)
+    iv_secondquad.fig.set_figwidth(10)
+    iv_secondquad.fig.canvas.draw()
+    iv_secondquad.fig.savefig(output_path+'quad2_map.pdf', bbox_inches='tight')
 
-    topdown_1q = make_quadrant_topdown_map(cloud_catalog)
-    topdown_1q.set_figwidth(6)
-    topdown_1q.set_figheight(8)
-    topdown_1q.axes[0].set_xlim(0, 15)
-    topdown_1q.axes[0].set_ylim(17, -4.5)
-    topdown_1q.axes[0].set_xlabel("Solar-centric $y$ (kpc)")
-    topdown_1q.axes[0].set_ylabel("Solar-centric $x$ (kpc)")
+    topdown_2q = make_quadrant_topdown_map(cloud_catalog, loc='lower right')
+    topdown_2q.set_figwidth(6)
+    topdown_2q.set_figheight(8)
+    topdown_2q.axes[0].set_xlim(-3, 12)
+    topdown_2q.axes[0].set_ylim(8.3, -7.6)
+    topdown_2q.axes[0].set_xlabel("Solar-centric $y$ (kpc)")
+    topdown_2q.axes[0].set_ylabel("Solar-centric $x$ (kpc)")
 
-    topdown_1q.savefig(output_path+'quad2_topdown.pdf')
+    topdown_2q.savefig(output_path+'quad2_topdown.pdf', bbox_inches='tight')
 
-    cmf_1q = plot_cmf(cloud_catalog)[0]
-    cmf_1q.savefig(output_path+"quad2_cmf.pdf")
+    cmf_2q = plot_cmf(cloud_catalog)[0]
+    cmf_2q.savefig(output_path+"quad2_cmf.pdf", bbox_inches='tight')
 
-    size_linewidth_1q = plot_size_linewidth(cloud_catalog)
-    plt.xlim(7, 115)
+    size_linewidth_2q = plot_size_linewidth_fit(cloud_catalog)[0]
+    plt.xlim(3, 115)
     plt.ylim(0.55, 29)
-    size_linewidth_1q.savefig(output_path+"quad2_size_linewith.pdf")
+    size_linewidth_2q.savefig(output_path+"quad2_size_linewidth.pdf", bbox_inches='tight')
 
