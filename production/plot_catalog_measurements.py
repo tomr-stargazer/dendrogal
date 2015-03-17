@@ -85,6 +85,34 @@ def plot_cmf(catalog, bins=20, hist_range=(4, 7), mass_column_name='mass', **kwa
 
     return fig, cmf_output
 
+def plot_mass_density_radius(catalog, bins=20):
 
+    fig = plt.figure()
 
+    catalog_rgal = (catalog['x_gal']**2 + catalog['y_gal']**2)**(1/2)
 
+    radii = np.arange(bins)
+    mass_per_radius = np.zeros_like(radii) 
+    area_per_radius = np.zeros_like(radii)
+
+    for i, r in enumerate(radii):
+
+        if i == bins-1:
+            break
+
+        catalog_at_r = catalog[(catalog_rgal > radii[i]) & 
+                               (catalog_rgal < radii[i+1])]
+
+        mass_in_r = np.sum(catalog_at_r['mass'])
+
+        mass_per_radius[i] = mass_in_r
+
+        area_per_radius = np.pi*((radii[i+1])**2 - radii[i]**2) * u.kpc**2
+
+    mass_density_per_radius = (mass_per_radius*u.solMass/area_per_radius).to(u.solMass / u.pc**2)
+
+    plt.plot(radii, mass_density_per_radius, 'ko-')
+
+    plt.xlim(2,17)
+
+    return mass_per_radius, mass_density_per_radius
