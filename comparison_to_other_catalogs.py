@@ -28,6 +28,7 @@ id_column = dame86_catalog['ID']
 vcen_column = np.array([x.split(',')[1] for x in id_column]).astype('float')
 lcen_column = dame86_catalog['LII']
 sky_radius_column = np.degrees(dame86_catalog['R']/(dame86_catalog['D']*1000))
+mass_column = dame86_catalog['logM']
 
 garcia_sky_radius = np.degrees(garcia_catalog['R']/(garcia_catalog['D']*1000))
 
@@ -54,6 +55,16 @@ def make_figures_to_show_lv_stuff():
 
     return fig1, fig2
 
+def dame_mass_histogram():
+
+    fig = plt.figure()
+
+    plt.hist(mass_column, range=(4,7), bins=17)
+    plt.xlabel("log(M)")
+
+    return fig
+
+
 def plot_dame_ellipses_on_integrated_viewer(integrated_viewer):
 
     iv = integrated_viewer
@@ -77,6 +88,9 @@ def plot_dame_ellipses_on_integrated_viewer(integrated_viewer):
         iv.ax_lv.add_artist(e)
         e.set_facecolor('none')
         e.set_edgecolor('blue')
+        e.set_zorder(2)
+
+    iv.fig.canvas.draw()
 
 
 def plot_garcia_ellipses_on_iv(integrated_viewer):
