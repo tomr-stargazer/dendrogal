@@ -200,10 +200,12 @@ def combined_galaxy_figures(catalog):
 
     # catalog = extract_and_combine_catalogs(args)
 
-    topdown_all = make_quadrant_topdown_map(catalog, loc='lower right')
+    topdown_all = make_quadrant_topdown_map(catalog, loc='lower center')
+    topdown_all.set_figwidth(9)
+    topdown_all.set_figheight(9)
     topdown_all.axes[0].set_xlabel("Solar-centric $y$ (kpc)")
     topdown_all.axes[0].set_ylabel("Solar-centric $x$ (kpc)")
-    topdown_all.axes[0].set_xlim(-13.1, 20)
+    topdown_all.axes[0].set_xlim(-13, 13)
     topdown_all.axes[0].set_ylim(21.9, -6.5)
 
     topdown_all.savefig(output_path+"allquads_topdown.pdf", bbox_inches='tight')
