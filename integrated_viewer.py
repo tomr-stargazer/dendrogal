@@ -12,7 +12,7 @@ from wcsaxes import WCSAxes
 
 class IntegratedViewer(object):
     def __init__(self, dendrogram, hub, alignment='horizontal', cmap=plt.cm.gray,
-                 clip_velocity=None, aspect=2.5):
+                 clip_velocity=None, aspect=2.5, linewidths=1.5):
 
         if dendrogram.data.ndim != 3:
             raise ValueError(
@@ -77,6 +77,7 @@ class IntegratedViewer(object):
             self.clip_velocity = clip_velocity
 
         self.aspect = aspect
+        self.linewidths = linewidths
 
         self._draw_plot()
         self.hub.add_callback(self.update_selection)
@@ -180,9 +181,9 @@ class IntegratedViewer(object):
                 self.selected_contours[selection_id] = (
                     self.ax_lb.contour(
                         mask_lb, colors=self.hub.colors[selection_id],
-                        linewidths=1.5, levels=[0.5], alpha=0.9, zorder=struct.height), 
+                        linewidths=self.linewidths, levels=[0.5], alpha=0.9, zorder=struct.height), 
                     self.ax_lv.contour(
                         mask_lv, colors=self.hub.colors[selection_id],
-                        linewidths=1.5, levels=[0.5], alpha=0.9, zorder=struct.height) )
+                        linewidths=self.linewidths, levels=[0.5], alpha=0.9, zorder=struct.height) )
 
         self.fig.canvas.draw()
