@@ -22,7 +22,7 @@ from ..hurt_image_overlay_demo import underlay_hurt_galaxy
 
 output_path = os.path.expanduser("~/Dropbox/Grad School/Research/Milkyway/paper/")
 
-def make_quadrant_lbv_map(cloud_catalog, dendgrogram, contour_select=True, alignment='lv'):
+def make_quadrant_lbv_map(cloud_catalog, dendgrogram, contour_select=True, alignment='lv', vscale=0.65, xscale=0.125, aspect=1/3):
 
     # one: select things
 
@@ -37,7 +37,7 @@ def make_quadrant_lbv_map(cloud_catalog, dendgrogram, contour_select=True, align
         dv.hub.select(3, None)
 
     iv = IntegratedViewer(d, dv.hub, cmap='gray_r', clip_velocity=False, 
-                          alignment=alignment, aspect=1/3)
+                          alignment=alignment, aspect=aspect)
 
     # let's make ellipses
     # copied largely from comparison_to_other_catalogs.py
@@ -52,9 +52,9 @@ def make_quadrant_lbv_map(cloud_catalog, dendgrogram, contour_select=True, align
 
     # l_scale_lv = (l_lv_pixels[1] - l_lv_pixels[0])/(lcen_column[1]-lcen_column[0])
     # v_scale_lv = (v_lv_pixels[1] - v_lv_pixels[0])/(vcen_column[1]-vcen_column[0])
-    l_scale_lbv = 0.125
-    b_scale_lbv = 0.125
-    v_scale_lbv = 0.65
+    l_scale_lbv = xscale # 0.125 in quadrant 1
+    b_scale_lbv = xscale # 0.125 in quadrant 1
+    v_scale_lbv = vscale # 0.65 in quadrant 1
 
     lv_ells = [Ellipse(xy=zip(l_lbv_pixels, v_lbv_pixels)[i], 
                        width=2*cloud_catalog['major_sigma'][i]/l_scale_lbv, 
