@@ -14,6 +14,7 @@ from .compute_dendrogram_and_catalog import compute_dendrogram, compute_catalog
 from .calculate_distance_dependent_properties import assign_properties
 from .remove_degenerate_structures import reduce_catalog
 from .detect_disparate_distances import detect_disparate_distances
+from .disqualify_edge_structures import identify_edge_structures
 
 from ..reid_distance_assigner import make_reid_distance_column
 from ..catalog_tree_stats import compute_tree_stats
@@ -36,6 +37,9 @@ def fourth_quad_dendrogram():
     # note disparate distances
     catalog['disparate'] = detect_disparate_distances(d, catalog)
 
+    # note edge structures
+    catalog['on_edge'] = identify_edge_structures(d)
+
     return d, catalog, header, metadata
 
 def distance_disambiguator(catalog):
@@ -54,8 +58,8 @@ def distance_disambiguator(catalog):
     far_distance = u.Quantity(far_distance_column)
     far_size = sky_radius.to(u.rad).value * far_distance
 
-    quad2_fit_constant = 0.48293812090592952
-    quad2_fit_power = 0.56796770148326814
+    quad2_fit_constant = 0.39
+    quad2_fit_power = 0.62
 
     expected_size =  (1/quad2_fit_constant * catalog['v_rms'].data)**(1/quad2_fit_power) * u.pc
 
@@ -76,7 +80,9 @@ def extract_positive_velocity_clouds(input_catalog):
         (catalog['v_cen'] < 5) |
         (catalog['x_cen'] > 340) |
         (catalog['mass'] < 10**3.5 * u.solMass) |
-        (catalog['disparate'] == 0))
+        (catalog['disparate'] == 0) |
+        (catalog['on_edge'] == 1)
+        )
 
     output_catalog = catalog[~disqualified]
 
@@ -93,14 +99,15 @@ def extract_negative_velocity_clouds(input_catalog):
     # narrow down how we select clouds
     disqualified = (
         (catalog['v_cen'] > -5) |
-        (catalog['mass'] < 10**3.5 * u.solMass) |
-        (catalog['disparate'] == 0)        
+        (catalog['mass'] < 10**4.5 * u.solMass) |
+        (catalog['disparate'] == 0) |
+        (catalog['on_edge'] == 1)
         # (np.abs(catalog['fractional_gain'] - 0.5) > 0.05)
         )
 
     qualified = (
         (catalog['n_descendants'] < 10) & 
-        (catalog['n_descendants'] > 1) &
+        # (catalog['n_descendants'] > 1) &
         (catalog['fractional_gain'] < 0.81))
 
     output_catalog = catalog[~disqualified & qualified]
