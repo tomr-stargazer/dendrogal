@@ -13,6 +13,7 @@ from .load_and_process_data import load_data, permute_data_to_standard_order
 from .compute_dendrogram_and_catalog import compute_dendrogram, compute_catalog
 from .calculate_distance_dependent_properties import assign_properties
 from .remove_degenerate_structures import reduce_catalog
+from .disqualify_edge_structures import identify_edge_structures
 
 from ..reid_distance_assigner import make_reid_distance_column
 from ..catalog_tree_stats import compute_tree_stats
@@ -32,6 +33,9 @@ def third_quad_dendrogram():
     # assignment of tree statistic properties
     compute_tree_stats(catalog, d)    
 
+    # note edge structures
+    catalog['on_edge'] = identify_edge_structures(d)
+
     return d, catalog, header, metadata
 
 
@@ -42,6 +46,7 @@ def extract_clouds(input_catalog):
     # narrow down how we select clouds
     disqualified = (
         (np.abs(catalog['v_cen']) < 25) |
+        (catalog['on_edge'] == 1) | # removes edge objects
         # (catalog['major_sigma'] > 2 * u.deg) |
         # (catalog['area_exact'] > 50 * u.deg**2) |
         (catalog['x_sol'] < -7) |
