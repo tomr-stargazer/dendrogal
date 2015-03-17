@@ -13,12 +13,12 @@ def on_edge(struct, shape):
     x_len, y_len, z_len = shape
     x_array, y_array, z_array = struct.indices()
 
-    if ((0 in x_array) or
-        (0 in y_array) or
-        (0 in z_array) or
-        (x_len-1 in x_array) or
-        (y_len-1 in y_array) or
-        (z_len-1 in z_array)
+    if ((x_array.min() == 0) or
+        (y_array.min() == 0) or
+        (z_array.min() == 0) or
+        (x_array.max() == x_len-1) or
+        (y_array.max() == y_len-1) or
+        (z_array.max() == z_len-1)
         ):
         return True
     else:
