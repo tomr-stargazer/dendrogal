@@ -40,6 +40,10 @@ class IntegratedViewer(object):
             figsize = (10, 4)
             ax_lb_limits = [0.1, 0.1, 0.8, 0.8]
             ax_lv_limits = [0,0,0.01,0.01]
+        elif alignment == 'pv' or alignment == 'lv':
+            figsize = (10, 4)
+            ax_lb_limits = [0.5, 0.5, 0.01, 0.01]
+            ax_lv_limits = [0.1, 0.1, 0.8, 0.8]
         else:
             raise ValueError("`alignment` must be 'horizontal' or 'vertical'")
 
