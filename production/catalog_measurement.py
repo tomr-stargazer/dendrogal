@@ -75,7 +75,7 @@ def truncated_cloudmass_function(parameter_list, mass_array):
     return N_by_mass
 
 
-def cumulative_massfunction_fit(catalog, min_mass=1e5, bins=20):
+def cumulative_massfunction_fit(catalog, min_mass=1e5, bins=20, mass_column_name='mass'):
     """
     Measures a catalog's mass function slope using .
 
@@ -99,13 +99,13 @@ def cumulative_massfunction_fit(catalog, min_mass=1e5, bins=20):
         raise ValueError("'mass' must be column in `catalog`!")
 
     # make a reversely-summed histogram (the [::-1]'s ensure it's reversed properly)
-    hist, bin_edges = np.histogram( np.log10(catalog['mass']), range=[np.log10(min_mass), 7.5], bins=bins)
+    hist, bin_edges = np.histogram( np.log10(catalog[mass_column_name]), range=[np.log10(min_mass), 7.5], bins=bins)
     cum_hist = np.cumsum(hist[::-1])[::-1]
     bin_centers = (bin_edges[1:] + bin_edges[:-1])/2.
 
     initial_gamma = -2
-    initial_M_0 = sorted(catalog['mass'])[-2] # skip the biggest, go for second biggest
-    initial_N_0 = len(np.where(catalog['mass'] > 2**(1/(initial_gamma+1))*initial_M_0)[0])
+    initial_M_0 = sorted(catalog[mass_column_name])[-2] # skip the biggest, go for second biggest
+    initial_N_0 = len(np.where(catalog[mass_column_name] > 2**(1/(initial_gamma+1))*initial_M_0)[0])
 
     print "initial guess gamma: {0}".format(initial_gamma)
     print "initial guess M_0: {0}".format(initial_M_0)

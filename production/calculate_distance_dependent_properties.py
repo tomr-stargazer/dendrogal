@@ -11,7 +11,7 @@ import astropy.units as u
 import astropy.constants as c
 
 
-def assign_properties(catalog, galactic_center_distance=8.340*u.kpc):
+def assign_properties(catalog, galactic_center_distance=8.340*u.kpc, flux_column_name='flux_true'):
     """
     Computes and assigns distance-dependent properties to a catalog.
 
@@ -35,12 +35,12 @@ def assign_properties(catalog, galactic_center_distance=8.340*u.kpc):
 
     catalog['size'] = size.to(u.pc)
     
-    flux_true = u.Quantity(catalog['flux_true'])
+    flux = u.Quantity(catalog[flux_column_name])
     sigma_v = u.Quantity(catalog['v_rms'])
 
     # mass and alpha calculations from http://adsabs.harvard.edu/abs/2008ApJ...679.1338R
 
-    luminosity = flux_true * distance**2 / (1 * u.steradian)
+    luminosity = flux * distance**2 / (1 * u.steradian)
     X2 = 1.0
     mass = 4.4 * X2 * luminosity.to(u.K * u.km/u.s * u.pc**2).value * u.solMass
 

@@ -8,6 +8,8 @@ from __future__ import division
 import numpy as np
 import matplotlib.pyplot as plt
 
+import astropy.units as u
+
 from .catalog_measurement import size_linewidth_slope, cumulative_massfunction_fit, truncated_cloudmass_function
 
 
@@ -53,19 +55,18 @@ def plot_cmf_without_fit(catalog):
 
 	return fig
 
-def plot_cmf(catalog, bins=20, **kwargs):
+def plot_cmf(catalog, bins=20, hist_range=(4, 7), mass_column_name='mass', **kwargs):
 
     fig = plt.figure()
 
-    number_in_bin_q2, bin_edges, ch = plt.hist(np.log10(catalog['mass']), cumulative=-1, log=True, bins=bins)
+    number_in_bin_q2, bin_edges, ch = plt.hist(np.log10(catalog[mass_column_name]), cumulative=-1, log=True, bins=bins, range=hist_range)
     bin_centers_q2 = (bin_edges[1:] + bin_edges[:-1])/2.
     plt.clf()
     plt.plot(bin_centers_q2, number_in_bin_q2, 'ko' )
     plt.semilogy()
     plt.xlabel(r"log$_{10}$ (M$_{GMC}$ / M$_\odot$)")
     plt.ylabel("n(M > M')")
-
-    cmf_output = cumulative_massfunction_fit(catalog, bins=bins, **kwargs)
+    cmf_output = cumulative_massfunction_fit(catalog, bins=bins, mass_column_name=mass_column_name, **kwargs)
 
     M_0, N_0, gamma = cmf_output[0]
 
@@ -76,7 +77,9 @@ def plot_cmf(catalog, bins=20, **kwargs):
 
     text_string = r"$N(M' > M) = N_0 \left [ \left ( \frac{M}{M_0} \right )^{\gamma+1} - 1 \right ]$"
 
-    plt.text(4, 1, text_string, fontsize=18)
+    plt.text(4.1, 3, text_string, fontsize=18)
+    plt.xlim(*hist_range)
+    plt.ylim(0.7, 1e3)
 
     plt.legend(loc='upper right')
 
