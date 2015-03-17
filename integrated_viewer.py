@@ -12,7 +12,7 @@ from wcsaxes import WCSAxes
 
 class IntegratedViewer(object):
     def __init__(self, dendrogram, hub, alignment='horizontal', cmap=plt.cm.gray,
-                 clip_velocity=None, aspect=2.5, linewidths=1.5):
+                 clip_velocity=None, aspect=2.5, linewidths=0.9):
 
         if dendrogram.data.ndim != 3:
             raise ValueError(
