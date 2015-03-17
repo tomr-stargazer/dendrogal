@@ -100,11 +100,11 @@ def make_quadrant_topdown_map(cloud_catalog, loc=None):
     bigs = cloud_catalog[(cloud_catalog['mass'] < 1e7) & (cloud_catalog['mass'] > 1e6)]
     giants = cloud_catalog[cloud_catalog['mass'] > 1e7]
 
-    plt.plot(smalls['y_sol'], smalls['x_sol'], 'r.', label=r"$10^4 M_\odot$")
-    plt.plot(mediums['y_sol'], mediums['x_sol'], 'bo', label=r"$10^5 M_\odot$")
-    plt.plot(bigs['y_sol'], bigs['x_sol'], 'y*', ms=15, label=r"$10^6 M_\odot$")
+    plt.plot(smalls['y_sol'], smalls['x_sol'], 'co', ms=4, label=r"$10^4 M_\odot$")
+    plt.plot(mediums['y_sol'], mediums['x_sol'], 'co', ms=7, label=r"$10^5 M_\odot$")
+    plt.plot(bigs['y_sol'], bigs['x_sol'], 'co', ms=9, label=r"$10^6 M_\odot$")
     if len(giants) > 0:
-        plt.plot(giants['y_sol'], giants['x_sol'], 'gs', label=r"$10^7 M_\odot$")
+        plt.plot(giants['y_sol'], giants['x_sol'], 'co', ms=10, label=r"$10^7 M_\odot$")
 
     leg = plt.legend(loc=loc, numpoints=1)
     leg.get_frame().set_alpha(0.5)
