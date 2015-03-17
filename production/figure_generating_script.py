@@ -196,3 +196,28 @@ def fourth_quadrant_figures(args=None, save=True):
     plt.ylim(0.55, 29)
     size_linewidth_4q.savefig(output_path+"quad4_size_linewidth.pdf", bbox_inches='tight')    
 
+def combined_galaxy_figures(catalog):
+
+    # catalog = extract_and_combine_catalogs(args)
+
+    topdown_all = make_quadrant_topdown_map(catalog, loc='lower right')
+    topdown_all.axes[0].set_xlabel("Solar-centric $y$ (kpc)")
+    topdown_all.axes[0].set_ylabel("Solar-centric $x$ (kpc)")
+    topdown_all.axes[0].set_xlim(-13.1, 20)
+    topdown_all.axes[0].set_ylim(21.9, -6.5)
+
+    topdown_all.savefig(output_path+"allquads_topdown.pdf", bbox_inches='tight')
+
+    cmf_allquad = plot_cmf(catalog)[0]
+    cmf_allquad.savefig(output_path+"allquads_cmf.pdf", bbox_inches='tight')
+
+    size_linewidth_allquad = plot_size_linewidth_fit(catalog)[0]
+    plt.xlim(3, 115)
+    plt.ylim(0.55, 29)
+    size_linewidth_allquad.savefig(output_path+"allquads_size_linewidth.pdf", bbox_inches='tight')   
+     
+
+
+
+
+
