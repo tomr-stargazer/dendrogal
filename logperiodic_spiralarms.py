@@ -80,10 +80,10 @@ def convert_galactic_polar_to_solar_polar(beta, radii, solar_radius=8.34):
     solar_y = galactic_y - rsun
 
     solar_d = (solar_x**2 + solar_y**2)**(1/2)
-    solar_l = np.arctan( (solar_y)/(solar_x) ).to(u.deg) - 90 * u.deg
+    solar_l = np.arctan2( solar_y, solar_x ).to(u.deg) - 90 * u.deg
 
     # we constrain solar_d to be positive, so sometimes the angle needs to wrap around halfway
-    solar_l[solar_x >= 0] += 180 * u.deg
+    # solar_l[solar_x >= 0] += 180 * u.deg
 
     # make negative angles wrap until they're positive
     while (solar_l < 0).any():

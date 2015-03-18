@@ -12,7 +12,7 @@ from wcsaxes import WCSAxes
 
 class IntegratedViewer(object):
     def __init__(self, dendrogram, hub, alignment='horizontal', cmap=plt.cm.gray,
-                 clip_velocity=None, aspect=2.5, linewidths=0.9):
+                 clip_velocity=None, aspect=2.5, linewidths=0.9, figsize=None):
 
         if dendrogram.data.ndim != 3:
             raise ValueError(
@@ -29,19 +29,19 @@ class IntegratedViewer(object):
         self.selected_contours = {} # selection_id -> (contour, contour) tuple
 
         if alignment == 'horizontal':
-            figsize = (10, 4.4)
+            figsize = figsize or (10, 4.4)
             ax_lb_limits = [0.1, 0.05, 0.8, 0.4]
             ax_lv_limits = [0.1, 0.5, 0.8, 0.5]
         elif alignment == 'vertical':
-            figsize = (8, 6)
+            figsize = figsize or (8, 6)
             ax_lb_limits = [0.1, 0.1, 0.375, 0.8]
             ax_lv_limits = [0.55, 0.1, 0.375, 0.8]
         elif alignment == 'pp' or alignment == 'lb':
-            figsize = (10, 4)
+            figsize = figsize or (10, 4)
             ax_lb_limits = [0.1, 0.1, 0.8, 0.8]
             ax_lv_limits = [0,0,0.01,0.01]
         elif alignment == 'pv' or alignment == 'lv':
-            figsize = (10, 4)
+            figsize = figsize or (10, 4)
             ax_lb_limits = [0.5, 0.5, 0.01, 0.01]
             ax_lv_limits = [0.1, 0.1, 0.8, 0.8]
         else:

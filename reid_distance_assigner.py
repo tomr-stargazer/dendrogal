@@ -79,20 +79,21 @@ def make_reid_distance_column(catalog, nearfar='near', executable_path=executabl
 
     source_file_string = ''
     
-    for row in catalog:
+    galactic_coord = Galactic(
+        l=catalog['x_cen'], b=catalog['y_cen'], unit=(u.deg, u.deg))
+
+    rhh, rmm, rss = galactic_coord.fk5.ra.hms
+    ddd, dmm, dss = galactic_coord.fk5.dec.dms
+
+    fstring = str(nearfar_dict[nearfar])
+
+    for i, row in enumerate(catalog):
 
         name = str(row["_idx"])
         
-        galactic_coord = Galactic(
-            l=row['x_cen'], b=row['y_cen'], unit=(u.deg, u.deg))
-
-        rhh, rmm, rss = galactic_coord.fk5.ra.hms
-        ddd, dmm, dss = galactic_coord.fk5.dec.dms
-
-        rastring = "%02i%02i%05.2f" % (rhh, rmm, rss)
-        destring = "%+03i%02i%05.2f" % (ddd, np.abs(dmm), np.abs(dss))
+        rastring = "%02i%02i%05.2f" % (rhh[i], rmm[i], rss[i])
+        destring = "%+03i%02i%05.2f" % (ddd[i], np.abs(dmm)[i], np.abs(dss)[i])
         vstring = "%7.1f" % row['v_cen']
-        fstring = str(nearfar_dict[nearfar])
 
         row_string = name+" "+rastring+" "+destring+" "+vstring+" "+fstring+"\n"
 

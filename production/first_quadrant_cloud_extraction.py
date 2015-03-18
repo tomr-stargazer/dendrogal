@@ -14,27 +14,38 @@ from .compute_dendrogram_and_catalog import compute_dendrogram, compute_catalog
 from .calculate_distance_dependent_properties import assign_properties
 from .remove_degenerate_structures import reduce_catalog
 from .detect_disparate_distances import detect_disparate_distances
+from .disqualify_edge_structures import identify_edge_structures
 
 from ..reid_distance_assigner import make_reid_distance_column
 from ..catalog_tree_stats import compute_tree_stats
 
 def first_quad_dendrogram():
     datacube, header = permute_data_to_standard_order(*load_data("DHT08_Quad1_mominterp.fits"))
-    d = compute_dendrogram(datacube, header, min_value=0.18, min_delta=0.18/2, min_npix=50)
+    d = compute_dendrogram(datacube, header, min_value=0.18, min_delta=0.18/2, min_npix=40)
     catalog, metadata = compute_catalog(d, header)
 
     # DISTANCE assignment
     best_distance = distance_disambiguator(catalog)
     catalog['distance'] = best_distance
 
+    catalog_clipped = catalog.copy(copy_data=True)
+
     # assignment of physical properties
     assign_properties(catalog)
+    assign_properties(catalog_clipped, flux_column_name='flux_clipped')
+
+    catalog['mass_clipped'] = catalog_clipped['mass']
+    catalog['virial_alpha_clipped'] = catalog_clipped['virial_alpha']
+    catalog['pressure_clipped'] = catalog_clipped['pressure']
 
     # assignment of tree statistic properties
     compute_tree_stats(catalog, d)
 
     # note disparate distances
     catalog['disparate'] = detect_disparate_distances(d, catalog)
+
+    # note edge structures
+    catalog['on_edge'] = identify_edge_structures(d)
 
     return d, catalog, header, metadata
 
@@ -76,7 +87,8 @@ def extract_negative_velocity_clouds(input_catalog):
     disqualified = (
         (catalog['v_cen'] > -5) |
         (catalog['mass'] < 10**3.5 * u.solMass) | 
-        (catalog['disparate'] == 0)
+        (catalog['disparate'] == 0) | 
+        (catalog['on_edge'] == 1)
         )
 
     output_catalog = catalog[~disqualified]
@@ -93,19 +105,56 @@ def extract_positive_velocity_clouds(input_catalog):
     # narrow down how we select clouds
     disqualified = (
         (catalog['v_cen'] < 20) |
-        (catalog['mass'] < 10**3.5 * u.solMass) |
-        (catalog['disparate'] == 0)        
+#        (catalog['mass'] < 10**3.5 * u.solMass) |
+        (catalog['disparate'] == 0) |
+        (catalog['on_edge'] == 1)
         # (np.abs(catalog['fractional_gain'] - 0.5) > 0.05)
         )
 
-    qualified = (
+    qualified_1 = (
         (catalog['n_descendants'] < 10) & 
         (catalog['n_descendants'] > 1) &
-        (catalog['fractional_gain'] < 0.81))
+        (catalog['fractional_gain'] < 0.81) & 
+        (catalog['mass'] > 10**3.5 * u.solMass))
 
-    output_catalog = catalog[~disqualified & qualified]
+    qualified_2 = (
+        (catalog['n_descendants'] < 10) & 
+        (catalog['fractional_gain'] < 0.81) & 
+        (catalog['mass_clipped'] > 10**5 * u.solMass))
+
+    output_catalog = catalog[~disqualified & (qualified_1|qualified_2)]
 
     return output_catalog
+
+def extract_positive_velocity_clouds_control(input_catalog):
+    """
+    This is a way to get things in the positive-velocity part of the map, excluding local stuff.
+    """
+
+    catalog = input_catalog.copy(copy_data=True)
+
+    # narrow down how we select clouds
+    disqualified = (
+        (catalog['v_cen'] < 20) |
+        (catalog['disparate'] == 0) |
+        (catalog['on_edge'] == 1)
+        )
+
+    qualified_1 = (
+        (catalog['n_descendants'] < 10) & 
+        (catalog['n_descendants'] > 1) &
+        (catalog['fractional_gain'] < 0.81) & 
+        (catalog['mass'] > 10**3.5 * u.solMass))
+
+    # qualified_2 = (
+    #     (catalog['n_descendants'] < 10) & 
+    #     (catalog['fractional_gain'] < 0.81) & 
+    #     (catalog['mass_clipped'] > 10**5 * u.solMass))
+
+    output_catalog = catalog[~disqualified & #(qualified_1|qualified_2)]
+                             qualified_1]
+
+    return output_catalog    
 
 def extract_low_velocity_clouds(input_catalog):
     """
@@ -120,7 +169,9 @@ def extract_low_velocity_clouds(input_catalog):
         (catalog['v_cen'] > 20) |
         (catalog['n_descendants'] > 10) |
         (catalog['mass'] < 10**3.5 * u.solMass) |
-        (np.abs(catalog['y_cen'] > 1)) )
+        (np.abs(catalog['y_cen'] > 1)) |
+        (catalog['on_edge'] == 1)
+        )
 
     qualified = (
         (catalog['distance'] > 9.8) & 
@@ -130,12 +181,6 @@ def extract_low_velocity_clouds(input_catalog):
 
     return output_catalog
 
-# def prune_catalog(d, catalog):
-#     new_catalog = disqualify(catalog)
-
-#     smaller_catalog = reduce_catalog(d, new_catalog)
-
-#     return smaller_catalog
 
 def export_firstquad_catalog(args=None):
     """ 
