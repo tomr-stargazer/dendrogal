@@ -110,10 +110,6 @@ def make_reid_distance_column(catalog, nearfar='near', executable_path=executabl
         
     output, error = p.communicate()
 
-    print output
-    print error
-
-
     lines_of_data = [x for x in output.split('\n') if '!' not in x and x != '']
 
 
