@@ -169,6 +169,10 @@ def test_reload_dendrogram_catalog_output():
     assert_equal(header2, header)
     assert_equal(metadata2, metadata)
 
+    # 4.5. stress test.
+    for i in range(5):
+        reload_dendrogram_catalog_output(**kwargs)
+
     #5 then delete the saved objects.
     os.remove(filename_base+"_d.hdf5")
     os.remove(filename_base+"_catalog.fits")
@@ -186,42 +190,4 @@ def test_reload_failure():
               'savepath': filepath}
 
     assert_raises(IOError, reload_dendrogram_catalog_output, **kwargs)
-
-def test_reload_stress_test():
-    data = np.zeros((3,3,3))
-    data[1,1,1] = 1
-    d = Dendrogram.compute(data, min_value=0)
-
-    catalog = Table()
-    catalog['test_column'] = np.zeros(10)
-
-    header = Header.fromstring("SIMPLE  =                    T / conforms to FITS standard                      BITPIX  =                   64 / array data type                                NAXIS   =                    3 / number of array dimensions                     NAXIS1  =                    6                                                  NAXIS2  =                    5                                                  NAXIS3  =                    4                                                  CTYPE1  = 'VELO-LSR'                                                            CTYPE2  = 'GLON-CAR'                                                            CTYPE3  = 'GLAT-CAR'                                                            CRVAL1  = ''                                                                    CRVAL2  = ''                                                                    CRVAL3  = ''                                                                    CDELT1  = ''                                                                    CDELT2  = ''                                                                    CDELT3  = ''                                                                    CRPIX1  = ''                                                                    CRPIX2  = ''                                                                    CRPIX3  = ''                                                                    END                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             ")
-
-    metadata = {}
-    metadata['data_unit'] = u.K
-
-    # 2. save it all "manually"
-    filename_base = filepath+"not_real_data_stresstest.fits_1.000_2.000_3"
-
-    d.save_to(filename_base+"_d.hdf5")
-    catalog.write(filename_base+"_catalog.fits", overwrite=True)
-    header.tofile(filename_base+"_header.fits", clobber=True)
-    pickle.dump(metadata, open(filename_base+"_metadata.p", 'wb'))
-
-    # 3. reconstitute it using the magic function
-    kwargs = {'data_filename': 'not_real_data_stresstest.fits', 
-              'min_value': 1, 
-              'min_delta': 2, 
-              'min_npix': 3,
-              'savepath': filepath}
-
-    # 4. stress test.
-    for i in range(10):
-        reload_dendrogram_catalog_output(**kwargs)
-
-    #5 then delete the saved objects.
-    os.remove(filename_base+"_d.hdf5")
-    os.remove(filename_base+"_catalog.fits")
-    os.remove(filename_base+"_header.fits")
-    os.remove(filename_base+"_metadata.p")
 
