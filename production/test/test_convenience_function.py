@@ -16,7 +16,7 @@ from astropy.io.fits import getdata, getheader, Header, writeto
 import astropy.units as u
 from astrodendro import Dendrogram
 
-from ..convenience_function import save_dendrogram_catalog_output, reload_dendrogram_catalog_output
+from ..convenience_function import save_dendrogram_catalog_output
 
 filepath = "production/test/"
 
