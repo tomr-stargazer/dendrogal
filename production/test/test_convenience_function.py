@@ -8,7 +8,7 @@ should run with py.test
 import os
 import pickle
 
-from numpy.testing import assert_allclose, assert_equal, assert_array_equal
+from numpy.testing import assert_allclose, assert_equal, assert_array_equal, assert_raises
 import numpy as np
 
 from astropy.table import Table
@@ -16,12 +16,78 @@ from astropy.io.fits import getdata, getheader, Header, writeto
 import astropy.units as u
 from astrodendro import Dendrogram
 
-from ..convenience_function import save_dendrogram_catalog_output
+from ..convenience_function import save_dendrogram_catalog_output, filename_generator
 
 filepath = "production/test/"
 
 def test_filename_generator():
-    pass
+
+    # 1. test that no arguments gives an error
+    assert_raises(ValueError, filename_generator, [], {})
+
+    # 2. test with some integers
+    expected_1 = {}
+    expected_1_base = 'a.fits_1.000_2.000_3'
+    expected_1['d'] = filepath+expected_1_base+"_d.hdf5"
+    expected_1['catalog'] = filepath+expected_1_base+"_catalog.fits"
+    expected_1['header'] = filepath+expected_1_base+"_header.fits"
+    expected_1['metadata'] = filepath+expected_1_base+"_metadata.p"
+
+    kwargs_1 = {'data_filename':'a.fits',
+              'min_value': 1, 
+              'min_delta': 2, 
+              'min_npix': 3,
+              'savepath': filepath}
+
+    assert_equal(filename_generator(**kwargs_1), expected_1)
+
+    # 3. test with some reasonable floats
+    expected_2_base = 'a.fits_0.123_12.778_200'
+    expected_2_d = filepath+expected_2_base+"_d.hdf5"
+
+    kwargs_2 = {'data_filename':'a.fits',
+              'min_value': 0.123, 
+              'min_delta': 12.778, 
+              'min_npix': 200,
+              'savepath': filepath}
+
+    assert_equal(filename_generator(**kwargs_2)['d'], expected_2_d)
+
+    # 4. test with some possibly borderline floats
+    expected_3_base = 'a.fits_0.001_3.142_5'
+    expected_3_d = filepath+expected_3_base+"_d.hdf5"
+
+    kwargs_3 = {'data_filename':'a.fits',
+              'min_value': 0.0009, 
+              'min_delta': np.pi, 
+              'min_npix': 5,
+              'savepath': filepath}
+
+    assert_equal(filename_generator(**kwargs_3)['d'], expected_3_d)
+
+    # 5. test with some negative values
+    expected_4_base = 'a.fits_-1.000_-0.550_-5'
+    expected_4_d = filepath+expected_4_base+"_d.hdf5"
+
+    kwargs_4 = {'data_filename':'a.fits',
+              'min_value': -1, 
+              'min_delta': -0.55, 
+              'min_npix': -5,
+              'savepath': filepath}
+
+    assert_equal(filename_generator(**kwargs_4)['d'], expected_4_d)
+
+    # 6. some None's
+    expected_5_base = 'a.fits_None_None_None'
+    expected_5_d = filepath+expected_5_base+"_d.hdf5"
+
+    kwargs_5 = {'data_filename':'a.fits',
+              'min_value': None, 
+              'min_delta': None, 
+              'min_npix': None,
+              'savepath': filepath}
+
+    assert_equal(filename_generator(**kwargs_5)['d'], expected_5_d)
 
 def test_save_dendrogram_catalog_output():
 
