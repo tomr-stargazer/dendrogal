@@ -40,6 +40,18 @@ def save_dendrogram_catalog_output(d, catalog, header, metadata, **kwargs):
     return None
 
 
+def reload_dendrogram_catalog_output(**kwargs):
+
+    filename_dict = filename_generator(**kwargs)
+
+    d = astrodendro.Dendrogram.load_from(filename_dict['d'])
+    catalog = astropy.table.Table.read(filename_dict['catalog'])
+    header = getheader(filename_dict['header'])
+    metadata = pickle.load(open(filename_dict['metadata'], 'rb'))
+
+    return d, catalog, header, metadata
+
+
 def filename_generator(data_filename=None, min_value=None, min_delta=None, min_npix=None, savepath=savepath):
 
     filename_dict = {}

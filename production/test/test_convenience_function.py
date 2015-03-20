@@ -16,7 +16,7 @@ from astropy.io.fits import getdata, getheader, Header, writeto
 import astropy.units as u
 from astrodendro import Dendrogram
 
-from ..convenience_function import save_dendrogram_catalog_output, filename_generator
+from ..convenience_function import save_dendrogram_catalog_output, filename_generator, reload_dendrogram_catalog_output
 
 filepath = "production/test/"
 
@@ -105,7 +105,7 @@ def test_save_dendrogram_catalog_output():
     metadata['data_unit'] = u.K
 
     # 2. run save_dendrogram_catalog_output on them - to some safe location
-    kwargs = {'data_filename': 'not_real_data.fits', 
+    kwargs = {'data_filename': 'not_real_data_savetest.fits', 
               'min_value': 1, 
               'min_delta': 2, 
               'min_npix': 3,
@@ -113,7 +113,7 @@ def test_save_dendrogram_catalog_output():
     save_dendrogram_catalog_output(d, catalog, header, metadata, **kwargs)
 
     # 3. reload those things 
-    filename_base = filepath+"not_real_data.fits_1.000_2.000_3"
+    filename_base = filepath+"not_real_data_savetest.fits_1.000_2.000_3"
 
     d2 = Dendrogram.load_from(filename_base+"_d.hdf5")
     catalog2 = Table.read(filename_base+"_catalog.fits")
@@ -133,15 +133,44 @@ def test_save_dendrogram_catalog_output():
     os.remove(filename_base+"_metadata.p")
 
 def test_reload_dendrogram_catalog_output():
-    pass
+    # 1. construct a silly dendrogram, catalog, header, and metadata
+    data = np.zeros((3,3,3))
+    data[1,1,1] = 1
+    d = Dendrogram.compute(data, min_value=0)
 
-# def reload_dendrogram_catalog_output(**kwargs):
+    catalog = Table()
+    catalog['test_column'] = np.zeros(10)
 
-#     filename_dict = filename_generator(**kwargs)
+    header = Header.fromstring("SIMPLE  =                    T / conforms to FITS standard                      BITPIX  =                   64 / array data type                                NAXIS   =                    3 / number of array dimensions                     NAXIS1  =                    6                                                  NAXIS2  =                    5                                                  NAXIS3  =                    4                                                  CTYPE1  = 'VELO-LSR'                                                            CTYPE2  = 'GLON-CAR'                                                            CTYPE3  = 'GLAT-CAR'                                                            CRVAL1  = ''                                                                    CRVAL2  = ''                                                                    CRVAL3  = ''                                                                    CDELT1  = ''                                                                    CDELT2  = ''                                                                    CDELT3  = ''                                                                    CRPIX1  = ''                                                                    CRPIX2  = ''                                                                    CRPIX3  = ''                                                                    END                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             ")
 
-#     d = astrodendro.Dendrogram.load_from(filename_dict['d'])
-#     catalog = astropy.table.Table.read(filename_dict['catalog'])
-#     header = getheader(filename_dict['header'])
-#     metadata = pickle.load(open(filename_dict['metadata'], 'rb'))
+    metadata = {}
+    metadata['data_unit'] = u.K
 
-#     return d, catalog, header, metadata
+    # 2. save it all "manually"
+    filename_base = filepath+"not_real_data_reloadtest.fits_1.000_2.000_3"
+
+    d.save_to(filename_base+"_d.hdf5")
+    catalog.write(filename_base+"_catalog.fits", overwrite=True)
+    header.tofile(filename_base+"_header.fits", clobber=True)
+    pickle.dump(metadata, open(filename_base+"_metadata.p", 'wb'))
+
+    # 3. reconstitute it using the magic function
+    kwargs = {'data_filename': 'not_real_data_reloadtest.fits', 
+              'min_value': 1, 
+              'min_delta': 2, 
+              'min_npix': 3,
+              'savepath': filepath}
+
+    d2, catalog2, header2, metadata2 = reload_dendrogram_catalog_output(**kwargs)
+
+    #4 and assert they equal the mock things.
+    assert_equal(d2.index_map, d.index_map)
+    assert_array_equal(catalog2, catalog)
+    assert_equal(header2, header)
+    assert_equal(metadata2, metadata)
+
+    #5 then delete the saved objects.
+    os.remove(filename_base+"_d.hdf5")
+    os.remove(filename_base+"_catalog.fits")
+    os.remove(filename_base+"_header.fits")
+    os.remove(filename_base+"_metadata.p")
