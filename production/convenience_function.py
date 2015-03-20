@@ -17,6 +17,25 @@ import astrodendro
 from .load_and_process_data import load_data, permute_data_to_standard_order
 from .compute_dendrogram_and_catalog import compute_dendrogram, compute_catalog
 
+
+# def memoize(func):
+#     """ Decorator function, ripped off of astrodendro.analysis.memoize()"""
+
+#     @wraps(func)
+#     def wrapper(self, *args, **kwargs):
+#         try:
+#             # LOAD THE dendrogram & catalog FROM WHEREVER IT WOULD LIVE IF IT WERE SAVED
+#             return reload_dendrogram_catalog_output(*args, **kwargs)
+#         except IOError:
+#             # generate and save the thing, then return it
+#             output = func(**kwargs)
+#             save_dendrogram_catalog_output(output, *args, **kwargs)
+#             return output
+
+#     return wrapper
+
+
+# @memoize
 def load_permute_dendro_catalog(filename, min_value=None, min_delta=None, min_npix=None):
 
     datacube, header = permute_data_to_standard_order(*load_data(filename))
@@ -25,6 +44,16 @@ def load_permute_dendro_catalog(filename, min_value=None, min_delta=None, min_np
     catalog, metadata = compute_catalog(d, header)
 
     return d, catalog, header, metadata 
+
+def load_permute_dendro_catalog_memoized(filename, **kwargs):
+    try:
+        # LOAD THE dendrogram & catalog FROM WHEREVER IT WOULD LIVE IF IT WERE SAVED
+        return reload_dendrogram_catalog_output(data_filename=filename, **kwargs)
+    except IOError:
+        # generate and save the thing, then return it
+        output = load_permute_dendro_catalog(filename=filename, **kwargs)
+        save_dendrogram_catalog_output(*output, data_filename=filename, **kwargs)
+        return output
 
 savepath = os.path.expanduser("~/Documents/Code/astrodendro_analysis/production/saved_dendrograms/")
 
@@ -79,5 +108,3 @@ def filename_generator(data_filename=None, min_value=None, min_delta=None, min_n
     filename_dict['metadata'] = savepath+filename_base+"_metadata.p"
 
     return filename_dict
-
-

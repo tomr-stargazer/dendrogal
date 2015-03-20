@@ -14,14 +14,18 @@ from .compute_dendrogram_and_catalog import compute_dendrogram, compute_catalog
 from .calculate_distance_dependent_properties import assign_properties
 from .remove_degenerate_structures import reduce_catalog
 from .disqualify_edge_structures import identify_edge_structures
+from .convenience_function import load_permute_dendro_catalog, load_permute_dendro_catalog_memoized
 
 from ..reid_distance_assigner import make_reid_distance_column
 from ..catalog_tree_stats import compute_tree_stats
 
 def third_quad_dendrogram():
-    datacube, header = permute_data_to_standard_order(*load_data("DHT31_Quad3_mominterp.fits"))
-    d = compute_dendrogram(datacube, header, min_value=0.12/2, min_delta=0.12, min_npix=20)
-    catalog, metadata = compute_catalog(d, header)
+    data_filename = "DHT31_Quad3_mominterp.fits"
+    dendrogram_kwargs = {'min_value' : 0.12/2,
+                         'min_delta' : 0.12,
+                         'min_npix' : 20}
+
+    d, catalog, header, metadata = load_permute_dendro_catalog_memoized(data_filename, **dendrogram_kwargs)
 
     # DISTANCE assignment
     reid_distance = make_reid_distance_column(catalog, nearfar='near')
