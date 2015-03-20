@@ -177,6 +177,8 @@ def test_reload_dendrogram_catalog_output():
 
 def test_reload_failure():
 
+    assert not os.path.isfile(filepath+'doesnt_exist.fits')
+
     kwargs = {'data_filename': 'doesnt_exist.fits', 
               'min_value': None, 
               'min_delta': None, 
