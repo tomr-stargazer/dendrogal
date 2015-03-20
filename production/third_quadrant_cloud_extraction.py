@@ -4,28 +4,24 @@ from __future__ import division
 
 import numpy as np
 
-import astropy
-import astrodendro
 import astropy.units as u
-import astropy.constants as c
 
-from .load_and_process_data import load_data, permute_data_to_standard_order
-from .compute_dendrogram_and_catalog import compute_dendrogram, compute_catalog
+from .convenience_function import load_permute_dendro_catalog
 from .calculate_distance_dependent_properties import assign_properties
 from .remove_degenerate_structures import reduce_catalog
 from .disqualify_edge_structures import identify_edge_structures
-from .convenience_function import load_permute_dendro_catalog, load_permute_dendro_catalog_memoized
 
 from ..reid_distance_assigner import make_reid_distance_column
 from ..catalog_tree_stats import compute_tree_stats
 
 def third_quad_dendrogram():
+
     data_filename = "DHT31_Quad3_mominterp.fits"
     dendrogram_kwargs = {'min_value' : 0.12/2,
                          'min_delta' : 0.12,
                          'min_npix' : 20}
 
-    d, catalog, header, metadata = load_permute_dendro_catalog_memoized(data_filename, **dendrogram_kwargs)
+    d, catalog, header, metadata = load_permute_dendro_catalog(data_filename, **dendrogram_kwargs)
 
     # DISTANCE assignment
     reid_distance = make_reid_distance_column(catalog, nearfar='near')

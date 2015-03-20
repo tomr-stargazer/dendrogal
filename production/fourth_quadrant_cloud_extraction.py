@@ -5,12 +5,9 @@ from __future__ import division
 import numpy as np
 
 import astropy
-import astrodendro
 import astropy.units as u
-import astropy.constants as c
 
-from .load_and_process_data import load_data, permute_data_to_standard_order
-from .compute_dendrogram_and_catalog import compute_dendrogram, compute_catalog
+from .convenience_function import load_permute_dendro_catalog
 from .calculate_distance_dependent_properties import assign_properties
 from .remove_degenerate_structures import reduce_catalog
 from .detect_disparate_distances import detect_disparate_distances
@@ -20,9 +17,13 @@ from ..reid_distance_assigner import make_reid_distance_column
 from ..catalog_tree_stats import compute_tree_stats
 
 def fourth_quad_dendrogram():
-    datacube, header = permute_data_to_standard_order(*load_data("DHT36_Quad4_mominterp.fits"))
-    d = compute_dendrogram(datacube, header, min_value=0.12/2, min_delta=0.12/2, min_npix=20)
-    catalog, metadata = compute_catalog(d, header)
+
+    data_filename = "DHT36_Quad4_mominterp.fits"
+    dendrogram_kwargs = {'min_value' : 0.12/2,
+                         'min_delta' : 0.12/2,
+                         'min_npix' : 20}
+
+    d, catalog, header, metadata = load_permute_dendro_catalog(data_filename, **dendrogram_kwargs)
 
     # DISTANCE assignment
     best_distance = distance_disambiguator(catalog)
