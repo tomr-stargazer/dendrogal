@@ -1,1 +1,2 @@
 astropy==0.4.1
+h5py
