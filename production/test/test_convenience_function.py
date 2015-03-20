@@ -174,3 +174,14 @@ def test_reload_dendrogram_catalog_output():
     os.remove(filename_base+"_catalog.fits")
     os.remove(filename_base+"_header.fits")
     os.remove(filename_base+"_metadata.p")
+
+def test_reload_failure():
+
+    kwargs = {'data_filename': 'doesnt_exist.fits', 
+              'min_value': None, 
+              'min_delta': None, 
+              'min_npix': None,
+              'savepath': filepath}
+
+    assert_raises(IOError, reload_dendrogram_catalog_output, **kwargs)
+
