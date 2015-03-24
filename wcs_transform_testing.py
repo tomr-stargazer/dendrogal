@@ -5,6 +5,8 @@ from __future__ import division
 import numpy as np
 import matplotlib.pyplot as plt
 
+from numpy.testing import assert_allclose, assert_equal
+
 from astropy import wcs
 import wcsaxes
 
@@ -44,9 +46,28 @@ wcs_object = wcs.wcs.WCS(header)
 # CDELT : -0.25  0.25  1.3003800000000001
 # NAXIS    : 0 0
 
+world_coordinates = np.vstack([np.arange(10), np.repeat(0, 10), np.arange(10)]).T
+
+pixel_from_wcs = wcs_object.wcs_world2pix(world_coordinates, 0)
+
+x_from_wcs = pixel_from_wcs[:,0]
+y_from_wcs = pixel_from_wcs[:,2]
+
 fig = plt.figure()
 
 ax = wcsaxes.WCSAxes(fig, [0.1 ,0.1 ,0.8, 0.8], wcs=wcs_object, slices=('x', 0, 'y'))
+fig.add_axes(ax)
 
-ax.plot(np.arange(10), np.arange(10), transform=ax.get_transform('world'))
+# ax.plot(np.arange(10), np.arange(10), transform=ax.get_transform('world'))
+tr = ax.get_transform('world')
+pixel_from_tr = tr.transform(np.array([np.arange(10),
+                               np.repeat(-90, 10),
+                               np.arange(10)]).transpose())
+x_from_tr, y_from_tr = pixel_from_tr[:,0], pixel_from_tr[:,1]
+ax.plot(x_from_tr, y_from_tr, 'b')
+ax.plot(x_from_wcs, y_from_wcs, 'r')
+plt.show()
+fig.canvas.draw()
 
+assert_equal(x_from_tr, x_from_wcs)
+assert_equal(y_from_tr, y_from_wcs)
