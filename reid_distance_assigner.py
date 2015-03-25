@@ -8,6 +8,7 @@ Hopefully I can figure out how to do this in a non-boneheaded way.
 from __future__ import division
 
 import os
+import pdb
 import subprocess
 from subprocess import Popen, PIPE, STDOUT
 
@@ -96,6 +97,7 @@ def make_reid_distance_column(catalog, nearfar='near', executable_path=executabl
         vstring = "%7.1f" % row['v_cen']
 
         row_string = name+" "+rastring+" "+destring+" "+vstring+" "+fstring+"\n"
+        print row_string
 
         source_file_string += row_string
 
@@ -105,11 +107,17 @@ def make_reid_distance_column(catalog, nearfar='near', executable_path=executabl
     f.write(source_file_string)
     f.close()
 
+    print "****** POPEN STARTING **** "
+
     p = Popen(
         [executable_path],
         shell = False, stdin=PIPE, stdout=PIPE)
+
+    print "****** POPEN ABOUT TO COMMUNICATE **** "
         
     output, error = p.communicate()
+
+    print "****** POPEN JUST COMMUNICATED **** "
 
     lines_of_data = [x for x in output.split('\n') if '!' not in x and x != '']
 
@@ -118,11 +126,21 @@ def make_reid_distance_column(catalog, nearfar='near', executable_path=executabl
     for i in range(len(lines_of_data)):
         line = lines_of_data[i]
         if len(line.split()) != 8:
+            print "the line split had more than 8"
+            print line
+            print lines_of_data[i-1]
             tuple_split = tuple(line.split()[0:5])
-            lines_of_data[i] = "  {0} {1} {2}  {3} {4}    0.00   0.00  0.00".format(*tuple_split)
+            source_name, lon, lat, vlsr, dk = tuple_split
+            lines_of_data[i] = "{0:6d} {1:.4f} {2:.4f}  {3:.4f} {4:.4f}    0.00   0.00  0.00".format(int(source_name), float(lon), float(lat), float(vlsr), float(dk))
 
-    kd_output = astropy.table.Table.read(lines_of_data, format='ascii')
+    print "****** ABOUT TO READ TABLE KD_OUTPUT **** "
+
+    print lines_of_data
+
+    pdb.set_trace()
     kd_output = astropy.table.Table.read(lines_of_data, format='ascii.no_header')
+
+    print "****** GOT KD_OUTPUT **** "
     
     kd_output.rename_column('col1', 'Source')
     kd_output.rename_column('col2', 'gal_long')
