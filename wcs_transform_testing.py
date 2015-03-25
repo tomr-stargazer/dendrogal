@@ -61,7 +61,7 @@ fig.add_axes(ax)
 # ax.plot(np.arange(10), np.arange(10), transform=ax.get_transform('world'))
 tr = ax.get_transform('world')
 pixel_from_tr = tr.transform(np.array([np.arange(10),
-                               np.repeat(-90, 10),
+                               np.repeat(0, 10),
                                np.arange(10)]).transpose())
 x_from_tr, y_from_tr = pixel_from_tr[:,0], pixel_from_tr[:,1]
 ax.plot(x_from_tr, y_from_tr, 'b')
