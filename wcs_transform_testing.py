@@ -59,7 +59,7 @@ ax = wcsaxes.WCSAxes(fig, [0.1 ,0.1 ,0.8, 0.8], wcs=wcs_object, slices=('x', 0, 
 fig.add_axes(ax)
 
 # ax.plot(np.arange(10), np.arange(10), transform=ax.get_transform('world'))
-tr = ax.get_transform('world')
+tr = ax._get_transform_no_transdata('world').inverted()
 pixel_from_tr = tr.transform(np.array([np.arange(10),
                                np.repeat(0, 10),
                                np.arange(10)]).transpose())
