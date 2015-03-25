@@ -122,6 +122,7 @@ def make_reid_distance_column(catalog, nearfar='near', executable_path=executabl
             lines_of_data[i] = "  {0} {1} {2}  {3} {4}    0.00   0.00  0.00".format(*tuple_split)
 
     kd_output = astropy.table.Table.read(lines_of_data, format='ascii')
+    kd_output = astropy.table.Table.read(lines_of_data, format='ascii.no_header')
     
     kd_output.rename_column('col1', 'Source')
     kd_output.rename_column('col2', 'gal_long')
