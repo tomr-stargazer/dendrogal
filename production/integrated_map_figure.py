@@ -16,6 +16,10 @@ import astropy.units as u
 
 from wcsaxes import WCSAxes
 
+colorbrewer_red = '#e41a1c' 
+colorbrewer_blue = '#377eb8'
+colorbrewer_green = '#4daf4a'
+
 def latitude_world2pix(wcs, latitudes):
     # assumes an l, b, v datacube (or at least that axis=1 is the latitude axis)
 
@@ -28,17 +32,15 @@ def latitude_world2pix(wcs, latitudes):
 
 class IntegratedMapFigure(object):
 
-    def __init__(self, datacube, wcs_object, contour=None, 
+    def __init__(self, datacube, wcs_object,  
                  aspect_in_units=5*(u.km/u.s)/u.deg, cmap='RdGy_r',
-                 integration_limits=(-1,1), figsize=(10,6) ):
+                 integration_limits=(-1,1), figsize=(10,9) ):
 
         self.datacube = datacube
         self.wcs = wcs_object
 
         self.fig = plt.figure(figsize=figsize)
         self.cmap = cmap
-
-        self.contour = contour
 
         ax = WCSAxes(self.fig, [0.1, 0.1, 0.8, 0.8], wcs=self.wcs, 
                      slices=('x', 0, 'y'))
@@ -62,4 +64,16 @@ class IntegratedMapFigure(object):
         self.image_lv = self.ax.imshow(np.log10(self.array_lv+1), origin='lower', 
             interpolation='nearest', cmap=self.cmap, aspect=self.aspect_px)
 
+        self.fig.canvas.draw()
 
+
+    def draw_contours(self, mask_3d, **kwargs):
+        """
+        Draws contours when you pass in a mask array!
+        """
+
+        mask_lv = np.sum(mask_3d, axis=1).astype('bool')
+
+        self.ax.contour(mask_lv, **kwargs)
+
+        self.fig.canvas.draw()
