@@ -27,13 +27,13 @@ colorbrewer_green = '#4daf4a'
 
 output_path = os.path.expanduser("~/Dropbox/Grad School/Research/Milkyway/paper/")
 
-def make_quadrant_lbv_map(cloud_catalog, dendgrogram, contour_select=True, 
+def make_quadrant_lbv_map(cloud_catalog, dendrogram, contour_select=True, 
                           alignment='lv', vscale=0.65, xscale=0.125, 
                           aspect=1/3, cmap='gray_r', **kwargs):
 
     # one: select things
 
-    d = dendgrogram
+    d = dendrogram
     dv = d.viewer()
 
     cloud_selection = selection_from_catalog(d, cloud_catalog)
