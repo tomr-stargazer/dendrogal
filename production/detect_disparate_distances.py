@@ -5,6 +5,9 @@ Finds out when structures have incompatible distance assignments internally.
 
 from __future__ import division
 
+import sys
+sys.setrecursionlimit(10000)
+
 import numpy as np
 
 # so the idea is:
