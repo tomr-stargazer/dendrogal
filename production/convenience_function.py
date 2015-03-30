@@ -8,6 +8,8 @@ I am implementing caching options to save even more time.
 import os.path
 from functools import wraps
 import pickle
+import datetime
+
 # import astropy.io.fits as fits
 import astropy
 from astropy.io.fits import getheader
@@ -23,6 +25,7 @@ def memoize(func):
 
     @wraps(func)
     def wrapper(filename, **kwargs):        
+        beginning = datetime.datetime.now()
         try:
             # LOAD THE dendrogram & catalog FROM WHEREVER IT WOULD LIVE IF IT WERE SAVED
             return reload_dendrogram_catalog_output(data_filename=filename, **kwargs)
@@ -31,6 +34,11 @@ def memoize(func):
             output = func(filename=filename, **kwargs)
             save_dendrogram_catalog_output(*output, data_filename=filename, **kwargs)
             return output
+        finally:
+            end = datetime.datetime.now()
+            time_elapsed = (end - beginning)
+            print " *** Dendrogram+catalog loading/generation took {0}".format(time_elapsed)
+
 
     return wrapper
 
