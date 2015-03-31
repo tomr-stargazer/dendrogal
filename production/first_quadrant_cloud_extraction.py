@@ -99,7 +99,11 @@ def extract_negative_velocity_clouds(input_catalog, max_descendants=30, min_desc
         (catalog['on_edge'] == 1)
         )
 
-    output_catalog = catalog[~disqualified]
+    # this step excludes the weird tail near the galactic center
+    disqualified_extreme_negative_velocities_near_GC = (
+        (catalog['v_cen'] < -10) & (catalog['x_cen'] < 20))
+
+    output_catalog = catalog[~disqualified & ~disqualified_extreme_negative_velocities_near_GC]
 
     return output_catalog
 
