@@ -16,12 +16,14 @@ from .disqualify_edge_structures import identify_edge_structures
 from ..reid_distance_assigner import make_reid_distance_column
 from ..catalog_tree_stats import compute_tree_stats
 
-def first_quad_dendrogram():
+def first_quad_dendrogram(min_value=0.18,
+                          min_delta=0.18,
+                          min_npix=20):
 
     data_filename = "DHT08_Quad1_mominterp.fits"
-    dendrogram_kwargs = {'min_value' : 0.18,
-                         'min_delta' : 0.18/2,
-                         'min_npix' : 50}
+    dendrogram_kwargs = {'min_value' : min_value,
+                         'min_delta' : min_delta,
+                         'min_npix' : min_npix}
 
     d, catalog, header, metadata = load_permute_dendro_catalog(data_filename, **dendrogram_kwargs)
 
@@ -85,7 +87,7 @@ def distance_disambiguator(catalog):
     return best_distance
 
 
-def extract_negative_velocity_clouds(input_catalog):
+def extract_negative_velocity_clouds(input_catalog, max_descendants=30, min_descendants=2):
 
     catalog = input_catalog.copy(copy_data=True)
 
@@ -101,7 +103,7 @@ def extract_negative_velocity_clouds(input_catalog):
 
     return output_catalog
 
-def extract_positive_velocity_clouds(input_catalog):
+def extract_positive_velocity_clouds(input_catalog, max_descendants=30, min_descendants=2):
     """
     This is a way to get things in the positive-velocity part of the map, excluding local stuff.
     """
@@ -118,15 +120,15 @@ def extract_positive_velocity_clouds(input_catalog):
         )
 
     qualified_1 = (
-        (catalog['n_descendants'] < 10) & 
-        (catalog['n_descendants'] > 1) &
+        (catalog['n_descendants'] < max_descendants) & 
+        (catalog['n_descendants'] >= min_descendants) &
         (catalog['fractional_gain'] < 0.81) & 
         (catalog['mass'] > 10**3.5 * u.solMass))
 
     qualified_2 = (
-        (catalog['n_descendants'] < 10) & 
+        (catalog['n_descendants'] < max_descendants) & 
         (catalog['fractional_gain'] < 0.81) & 
-        (catalog['mass_clipped'] > 10**5 * u.solMass))
+        (catalog['mass'] > 10**5 * u.solMass))
 
     output_catalog = catalog[~disqualified & (qualified_1|qualified_2)]
 
@@ -162,7 +164,7 @@ def extract_positive_velocity_clouds_control(input_catalog):
 
     return output_catalog    
 
-def extract_low_velocity_clouds(input_catalog):
+def extract_low_velocity_clouds(input_catalog, max_descendants=30, min_descendants=2):
     """
     Get the near-zero velocity Perseus arm clouds.
 
@@ -173,7 +175,7 @@ def extract_low_velocity_clouds(input_catalog):
     disqualified = (
         (catalog['v_cen'] < -5) |
         (catalog['v_cen'] > 20) |
-        (catalog['n_descendants'] > 10) |
+        (catalog['n_descendants'] > max_descendants) |
         (catalog['mass'] < 10**3.5 * u.solMass) |
         (np.abs(catalog['y_cen'] > 1)) |
         (catalog['on_edge'] == 1)
@@ -188,7 +190,7 @@ def extract_low_velocity_clouds(input_catalog):
     return output_catalog
 
 
-def export_firstquad_catalog(args=None):
+def export_firstquad_catalog(args=None, **kwargs):
     """ 
     Uses the above functions to create a "polished" and "final" cloud catalog from this quadrant.
 
@@ -199,9 +201,9 @@ def export_firstquad_catalog(args=None):
     else:
         d, catalog, header, metadata = args
 
-    negative_v_catalog = extract_negative_velocity_clouds(catalog)
-    positive_v_catalog = extract_positive_velocity_clouds(catalog)
-    low_v_catalog = extract_low_velocity_clouds(catalog)
+    negative_v_catalog = extract_negative_velocity_clouds(catalog, **kwargs)
+    positive_v_catalog = extract_positive_velocity_clouds(catalog, **kwargs)
+    low_v_catalog = extract_low_velocity_clouds(catalog, **kwargs)
 
     composite_unreduced_catalog = astropy.table.vstack([negative_v_catalog, positive_v_catalog, low_v_catalog])
 
