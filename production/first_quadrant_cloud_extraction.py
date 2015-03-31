@@ -74,8 +74,13 @@ def distance_disambiguator(catalog):
     use_near_distance = (np.abs(near_size - expected_size) <= np.abs(far_size - expected_size))
     use_far_distance = (np.abs(near_size - expected_size) > np.abs(far_size - expected_size))
 
+    use_near_distance_latitude = (np.abs(catalog['y_cen']) > 1)
+
     best_distance[use_near_distance] = near_distance[use_near_distance]
     best_distance[use_far_distance] = far_distance[use_far_distance]
+
+    #an override based on latitude
+    best_distance[use_near_distance_latitude] = near_distance[use_near_distance_latitude]
 
     return best_distance
 
