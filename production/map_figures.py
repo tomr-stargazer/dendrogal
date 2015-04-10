@@ -128,3 +128,64 @@ def make_quadrant_topdown_map(cloud_catalog, loc=None):
 
     return fig
 
+def make_lv_map_new(cloud_catalog, dendrogram, ellipse_color=colorbrewer_red, **kwargs):
+
+    d = dendrogram
+
+    imf = IntegratedMapFigure(d.data, d.wcs, **kwargs)
+
+    # A. DRAW CONTOURS - maybe not right now.
+    # cloud_selection = selection_from_catalog(d, cloud_catalog)
+    # mask = reduce(np.add, [structure.get_mask(subtree=True) for structure in cloud_selection])
+    # imf.draw_contours(mask, colors=colorbrewer_red, linewidths=0.9, alpha=0.9)
+
+    # B. DRAW ELLIPSES
+    world_coordinates = np.vstack([cloud_catalog['x_cen'], cloud_catalog['y_cen'], cloud_catalog['v_cen']]).T
+    lbv_pixels = d.wcs.wcs_world2pix(world_coordinates, 0)
+
+    l_lbv_pixels = lbv_pixels[:,0]
+    b_lbv_pixels = lbv_pixels[:,1]
+    v_lbv_pixels = lbv_pixels[:,2]
+
+    l_scale_lbv = imf.spatial_scale.value
+    b_scale_lbv = imf.spatial_scale.value
+    v_scale_lbv = imf.velocity_scale.value
+
+    lv_ells = [Ellipse(xy=zip(l_lbv_pixels, v_lbv_pixels)[i], 
+                       width=2*cloud_catalog['major_sigma'][i]/l_scale_lbv, 
+                       height=2*cloud_catalog['v_rms'][i]/v_scale_lbv) for i in range(len(cloud_catalog))]
+
+    lv_ells2 = [Ellipse(xy=zip(l_lbv_pixels, v_lbv_pixels)[i], 
+                       width=2*cloud_catalog['major_sigma'][i]/l_scale_lbv, 
+                       height=2*cloud_catalog['v_rms'][i]/v_scale_lbv) for i in range(len(cloud_catalog))]
+
+    for e in lv_ells:
+        imf.ax.add_artist(e)
+        e.set_facecolor('none')
+        e.set_edgecolor(ellipse_color)
+        e.set_linewidth(1.25)
+        e.set_zorder(0.95)
+
+    for e in lv_ells2:
+        imf.ax.add_artist(e)
+        e.set_facecolor('none')
+        e.set_edgecolor('white')
+        e.set_linewidth(4)
+        e.set_alpha(0.8)
+        e.set_zorder(0.9)
+
+    lon = imf.ax.coords['glon']
+    lon.set_ticks(spacing=5*u.deg, color='white', exclude_overlapping=True)
+    lon.display_minor_ticks(True)
+    lon.set_axislabel(r"$l$ (deg)", minpad=1.5)
+
+    vlsr = imf.ax.coords['vopt']
+    vlsr.set_ticks(spacing=25*u.m/u.s, color='white', exclude_overlapping=True) # erroneous units - why!?
+    vlsr.display_minor_ticks(True)
+    vlsr.set_axislabel(r"$v_{LSR}$ (km s$^{-1}$)")
+    vlsr.set_ticklabel_position('lr')
+
+
+    imf.fig.canvas.draw()
+
+    return imf
