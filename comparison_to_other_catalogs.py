@@ -92,6 +92,32 @@ def plot_dame_ellipses_on_integrated_viewer(integrated_viewer):
 
     iv.fig.canvas.draw()
 
+def plot_dame_ellipses_on_imf(imf):
+
+    world_coordinates = np.vstack([lcen_column, np.repeat(0, len(lcen_column)), vcen_column]).T
+
+    lv_pixels = imf.wcs.wcs_world2pix(world_coordinates, 0)
+
+    l_lv_pixels = lv_pixels[:,0]
+    v_lv_pixels = lv_pixels[:,2]
+
+    # l_scale_lv = (l_lv_pixels[1] - l_lv_pixels[0])/(lcen_column[1]-lcen_column[0])
+    # v_scale_lv = (v_lv_pixels[1] - v_lv_pixels[0])/(vcen_column[1]-vcen_column[0])
+    l_scale_lv = imf.spatial_scale.value
+    v_scale_lv = imf.velocity_scale.value
+
+    lv_ells = [Ellipse(xy=zip(l_lv_pixels, v_lv_pixels)[i], 
+                       width=2*sky_radius_column[i]/l_scale_lv, 
+                       height=dame86_catalog['DV'][i]/v_scale_lv) for i in range(len(dame86_catalog))]
+    for e in lv_ells:
+        imf.ax.add_artist(e)
+        e.set_facecolor('none')
+        e.set_edgecolor('green')
+        e.set_linewidth(2)
+        e.set_zorder(2)
+
+    imf.fig.canvas.draw()
+
 
 def plot_garcia_ellipses_on_iv(integrated_viewer):
 
