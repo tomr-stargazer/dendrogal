@@ -66,12 +66,25 @@ def make_quadrant_lbv_map(cloud_catalog, dendrogram, contour_select=True,
     lv_ells = [Ellipse(xy=zip(l_lbv_pixels, v_lbv_pixels)[i], 
                        width=2*cloud_catalog['major_sigma'][i]/l_scale_lbv, 
                        height=2*cloud_catalog['v_rms'][i]/v_scale_lbv) for i in range(len(cloud_catalog))]
+
+    lv_ells2 = [Ellipse(xy=zip(l_lbv_pixels, v_lbv_pixels)[i], 
+                       width=2*cloud_catalog['major_sigma'][i]/l_scale_lbv, 
+                       height=2*cloud_catalog['v_rms'][i]/v_scale_lbv) for i in range(len(cloud_catalog))]
+
+
     for e in lv_ells:
         iv.ax_lv.add_artist(e)
         e.set_facecolor('none')
-        e.set_edgecolor(colorbrewer_red)
-        e.set_linewidth(1.5)
+        e.set_edgecolor('black')
+        e.set_linewidth(1)
         e.set_zorder(1)
+
+    for e in lv_ells2:
+        iv.ax_lv.add_artist(e)
+        e.set_facecolor('none')
+        e.set_edgecolor('white')
+        e.set_linewidth(2)
+        e.set_zorder(0.95)
 
     lon = iv.ax_lv.coords['glon']
     lon.set_ticks(spacing=5*u.deg)

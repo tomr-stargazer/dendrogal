@@ -25,7 +25,7 @@ from .third_quadrant_cloud_extraction import third_quad_dendrogram, export_third
 from .fourth_quadrant_cloud_extraction import fourth_quad_dendrogram, export_fourthquad_catalog
 from ..comparison_to_other_catalogs import plot_dame_ellipses_on_integrated_viewer
 from .remove_degenerate_structures import reduce_catalog, selection_from_catalog
-from .map_figures import make_quadrant_lbv_map, make_quadrant_topdown_map
+from .map_figures import make_quadrant_lbv_map, make_quadrant_topdown_map, make_lv_map_new
 from .plot_catalog_measurements import plot_cmf, plot_size_linewidth_fit
 
 
@@ -58,11 +58,17 @@ def first_quadrant_figures(args=None, save=True):
 
     iv_dame_b.fig.savefig(output_path+"quad1_comparison_b.pdf", bbox_inches='tight')
 
-    iv_firstquad = make_quadrant_lbv_map(cloud_catalog, d, alignment='horizontal')
-    iv_firstquad.fig.set_figheight(5.7)
-    iv_firstquad.fig.set_figwidth(10)
-    iv_firstquad.fig.canvas.draw()
-    iv_firstquad.fig.savefig(output_path+'quad1_map.pdf', bbox_inches='tight')
+    # iv_firstquad = make_quadrant_lbv_map(cloud_catalog, d, alignment='horizontal')
+    # iv_firstquad.fig.set_figheight(5.7)
+    # iv_firstquad.fig.set_figwidth(10)
+    # iv_firstquad.fig.canvas.draw()
+    # iv_firstquad.fig.savefig(output_path+'quad1_map.pdf', bbox_inches='tight')
+
+    imf_firstquad = make_lv_map_new(cloud_catalog, d)
+    # imf_firstquad.fig.set_figheight(5.7)
+    # imf_firstquad.fig.set_figwidth(10)
+    imf_firstquad.fig.canvas.draw()
+    imf_firstquad.fig.savefig(output_path+'quad1_map.pdf', bbox_inches='tight')
 
     topdown_1q = make_quadrant_topdown_map(cloud_catalog)
     topdown_1q.set_figwidth(6)
@@ -96,11 +102,17 @@ def second_quadrant_figures(args=None, save=True):
 
     cloud_selection = selection_from_catalog(d, cloud_catalog)
 
-    iv_secondquad = make_quadrant_lbv_map(cloud_catalog, d, alignment='horizontal', aspect=2, vscale=1.3)
-    iv_secondquad.fig.set_figheight(5.7)
-    iv_secondquad.fig.set_figwidth(10)
-    iv_secondquad.fig.canvas.draw()
-    iv_secondquad.fig.savefig(output_path+'quad2_map.pdf', bbox_inches='tight')
+    # iv_secondquad = make_quadrant_lbv_map(cloud_catalog, d, alignment='horizontal', aspect=2, vscale=1.3)
+    # iv_secondquad.fig.set_figheight(5.7)
+    # iv_secondquad.fig.set_figwidth(10)
+    # iv_secondquad.fig.canvas.draw()
+    # iv_secondquad.fig.savefig(output_path+'quad2_map.pdf', bbox_inches='tight')
+
+    imf_secondquad = make_lv_map_new(cloud_catalog, d, integration_range=(-2,2))
+    # imf_secondquad.fig.set_figheight(5.7)
+    # imf_secondquad.fig.set_figwidth(10)
+    imf_secondquad.fig.canvas.draw()
+    imf_secondquad.fig.savefig(output_path+'quad2_map.pdf', bbox_inches='tight')
 
     topdown_2q = make_quadrant_topdown_map(cloud_catalog, loc='lower right')
     topdown_2q.set_figwidth(6)
@@ -134,11 +146,15 @@ def third_quadrant_figures(args=None, save=True):
 
     cloud_selection = selection_from_catalog(d, cloud_catalog)
 
-    iv_thirdquad = make_quadrant_lbv_map(cloud_catalog, d, alignment='horizontal', aspect=2, vscale=1.3)
-    iv_thirdquad.fig.set_figheight(5.7)
-    iv_thirdquad.fig.set_figwidth(10)
-    iv_thirdquad.fig.canvas.draw()
-    iv_thirdquad.fig.savefig(output_path+'quad3_map.pdf', bbox_inches='tight')
+    # iv_thirdquad = make_quadrant_lbv_map(cloud_catalog, d, alignment='horizontal', aspect=2, vscale=1.3)
+    # iv_thirdquad.fig.set_figheight(5.7)
+    # iv_thirdquad.fig.set_figwidth(10)
+    # iv_thirdquad.fig.canvas.draw()
+    # iv_thirdquad.fig.savefig(output_path+'quad3_map.pdf', bbox_inches='tight')
+
+    imf_thirdquad = make_lv_map_new(cloud_catalog, d, integration_range=(-2,2))
+    imf_thirdquad.fig.canvas.draw()
+    imf_thirdquad.fig.savefig(output_path+'quad3_map.pdf', bbox_inches='tight')
 
     topdown_3q = make_quadrant_topdown_map(cloud_catalog, loc='lower right')
     topdown_3q.set_figwidth(6)
@@ -172,11 +188,15 @@ def fourth_quadrant_figures(args=None, save=True):
 
     cloud_selection = selection_from_catalog(d, cloud_catalog)
 
-    iv_fourthquad = make_quadrant_lbv_map(cloud_catalog, d, alignment='horizontal', aspect=1/2, vscale=1.3)
-    iv_fourthquad.fig.set_figheight(8)
-    iv_fourthquad.fig.set_figwidth(8)
-    iv_fourthquad.fig.canvas.draw()
-    iv_fourthquad.fig.savefig(output_path+'quad4_map.pdf', bbox_inches='tight')
+    # iv_fourthquad = make_quadrant_lbv_map(cloud_catalog, d, alignment='horizontal', aspect=1/2, vscale=1.3)
+    # iv_fourthquad.fig.set_figheight(8)
+    # iv_fourthquad.fig.set_figwidth(8)
+    # iv_fourthquad.fig.canvas.draw()
+    # iv_fourthquad.fig.savefig(output_path+'quad4_map.pdf', bbox_inches='tight')
+
+    imf_fourthquad = make_lv_map_new(cloud_catalog, d)
+    imf_fourthquad.fig.canvas.draw()
+    imf_fourthquad.fig.savefig(output_path+'quad4_map.pdf', bbox_inches='tight')
 
     topdown_4q = make_quadrant_topdown_map(cloud_catalog, loc='lower right')
     topdown_4q.set_figwidth(6)
