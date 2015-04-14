@@ -10,8 +10,10 @@ import numpy as np
 from scipy.odr import RealData, Model, ODR
 from scipy.optimize import leastsq
 
+
 def powerlaw_function(B, x):
     return B[0] * (x**B[1])
+
 
 def size_linewidth_slope(catalog):
     """
@@ -40,10 +42,11 @@ def size_linewidth_slope(catalog):
 
     powerlaw_model = Model(powerlaw_function)
     # The provided `beta0` is a throwaway guess that shouldn't change the outcome.
-    odr_object = ODR(size_linewidth_data, powerlaw_model, beta0=[1.,1.])
+    odr_object = ODR(size_linewidth_data, powerlaw_model, beta0=[1., 1.])
     odr_output = odr_object.run()
 
     return odr_output
+
 
 def truncated_cloudmass_function(parameter_list, mass_array):
     """
