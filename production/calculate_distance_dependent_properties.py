@@ -1,4 +1,10 @@
-""" Takes a catalog and calculates distance-dependent properties. """
+"""
+Takes a catalog and calculates distance-dependent properties.
+
+Most of these relationships are taken from Rosolowsky et al. (2008),
+which in turn largely borrowed from Rosolowsky & Leroy (2006).
+
+"""
 
 from __future__ import division
 
@@ -28,13 +34,15 @@ def assign_properties(catalog, galactic_center_distance=8.340*u.kpc, flux_column
     if 'distance' not in catalog.colnames:
         raise ValueError("`catalog` must have a `distance` column")
 
-    sky_radius = u.Quantity(catalog['radius'])
+    eta = 1.9
+
+    sky_radius = eta * u.Quantity(catalog['radius'])
     distance = u.Quantity(catalog['distance'])
 
     size = sky_radius.to(u.rad).value * distance
 
     catalog['size'] = size.to(u.pc)
-    
+
     flux = u.Quantity(catalog[flux_column_name])
     sigma_v = u.Quantity(catalog['v_rms'])
 
@@ -46,8 +54,6 @@ def assign_properties(catalog, galactic_center_distance=8.340*u.kpc, flux_column
 
     catalog['mass'] = mass.to(u.solMass)
 
-    eta = 1.9
-    # this is computed wrong and will be as such until size is computed properly (with its eta)
     virial_parameter = 5 * eta * sigma_v**2 * size / (mass * c.G)
 
     catalog['virial_alpha'] = virial_parameter.decompose()
@@ -67,7 +73,7 @@ def assign_properties(catalog, galactic_center_distance=8.340*u.kpc, flux_column
     x = distance * np.sin(0.5*np.pi - brad) *np.cos(lrad) - R_0
     x_solar = distance * np.sin(0.5*np.pi - brad) *np.cos(lrad)
     y = distance * np.sin(0.5*np.pi - brad) *np.sin(lrad)
-    z = distance * np.cos(0.5*np.pi - brad) 
+    z = distance * np.cos(0.5*np.pi - brad)
 
     catalog['x_sol'] = x_solar.to('kpc')
     catalog['y_sol'] = y.to('kpc')
