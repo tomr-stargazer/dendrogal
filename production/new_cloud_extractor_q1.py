@@ -15,6 +15,7 @@ from astrodendro_analysis.production.calculate_distance_dependent_properties imp
 from astrodendro_analysis.production.remove_degenerate_structures import reduce_catalog
 from astrodendro_analysis.production.detect_disparate_distances import detect_disparate_distances
 from astrodendro_analysis.production.disqualify_edge_structures import identify_edge_structures
+from astrodendro_analysis.production.distance_disambiguate import distance_disambiguator
 
 from astrodendro_analysis.reid_distance_assigner import make_reid_distance_column
 from astrodendro_analysis.catalog_tree_stats import compute_tree_stats
@@ -253,44 +254,44 @@ def get_low_velocity_perseus_clouds(input_catalog, max_descendants=30):
     return output_catalog
 
 
-def distance_disambiguator(catalog):
-    """
-    Chooses the best distance based on size-linewidth fit & latitude.
+# def distance_disambiguator(catalog):
+#     """
+#     Chooses the best distance based on size-linewidth fit & latitude.
 
-    Currently, it's really crude about the latitude part.
+#     Currently, it's really crude about the latitude part.
 
-    """
+#     """
 
-    near_distance_column = catalog['near_distance']
-    far_distance_column = catalog['far_distance']
+#     near_distance_column = catalog['near_distance']
+#     far_distance_column = catalog['far_distance']
 
-    best_distance = np.zeros_like(near_distance_column)
+#     best_distance = np.zeros_like(near_distance_column)
 
-    sky_radius = u.Quantity(catalog['radius'].data * catalog['radius'].unit)
-    near_distance = u.Quantity(near_distance_column)
-    near_size = sky_radius.to(u.rad).value * near_distance
+#     sky_radius = u.Quantity(catalog['radius'].data * catalog['radius'].unit)
+#     near_distance = u.Quantity(near_distance_column)
+#     near_size = sky_radius.to(u.rad).value * near_distance
 
-    far_distance = u.Quantity(far_distance_column)
-    far_size = sky_radius.to(u.rad).value * far_distance
+#     far_distance = u.Quantity(far_distance_column)
+#     far_size = sky_radius.to(u.rad).value * far_distance
 
-    quad2_fit_constant = 0.48293812090592952
-    quad2_fit_power = 0.56796770148326814
+#     quad2_fit_constant = 0.48293812090592952
+#     quad2_fit_power = 0.56796770148326814
 
-    expected_size = (
-        1 / quad2_fit_constant * catalog['v_rms'].data) ** (1 / quad2_fit_power) * u.pc
+#     expected_size = (
+#         1 / quad2_fit_constant * catalog['v_rms'].data) ** (1 / quad2_fit_power) * u.pc
 
-    use_near_distance = (np.abs(near_size - expected_size) <= np.abs(far_size - expected_size))
-    use_far_distance = (np.abs(near_size - expected_size) > np.abs(far_size - expected_size))
+#     use_near_distance = (np.abs(near_size - expected_size) <= np.abs(far_size - expected_size))
+#     use_far_distance = (np.abs(near_size - expected_size) > np.abs(far_size - expected_size))
 
-    use_near_distance_latitude = (np.abs(catalog['y_cen']) > 1)
+#     use_near_distance_latitude = (np.abs(catalog['y_cen']) > 1)
 
-    best_distance[use_near_distance] = near_distance[use_near_distance]
-    best_distance[use_far_distance] = far_distance[use_far_distance]
+#     best_distance[use_near_distance] = near_distance[use_near_distance]
+#     best_distance[use_far_distance] = far_distance[use_far_distance]
 
-    # an override based on latitude
-    best_distance[use_near_distance_latitude] = near_distance[use_near_distance_latitude]
+#     # an override based on latitude
+#     best_distance[use_near_distance_latitude] = near_distance[use_near_distance_latitude]
 
-    return best_distance
+#     return best_distance
 
 
 def compile_firstquad_catalog(input_catalog):
