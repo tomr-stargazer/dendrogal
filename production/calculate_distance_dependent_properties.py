@@ -70,19 +70,19 @@ def assign_properties(catalog, galactic_center_distance=8.340*u.kpc, flux_column
     lrad = (catalog['x_cen'] * u.deg).to(u.rad).value
     brad = (catalog['y_cen'] * u.deg).to(u.rad).value
 
-    x = distance * np.sin(0.5*np.pi - brad) *np.cos(lrad) - R_0
-    x_solar = distance * np.sin(0.5*np.pi - brad) *np.cos(lrad)
-    y = distance * np.sin(0.5*np.pi - brad) *np.sin(lrad)
-    z = distance * np.cos(0.5*np.pi - brad)
+    solar_cart, gal_cart, gal_cyl = compute_galactic_coordinates(lrad, brad, distance, R_0=R_0)
 
-    catalog['x_sol'] = x_solar.to('kpc')
-    catalog['y_sol'] = y.to('kpc')
-    catalog['z_sol'] = z.to('kpc')
+    catalog['x_sol'] = solar_cart[0].to(u.kpc)
+    catalog['y_sol'] = solar_cart[1].to(u.kpc)
+    catalog['z_sol'] = solar_cart[2].to(u.kpc)
 
-    # soon, make these cyclindrical! R_gal, phi, z.
-    catalog['x_gal'] = x.to('kpc')
-    catalog['y_gal'] = y.to('kpc')
-    catalog['z_gal'] = z.to('kpc')
+    catalog['x_gal'] = gal_cart[0].to(u.kpc)
+    catalog['y_gal'] = gal_cart[1].to(u.kpc)
+    catalog['z_gal'] = gal_cart[2].to(u.kpc)
+
+    catalog['R_gal'] = gal_cyl[0].to(u.kpc)
+    catalog['phi_gal'] = gal_cyl[1].to(u.deg)
+
 
 
 def compute_galactic_coordinates(l, b, d_sun, R_0=8.340*u.kpc):
