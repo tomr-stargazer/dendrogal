@@ -10,6 +10,8 @@ from __future__ import division
 import numpy as np
 from numpy.testing import assert_allclose, assert_equal, assert_almost_equal
 
+import astropy.units as u
+
 from ..distance_disambiguate import (p_given_sigmas, p_from_size_linewidth,
                                      p_from_latitude, calculate_p_nearfar,
                                      distance_disambiguator)
@@ -53,6 +55,25 @@ def test_p_from_size_linewidth():
 
     assert_almost_equal(p_minus_2sigma, p_given_sigmas(-2))
 
+
 def test_p_from_latitude():
 
-    pass
+    # test the most basic functionality
+    HWHM = 60 * u.pc
+
+    assert_equal(p_from_latitude(0, HWHM), 1)
+    assert_equal(p_from_latitude(-HWHM/np.sqrt(2*np.log(2)), HWHM), p_given_sigmas(1))
+
+    # test, among other things, that for a given latitude and 2 distances,
+    # the near distance is more likely
+
+    latitude = 0.5 * u.deg
+    near_distance = 5 * u.kpc
+    far_distance = 15 * u.kpc
+    z_near = near_distance * np.cos(0.5*np.pi - latitude.to(u.rad).value)
+    z_far = far_distance * np.cos(0.5*np.pi - latitude.to(u.rad).value)
+
+    p_near = p_from_latitude(z_near, HWHM)
+    p_far = p_from_latitude(z_far, HWHM)
+
+    assert p_near > p_far
