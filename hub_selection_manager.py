@@ -155,7 +155,7 @@ def load_template_cube(filename='template', input_path=None):
 
     input_path = input_path or "{0}templates/{1}.fits".format(dropbox_path, filename)
 
-    cube, header = getdata(input_path, memmap=True, header=True)
+    cube, header = getdata(input_path, memmap=False, header=True)
 
     return cube, header
 
