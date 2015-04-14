@@ -24,8 +24,12 @@ from astrodendro_analysis.production.calculate_distance_dependent_properties imp
 
 
 def p_given_sigmas(N_sigmas):
+    """
+    Chance to draw a value N_sigmas from the mean of a normal distribution.
+    
+    """
 
-    p = 1 - (norm.cdf(N_sigmas) - norm.cdf(-N_sigmas))
+    p = 2 * norm.cdf(-np.abs(N_sigmas))
 
     return p
 
