@@ -85,3 +85,38 @@ def assign_properties(catalog, galactic_center_distance=8.340*u.kpc, flux_column
     catalog['z_gal'] = z.to('kpc')
 
 
+def compute_galactic_coordinates(l, b, d_sun, R_0=8.340*u.kpc):
+    """
+    Cartesian & cylindrical Solar & Galactic coordinates, taking solar offset into account.
+
+    Calculation taken from Ellsworth-Bowers et al. (2013), ApJ 770:39
+    Appendix C: "The vertical solar offset and converting (l, b, d_sun)
+    into (R_gal, phi, z)"
+
+    """
+
+    from numpy import cos, sin, arcsin
+
+    x_sol = d_sun * cos(l) * cos(b)
+    y_sol = d_sun * sin(l) * cos(b)
+    z_sol = d_sun * sin(b)
+
+    solar_cartesian = (x_sol, y_sol, z_sol)
+
+    # Sun's displacement above the midplane
+    z_0 = 25 * u.pc
+    theta = arcsin(z_0/R_0)
+
+    x_gal = R_0*cos(theta) - d_sun * (cos(l)*cos(b)*cos(theta) + sin(b)*sin(theta))
+    y_gal = -d_sun * sin(l) * cos(b)
+    z_gal = R_0*sin(theta) - d_sun * (cos(l)*cos(b)*sin(theta) + sin(b)*cos(theta))
+
+    gal_cartesian = (x_gal, y_gal, z_gal)
+
+    R_gal = np.sqrt(x_gal**2 + y_gal**2)
+    phi_gal = np.arctan2(y_gal, x_gal)
+    z_gal = z_gal
+
+    gal_cylindrical = (R_gal, phi_gal, z_gal)
+
+    return solar_cartesian, gal_cartesian, gal_cylindrical
