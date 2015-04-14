@@ -47,6 +47,7 @@ def assign_properties(catalog, galactic_center_distance=8.340*u.kpc, flux_column
     catalog['mass'] = mass.to(u.solMass)
 
     eta = 1.9
+    # this is computed wrong and will be as such until size is computed properly (with its eta)
     virial_parameter = 5 * eta * sigma_v**2 * size / (mass * c.G)
 
     catalog['virial_alpha'] = virial_parameter.decompose()
