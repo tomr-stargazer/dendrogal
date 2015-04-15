@@ -54,7 +54,7 @@ def create_intermom_file(filename, memmap=False, clobber=False, rms_noise=None):
 
         if rms_noise is None:
             raise ValueError("Please provide an rms_noise.")
-        new_filename = filename.rstrip("interp.fits") + "mominterp.fits"
+        new_filename = filename.rstrip("interp.fits") + "interp_mom.fits"
 
         clobber_string = ""
         if os.path.isfile(new_filename) and clobber:
