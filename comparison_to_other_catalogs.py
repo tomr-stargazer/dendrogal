@@ -148,3 +148,27 @@ def plot_garcia_ellipses_on_iv(integrated_viewer):
 
     iv.fig.canvas.draw()
 
+
+def plot_garcia_ellipses_on_imf(imf):
+
+    world_coordinates = np.vstack([garcia_catalog['GLON'].data, garcia_catalog['GLAT'].data, garcia_catalog['Vlsr'].data]).T
+
+    lv_pixels = imf.wcs.wcs_world2pix(world_coordinates, 0)
+
+    l_lv_pixels = lv_pixels[:,0]
+    v_lv_pixels = lv_pixels[:,2]
+
+    l_scale_lv = imf.spatial_scale.value
+    v_scale_lv = imf.velocity_scale.value
+
+    lv_ells = [Ellipse(xy=zip(l_lv_pixels, v_lv_pixels)[i], 
+                       width=2*garcia_sky_radius[i]/l_scale_lv, 
+                       height=garcia_catalog['DV'][i]/v_scale_lv) for i in range(len(garcia_catalog))]
+    for e in lv_ells:
+        imf.ax.add_artist(e)
+        e.set_facecolor('none')
+        e.set_edgecolor('green')
+        e.set_linewidth(2)
+        e.set_zorder(2)
+
+    imf.fig.canvas.draw()
