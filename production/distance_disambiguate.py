@@ -13,8 +13,6 @@ and I explicitly assume normal distributions.
 
 from __future__ import division
 
-import pdb
-
 import numpy as np
 from scipy.stats import norm
 
@@ -26,7 +24,7 @@ from astrodendro_analysis.production.calculate_distance_dependent_properties imp
 def p_given_sigmas(N_sigmas):
     """
     Chance to draw a value N_sigmas from the mean of a normal distribution.
-    
+
     """
 
     p = 2 * norm.cdf(-np.abs(N_sigmas))
@@ -124,7 +122,5 @@ def distance_disambiguator(catalog, **kwargs):
 
     best_distance[use_near_distance] = catalog['near_distance'][use_near_distance]
     best_distance[use_far_distance] = catalog['far_distance'][use_far_distance]
-
-    pdb.set_trace()
 
     return best_distance
