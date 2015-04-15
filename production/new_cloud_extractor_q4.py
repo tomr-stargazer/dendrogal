@@ -31,9 +31,8 @@ def fourth_quad_cloud_catalog():
     assigns a distance when there is no KDA, and then assigns physical
     properties to the unambiguously-distanced structures.
 
-    Its output is meant to be the input to `get_positive_velocity_clouds()`,
-    `get_low_velocity_perseus_clouds()`, and
-    `get_negative_velocity_clouds()`.
+    Its output is meant to be the input to `get_positive_velocity_clouds()`
+    and `get_negative_velocity_clouds()`.
 
     """
 
@@ -74,7 +73,7 @@ def get_negative_velocity_clouds(input_catalog, max_descendants=10):
     Extracts clouds from the negative-velocity region of the fourth quad.
 
     This is the 4Q's inner Galaxy.
-    Here, the KDA applies to most structures, so we fourth define
+    Here, the KDA applies to most structures, so we first define
     clouds based on (a) position in velocity space, (b) a cloud is not
     on an edge, (c) line widths between 1-10 km/s, (d) a cloud has less
     than `max_descendants` descendants, (e) the `fractional_gain` is
