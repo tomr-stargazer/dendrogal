@@ -188,3 +188,8 @@ def compile_fourthquad_catalog(input_catalog):
 
     return composite_reduced_catalog
 
+
+def export_fourthquad_catalog():
+
+    return compile_fourthquad_catalog(fourth_quad_cloud_catalog())
+

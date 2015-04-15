@@ -262,3 +262,7 @@ def compile_firstquad_catalog(input_catalog):
 
     return composite_reduced_catalog
 
+
+def export_firstquad_catalog():
+
+    return compile_firstquad_catalog(first_quad_cloud_catalog())

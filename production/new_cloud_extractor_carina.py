@@ -182,3 +182,7 @@ def compile_carina_catalog(input_catalog):
 
     return composite_reduced_catalog
 
+
+def export_carina_catalog():
+
+    return compile_carina_catalog(carina_cloud_catalog())
