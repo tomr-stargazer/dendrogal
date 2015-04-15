@@ -50,6 +50,7 @@ def extract_clouds(input_catalog):
         # (catalog['major_sigma'] > 2 * u.deg) |
         # (catalog['area_exact'] > 50 * u.deg**2) |
         (catalog['x_sol'] < -7) |
+        (catalog['x_cen'] > 280) | 
         (catalog['mass'] < 10**3.5 * u.solMass) )
 
     output_catalog = catalog[~disqualified]
