@@ -9,19 +9,9 @@ import os.path
 import datetime
 import numpy as np
 
-import astropy
-import astrodendro
-import astropy.units as u
-import astropy.constants as c
-
 from astropy import wcs
 from astropy.io.fits import getdata, getheader
 import astropy.io.fits as fits
-
-from astrodendro.scatter import Scatter
-from astrodendro_analysis.integrated_viewer import IntegratedViewer
-from astrodendro_analysis.reid_distance_assigner import make_reid_distance_column
-from astrodendro_analysis.assign_physical_values import assign_size_mass_alpha_pressure
 
 from dame_interpolation import interpolate_datacube
 from dame_moment_masking import moment_mask
