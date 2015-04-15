@@ -119,9 +119,9 @@ def make_quadrant_lbv_map(cloud_catalog, dendrogram, contour_select=True,
 
     return iv
 
-def make_quadrant_topdown_map(cloud_catalog, loc=None):
+def make_quadrant_topdown_map(cloud_catalog, loc=None, figsize=(10,8)):
 
-    fig = plt.figure()
+    fig = plt.figure(figsize=figsize)
 
     smalls = cloud_catalog[cloud_catalog['mass'] < 1e5]
     mediums = cloud_catalog[(cloud_catalog['mass'] < 1e6) & (cloud_catalog['mass'] > 1e5)]
