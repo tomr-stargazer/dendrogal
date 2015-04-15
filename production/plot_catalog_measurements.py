@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 
 import astropy.units as u
 
-from .catalog_measurement import size_linewidth_slope, cumulative_massfunction_fit, truncated_cloudmass_function
+from astrodendro_analysis.production.catalog_measurement import size_linewidth_slope, cumulative_massfunction_fit, truncated_cloudmass_function
 
 
 def plot_size_linewidth_fit(catalog, title=""):
