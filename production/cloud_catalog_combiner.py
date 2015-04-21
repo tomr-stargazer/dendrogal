@@ -32,6 +32,36 @@ def extract_and_combine_catalogs(args=[None]*4):
     fourth_cat['quadrant'] = 4*np.ones(len(fourth_cat))
     carina_cat['quadrant'] = 4*np.ones(len(carina_cat))
 
+    first_cat['survey'] = 8*np.ones(len(first_cat))
+    second_cat['survey'] = 17*np.ones(len(second_cat))
+    third_cat['survey'] = 31*np.ones(len(third_cat))
+    fourth_cat['survey'] = 36*np.ones(len(fourth_cat))
+    carina_cat['survey'] = 33*np.ones(len(carina_cat))
+
     total_table = astropy.table.vstack([first_cat, second_cat, third_cat, fourth_cat, carina_cat])
+
+    return total_table
+
+def print_results_by_quadrant(total_table=None):
+
+    if total_table is None:
+        total_table = extract_and_combine_catalogs()
+
+    first_cat = total_table[total_table['quadrant']==1]
+    second_cat = total_table[total_table['quadrant']==2]
+    third_cat = total_table[total_table['quadrant']==3]
+    fourth_cat = total_table[total_table['survey']==36]
+    carina_cat = total_table[total_table['survey']==33]
+    combined_fourth_cat = total_table[total_table['quadrant']==4]
+
+    print "Quadrant       |  N_clouds  | Mass  "
+    print "------------------------------------"
+    print "I               | {0:4d}     | {1:.2e} ".format(len(first_cat), np.sum(first_cat['mass']))
+    print "II              | {0:4d}     | {1:.2e} ".format(len(second_cat), np.sum(second_cat['mass']))
+    print "III             | {0:4d}     | {1:.2e} ".format(len(third_cat), np.sum(third_cat['mass']))
+    print "IV (no Carina)  | {0:4d}     | {1:.2e} ".format(len(fourth_cat), np.sum(fourth_cat['mass']))
+    print "IV (Carina-only)| {0:4d}     | {1:.2e} ".format(len(carina_cat), np.sum(carina_cat['mass']))
+    print "IV (combined)   | {0:4d}     | {1:.2e} ".format(len(combined_fourth_cat), np.sum(combined_fourth_cat['mass']))
+    print "All combined    | {0:4d}     | {1:.2e} ".format(len(total_table), np.sum(total_table['mass']))
 
     return total_table
