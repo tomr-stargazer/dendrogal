@@ -153,13 +153,17 @@ def get_positive_velocity_clouds(input_catalog, max_descendants=30):
 
     catalog = input_catalog.copy(copy_data=True)
 
-    disqualified = (
+    disqualified_location = (
         (catalog['v_cen'] < 10) |
         (catalog['on_edge'] == 1) |
         (catalog['x_cen'] < 280)        
     )
 
-    pre_output_catalog = catalog[~disqualified]
+    disqualified_tree = (
+        (catalog['n_descendants'] > max_descendants) &
+        (catalog['fractional_gain'] > 0.81))
+
+    pre_output_catalog = catalog[~disqualified_location & ~disqualified_tree]
 
     # now it's just got clouds that COULD be real
     almost_output_catalog = reduce_catalog(d, pre_output_catalog)
