@@ -156,23 +156,23 @@ def get_negative_velocity_clouds(input_catalog, max_descendants=30):
     catalog = input_catalog.copy(copy_data=True)
 
     # narrow down how we select clouds
-    disqualified = (
+    disqualified_location = (
         (catalog['v_cen'] > -5) |
         # (catalog['mass'] < 10 ** 3.5 * u.solMass) |
         # (catalog['disparate'] == 0) |
         (catalog['on_edge'] == 1)
     )
 
-    # qualified = (
-    #     (catalog['n_descendants'] < max_descendants) &
-    #     (catalog['fractional_gain'] < 0.81))
+    disqualified_tree = (
+        (catalog['n_descendants'] > max_descendants) &
+        (catalog['fractional_gain'] > 0.81))
 
     # this step excludes the weird tail near the galactic center
     disqualified_extreme_negative_velocities_near_GC = (
         (catalog['v_cen'] < -10) & (catalog['x_cen'] < 20))
 
-    pre_output_catalog = catalog[
-        ~disqualified & ~disqualified_extreme_negative_velocities_near_GC]
+    pre_output_catalog = catalog[~disqualified_tree & 
+        ~disqualified_location & ~disqualified_extreme_negative_velocities_near_GC]
 
     # now it's just got clouds that COULD be real
     almost_output_catalog = reduce_catalog(d, pre_output_catalog)
