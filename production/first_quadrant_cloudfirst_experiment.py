@@ -20,6 +20,20 @@ from make_firstquad_stub import d, catalog, header, metadata
 
 
 def first_quad_cloud_catalog():
+    """
+    This generates a 'processed' dendrogram catalog, made
+    from the global, pre-loaded `catalog` from the first quadrant.
+
+    It identifies edge structures, computes tree statistics,
+    determines the near & far distances (but does not resolve them),
+    assigns a distance when there is no KDA, and then assigns physical
+    properties to the unambiguously-distanced structures.
+
+    Its output is meant to be the input to `get_positive_velocity_clouds()`,
+    `get_perseus_arm_low_velocity_clouds()`, and
+    `get_negative_velocity_clouds()`.
+
+    """
 
     catalog_cp = catalog.copy(copy_data=True)
 
@@ -46,34 +60,52 @@ def first_quad_cloud_catalog():
 
     catalog_cp['distance'] = distance_column
 
-    # assignment of physical properties
+    # assignment of physical properties to unambigously-distanced structures
     assign_properties(catalog_cp)
 
-    # # note disparate distances
+    # note disparate distances
     # catalog_cp['disparate'] = detect_disparate_distances(d, catalog_cp)
 
     return catalog_cp
 
+
 def get_positive_velocity_clouds(input_catalog, max_descendants=30):
+    """
+    This extracts clouds from the positive-velocity region of the first quad.
+
+    Here, the KDA applies to most structures, so we first define
+    clouds based on (a) position in velocity space, (b) a cloud is not
+    on an edge, (c) line widths between 1-10 km/s, (d) a cloud has less
+    than `max_descendants` descendants, (e) the `fractional_gain` is 
+    below 0.81.
+
+    Structures that meet the above criteria go into a pre-candidate-cloud
+    list, and that list is "flattened" or "reduced" to remove degenerate
+    substructure.
+
+    Then the KDA is disambiguated for the relevant structures using the
+    function `distance_disambiguator` and 
+
+    """
+
 
     catalog = input_catalog.copy(copy_data=True)
 
     # one. grab the clouds we think are real
     disqualified = (
         (catalog['v_cen'] < 20) |
-#        (catalog['mass'] < 10**3.5 * u.solMass) |
+        #        (catalog['mass'] < 10**3.5 * u.solMass) |
         # (catalog['disparate'] == 0) |
         (catalog['on_edge'] == 1) |
         (catalog['v_rms'] <= 1) |
         (catalog['v_rms'] > 10)
         # (np.abs(catalog['fractional_gain'] - 0.5) > 0.05)
-        )
-
+    )
 
     qualified = (
-        (catalog['n_descendants'] < max_descendants) & 
-        (catalog['fractional_gain'] < 0.81) ) #& 
-        # (catalog['mass'] > 10**5 * u.solMass))
+        (catalog['n_descendants'] < max_descendants) &
+        (catalog['fractional_gain'] < 0.81))  # &
+    # (catalog['mass'] > 10**5 * u.solMass))
 
     pre_output_catalog = catalog[~disqualified & qualified]
 
@@ -86,7 +118,7 @@ def get_positive_velocity_clouds(input_catalog, max_descendants=30):
     assign_properties(almost_output_catalog)
 
     # now let's do a thing
-    final_qualified = ( almost_output_catalog['mass'] > 3e4)
+    final_qualified = (almost_output_catalog['mass'] > 3e4)
     output_catalog = almost_output_catalog[final_qualified]
 
     return output_catalog
@@ -108,7 +140,8 @@ def distance_disambiguator(catalog):
     quad2_fit_constant = 0.48293812090592952
     quad2_fit_power = 0.56796770148326814
 
-    expected_size =  (1/quad2_fit_constant * catalog['v_rms'].data)**(1/quad2_fit_power) * u.pc
+    expected_size = (
+        1 / quad2_fit_constant * catalog['v_rms'].data) ** (1 / quad2_fit_power) * u.pc
 
     use_near_distance = (np.abs(near_size - expected_size) <= np.abs(far_size - expected_size))
     use_far_distance = (np.abs(near_size - expected_size) > np.abs(far_size - expected_size))
@@ -118,7 +151,7 @@ def distance_disambiguator(catalog):
     best_distance[use_near_distance] = near_distance[use_near_distance]
     best_distance[use_far_distance] = far_distance[use_far_distance]
 
-    #an override based on latitude
+    # an override based on latitude
     best_distance[use_near_distance_latitude] = near_distance[use_near_distance_latitude]
 
     return best_distance
@@ -131,10 +164,10 @@ def extract_negative_velocity_clouds(input_catalog, max_descendants=30, min_desc
     # narrow down how we select clouds
     disqualified = (
         (catalog['v_cen'] > -5) |
-        (catalog['mass'] < 10**3.5 * u.solMass) | 
-        (catalog['disparate'] == 0) | 
+        (catalog['mass'] < 10 ** 3.5 * u.solMass) |
+        (catalog['disparate'] == 0) |
         (catalog['on_edge'] == 1)
-        )
+    )
 
     # this step excludes the weird tail near the galactic center
     disqualified_extreme_negative_velocities_near_GC = (
@@ -143,6 +176,7 @@ def extract_negative_velocity_clouds(input_catalog, max_descendants=30, min_desc
     output_catalog = catalog[~disqualified & ~disqualified_extreme_negative_velocities_near_GC]
 
     return output_catalog
+
 
 def extract_positive_velocity_clouds(input_catalog, max_descendants=30, min_descendants=2):
     """
@@ -154,26 +188,27 @@ def extract_positive_velocity_clouds(input_catalog, max_descendants=30, min_desc
     # narrow down how we select clouds
     disqualified = (
         (catalog['v_cen'] < 20) |
-#        (catalog['mass'] < 10**3.5 * u.solMass) |
+        #        (catalog['mass'] < 10**3.5 * u.solMass) |
         (catalog['disparate'] == 0) |
         (catalog['on_edge'] == 1)
         # (np.abs(catalog['fractional_gain'] - 0.5) > 0.05)
-        )
+    )
 
     qualified_1 = (
-        (catalog['n_descendants'] < max_descendants) & 
+        (catalog['n_descendants'] < max_descendants) &
         (catalog['n_descendants'] >= min_descendants) &
-        (catalog['fractional_gain'] < 0.81) & 
-        (catalog['mass'] > 10**3.5 * u.solMass))
+        (catalog['fractional_gain'] < 0.81) &
+        (catalog['mass'] > 10 ** 3.5 * u.solMass))
 
     qualified_2 = (
-        (catalog['n_descendants'] < max_descendants) & 
-        (catalog['fractional_gain'] < 0.81) & 
-        (catalog['mass'] > 10**5 * u.solMass))
+        (catalog['n_descendants'] < max_descendants) &
+        (catalog['fractional_gain'] < 0.81) &
+        (catalog['mass'] > 10 ** 5 * u.solMass))
 
-    output_catalog = catalog[~disqualified & (qualified_1|qualified_2)]
+    output_catalog = catalog[~disqualified & (qualified_1 | qualified_2)]
 
     return output_catalog
+
 
 def extract_positive_velocity_clouds_control(input_catalog):
     """
@@ -187,23 +222,24 @@ def extract_positive_velocity_clouds_control(input_catalog):
         (catalog['v_cen'] < 20) |
         (catalog['disparate'] == 0) |
         (catalog['on_edge'] == 1)
-        )
+    )
 
     qualified_1 = (
-        (catalog['n_descendants'] < 10) & 
+        (catalog['n_descendants'] < 10) &
         (catalog['n_descendants'] > 1) &
-        (catalog['fractional_gain'] < 0.81) & 
-        (catalog['mass'] > 10**3.5 * u.solMass))
+        (catalog['fractional_gain'] < 0.81) &
+        (catalog['mass'] > 10 ** 3.5 * u.solMass))
 
     # qualified_2 = (
-    #     (catalog['n_descendants'] < 10) & 
-    #     (catalog['fractional_gain'] < 0.81) & 
+    #     (catalog['n_descendants'] < 10) &
+    #     (catalog['fractional_gain'] < 0.81) &
     #     (catalog['mass_clipped'] > 10**5 * u.solMass))
 
-    output_catalog = catalog[~disqualified & #(qualified_1|qualified_2)]
+    output_catalog = catalog[~disqualified &  # (qualified_1|qualified_2)]
                              qualified_1]
 
-    return output_catalog    
+    return output_catalog
+
 
 def extract_low_velocity_clouds(input_catalog, max_descendants=30, min_descendants=2):
     """
@@ -217,13 +253,13 @@ def extract_low_velocity_clouds(input_catalog, max_descendants=30, min_descendan
         (catalog['v_cen'] < -5) |
         (catalog['v_cen'] > 20) |
         (catalog['n_descendants'] > max_descendants) |
-        (catalog['mass'] < 10**3.5 * u.solMass) |
+        (catalog['mass'] < 10 ** 3.5 * u.solMass) |
         (np.abs(catalog['y_cen'] > 1)) |
         (catalog['on_edge'] == 1)
-        )
+    )
 
     qualified = (
-        (catalog['distance'] > 9.8) & 
+        (catalog['distance'] > 9.8) &
         (catalog['distance'] < 14))
 
     output_catalog = catalog[~disqualified & qualified]
@@ -246,10 +282,9 @@ def export_firstquad_catalog(args=None, **kwargs):
     positive_v_catalog = extract_positive_velocity_clouds(catalog, **kwargs)
     low_v_catalog = extract_low_velocity_clouds(catalog, **kwargs)
 
-    composite_unreduced_catalog = astropy.table.vstack([negative_v_catalog, positive_v_catalog, low_v_catalog])
+    composite_unreduced_catalog = astropy.table.vstack(
+        [negative_v_catalog, positive_v_catalog, low_v_catalog])
 
     composite_reduced_catalog = reduce_catalog(d, composite_unreduced_catalog)
 
     return composite_reduced_catalog
-
-
