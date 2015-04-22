@@ -17,7 +17,7 @@ import demo
 from reid_distance_assigner import make_reid_distance_column
 from kinematic_distance import make_blitz_distance_column
 from assign_physical_values import assign_galactocentric_coordinates, assign_size_mass_alpha_pressure
-from astrodendro_analysis.integrated_viewer import IntegratedViewer
+from dendrogal.integrated_viewer import IntegratedViewer
 from astropy.wcs import wcs
 from astrodendro.scatter import Scatter
 

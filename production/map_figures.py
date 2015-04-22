@@ -12,10 +12,10 @@ import astrodendro
 import astropy.units as u
 import astropy.constants as c
 
-from astrodendro_analysis.integrated_viewer import IntegratedViewer
-from astrodendro_analysis.production.remove_degenerate_structures import reduce_catalog, selection_from_catalog
-from astrodendro_analysis.hurt_image_overlay_demo import underlay_hurt_galaxy
-from astrodendro_analysis.production.integrated_map_figure import IntegratedMapFigure
+from dendrogal.integrated_viewer import IntegratedViewer
+from dendrogal.production.remove_degenerate_structures import reduce_catalog, selection_from_catalog
+from dendrogal.hurt_image_overlay_demo import underlay_hurt_galaxy
+from dendrogal.production.integrated_map_figure import IntegratedMapFigure
 
 colorbrewer_red = '#e41a1c' 
 colorbrewer_blue = '#377eb8'

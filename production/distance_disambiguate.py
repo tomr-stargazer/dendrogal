@@ -18,7 +18,7 @@ from scipy.stats import norm
 
 import astropy.units as u
 
-from astrodendro_analysis.production.calculate_distance_dependent_properties import assign_properties
+from dendrogal.production.calculate_distance_dependent_properties import assign_properties
 
 
 def p_given_sigmas(N_sigmas):

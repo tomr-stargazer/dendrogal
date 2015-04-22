@@ -63,7 +63,7 @@ def load_permute_dendro_catalog(filename, min_value=None, min_delta=None, min_np
 #         save_dendrogram_catalog_output(*output, data_filename=filename, **kwargs)
 #         return output
 
-savepath = os.path.expanduser("~/Documents/Code/astrodendro_analysis/production/saved_dendrograms/")
+savepath = os.path.expanduser("~/Documents/Code/dendrogal/production/saved_dendrograms/")
 
 def save_dendrogram_catalog_output(d, catalog, header, metadata, **kwargs):
 

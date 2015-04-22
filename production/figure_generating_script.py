@@ -17,27 +17,27 @@ import astrodendro
 import astropy.units as u
 import astropy.constants as c
 
-from astrodendro_analysis.integrated_viewer import IntegratedViewer
+from dendrogal.integrated_viewer import IntegratedViewer
 
-from astrodendro_analysis.production.cloud_extractor_q1 import first_quad_cloud_catalog, compile_firstquad_catalog
-from astrodendro_analysis.production.cloud_extractor_q1 import d as quad1_d
+from dendrogal.production.cloud_extractor_q1 import first_quad_cloud_catalog, compile_firstquad_catalog
+from dendrogal.production.cloud_extractor_q1 import d as quad1_d
 
-from astrodendro_analysis.production.cloud_extractor_q2 import export_secondquad_catalog
-from astrodendro_analysis.production.cloud_extractor_q2 import d as quad2_d
+from dendrogal.production.cloud_extractor_q2 import export_secondquad_catalog
+from dendrogal.production.cloud_extractor_q2 import d as quad2_d
 
-from astrodendro_analysis.production.cloud_extractor_q3 import export_thirdquad_catalog
-from astrodendro_analysis.production.cloud_extractor_q3 import d as quad3_d
+from dendrogal.production.cloud_extractor_q3 import export_thirdquad_catalog
+from dendrogal.production.cloud_extractor_q3 import d as quad3_d
 
-from astrodendro_analysis.production.cloud_extractor_q4 import fourth_quad_cloud_catalog, compile_fourthquad_catalog
-from astrodendro_analysis.production.cloud_extractor_q4 import d as quad4_d
+from dendrogal.production.cloud_extractor_q4 import fourth_quad_cloud_catalog, compile_fourthquad_catalog
+from dendrogal.production.cloud_extractor_q4 import d as quad4_d
 
-from astrodendro_analysis.production.cloud_extractor_carina import carina_cloud_catalog, compile_carina_catalog
-from astrodendro_analysis.production.cloud_extractor_carina import d as carina_d
+from dendrogal.production.cloud_extractor_carina import carina_cloud_catalog, compile_carina_catalog
+from dendrogal.production.cloud_extractor_carina import d as carina_d
 
-from astrodendro_analysis.comparison_to_other_catalogs import plot_dame_ellipses_on_integrated_viewer, plot_dame_ellipses_on_imf
-from astrodendro_analysis.production.remove_degenerate_structures import reduce_catalog, selection_from_catalog
-from astrodendro_analysis.production.map_figures import make_quadrant_lbv_map, make_quadrant_topdown_map, make_lv_map_new
-from astrodendro_analysis.production.plot_catalog_measurements import plot_cmf, plot_size_linewidth_fit
+from dendrogal.comparison_to_other_catalogs import plot_dame_ellipses_on_integrated_viewer, plot_dame_ellipses_on_imf
+from dendrogal.production.remove_degenerate_structures import reduce_catalog, selection_from_catalog
+from dendrogal.production.map_figures import make_quadrant_lbv_map, make_quadrant_topdown_map, make_lv_map_new
+from dendrogal.production.plot_catalog_measurements import plot_cmf, plot_size_linewidth_fit
 
 
 output_path = os.path.expanduser("~/Dropbox/Grad School/Research/Milkyway/paper/")

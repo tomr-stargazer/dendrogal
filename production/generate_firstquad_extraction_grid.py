@@ -7,8 +7,8 @@ from __future__ import division
 
 import numpy as np
 
-from astrodendro_analysis import first_quadrant_cloud_extraction, map_figures
-from astrodendro_analysis.comparison_to_other_catalogs import plot_dame_ellipses_on_imf
+from dendrogal import first_quadrant_cloud_extraction, map_figures
+from dendrogal.comparison_to_other_catalogs import plot_dame_ellipses_on_imf
 
 colorbrewer_red = '#e41a1c' 
 colorbrewer_blue = '#377eb8'

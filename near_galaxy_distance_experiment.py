@@ -17,7 +17,7 @@ from astropy import constants as c
 from dame1987_table import convert_dame_table_to_standard_form, table2
 import demo
 from assign_physical_values import assign_galactocentric_coordinates, assign_size_mass_alpha_pressure
-from astrodendro_analysis.integrated_viewer import IntegratedViewer
+from dendrogal.integrated_viewer import IntegratedViewer
 from astropy.wcs import wcs
 from astrodendro.scatter import Scatter
 

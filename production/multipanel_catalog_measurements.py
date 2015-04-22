@@ -16,8 +16,8 @@ import matplotlib.pyplot as plt
 
 import astropy.units as u
 
-from astrodendro_analysis.production.catalog_measurement import size_linewidth_slope, cumulative_massfunction_fit, truncated_cloudmass_function
-from astrodendro_analysis.production.cloud_catalog_combiner import extract_and_combine_catalogs
+from dendrogal.production.catalog_measurement import size_linewidth_slope, cumulative_massfunction_fit, truncated_cloudmass_function
+from dendrogal.production.cloud_catalog_combiner import extract_and_combine_catalogs
 
 all_catalog = extract_and_combine_catalogs()
 

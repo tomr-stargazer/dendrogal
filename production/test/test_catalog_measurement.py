@@ -1,7 +1,7 @@
 """
 Tests for catalog_measurement.py
 
-should run with py.test from the root of astrodendro_analysis
+should run with py.test from the root of dendrogal
 
 """
 

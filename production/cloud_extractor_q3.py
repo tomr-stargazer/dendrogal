@@ -9,13 +9,13 @@ import numpy as np
 
 import astropy
 
-from astrodendro_analysis.production.calculate_distance_dependent_properties import assign_properties
-from astrodendro_analysis.production.remove_degenerate_structures import reduce_catalog
-from astrodendro_analysis.production.disqualify_edge_structures import identify_edge_structures
-from astrodendro_analysis.production.convenience_function import load_permute_dendro_catalog
+from dendrogal.production.calculate_distance_dependent_properties import assign_properties
+from dendrogal.production.remove_degenerate_structures import reduce_catalog
+from dendrogal.production.disqualify_edge_structures import identify_edge_structures
+from dendrogal.production.convenience_function import load_permute_dendro_catalog
 
-from astrodendro_analysis.reid_distance_assigner import make_reid_distance_column
-from astrodendro_analysis.catalog_tree_stats import compute_tree_stats
+from dendrogal.reid_distance_assigner import make_reid_distance_column
+from dendrogal.catalog_tree_stats import compute_tree_stats
 
 from make_thirdquad_stub import d, catalog, header, metadata
 

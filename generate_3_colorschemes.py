@@ -10,7 +10,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-from astrodendro_analysis.production.map_figures import make_quadrant_lbv_map
+from dendrogal.production.map_figures import make_quadrant_lbv_map
 from dummy_generator_of_d_and_catalog import d, cloud_catalog
 
 save_path = os.path.expanduser("~/Dropbox/Grad School/Research/Milkyway/color_schemes/")

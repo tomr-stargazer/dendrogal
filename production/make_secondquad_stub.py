@@ -10,7 +10,7 @@ avoid a time-bottleneck.
 
 from __future__ import division
 
-from astrodendro_analysis.production.convenience_function import load_permute_dendro_catalog
+from dendrogal.production.convenience_function import load_permute_dendro_catalog
 
 data_filename = "DHT17_Quad2_bw_mominterp.fits"
 dendrogram_kwargs = {'min_value' : 0.31/2,
