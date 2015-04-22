@@ -9,6 +9,8 @@ Front-loads the data as needed.
 
 from __future__ import division
 
+import pdb
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -38,11 +40,13 @@ def extract_outer_galaxy(catalog):
 
 
 def multipanel_size_linewidth():
+    # currently coded like a freshman. it's an abomination. computers do more for less.
 
     fig = plt.figure(figsize=(8,8))
 
     overall = fig.add_subplot(331)
     plt.setp(overall.get_xticklabels(), visible=False)
+    overall.set_ylabel(r"$\log_{10}(\sigma_v)$")    
     overall.text(1, 1.3, "All clouds", fontsize=18)
 
     size_array = all_catalog['size']
@@ -50,8 +54,17 @@ def multipanel_size_linewidth():
 
     overall.plot(np.log10(size_array), np.log10(linewidth_array), 'k.')
 
+    pdb.set_trace()
+    size_linewidth_output = size_linewidth_slope(all_catalog)
+    fit_coefficient = size_linewidth_output.beta[0]
+    fit_exponent = size_linewidth_output.beta[1]
+    fit_xs = np.logspace(0, 4, 20)
+    fit_ys = fit_coefficient * fit_xs ** fit_exponent    
+    plt.plot(np.log10(fit_xs), np.log10(fit_ys), 'g--', zorder=0, scalex=False, scaley=False)
+
     outer_N = fig.add_subplot(337, sharex=overall, sharey=overall)
     outer_N.set_xlabel(r"$\log_{10}(R/\rm{pc})$")
+    outer_N.set_ylabel(r"$\log_{10}(\sigma_v)$")
     outer_N.text(1, 1.3, "Outer (North)", fontsize=18)    
 
     N = all_catalog['x_cen'] < 180
@@ -64,6 +77,7 @@ def multipanel_size_linewidth():
 
     inner_N = fig.add_subplot(334, sharex=overall, sharey=overall)
     plt.setp(inner_N.get_xticklabels(), visible=False)
+    inner_N.set_ylabel(r"$\log_{10}(\sigma_v)$")
     inner_N.text(1, 1.3, "Inner (North)", fontsize=18)    
 
     size_array = extract_inner_galaxy(N_catalog)['size']
@@ -123,7 +137,7 @@ def multipanel_size_linewidth():
     overall.set_yticks(np.linspace(-0, 1.5, 4*5), minor=True)
     overall.set_ylim([-0.3, 1.6])
 
-    plt.tight_layout(pad=0.5)
+    # plt.tight_layout(pad=0.5)
 
     return fig
 
