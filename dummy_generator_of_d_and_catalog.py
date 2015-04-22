@@ -4,7 +4,7 @@ over and over when working on my code.
 
 """
 
-from astrodendro_analysis.production.first_quadrant_cloud_extraction import *
+from astrodendro_analysis.first_quadrant_cloud_extraction import *
 
 firstquad_output = first_quad_dendrogram()
 d, catalog, header, metadata = firstquad_output
