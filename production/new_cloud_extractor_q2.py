@@ -41,9 +41,8 @@ def second_quad_cloud_catalog():
     # note edge structures
     catalog_cp['on_edge'] = identify_edge_structures(d)
 
-    distance_table = make_reid_distance_column(catalog, nearfar='near')
-
     # DISTANCE assignment
+    distance_table = make_reid_distance_column(catalog, nearfar='near')
     catalog_cp['distance'] = distance_table['D_k']
 
     # assignment of physical properties to unambigously-distanced structures
