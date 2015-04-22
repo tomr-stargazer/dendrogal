@@ -19,15 +19,18 @@ import astropy.constants as c
 
 from astrodendro_analysis.integrated_viewer import IntegratedViewer
 
-# from astrodendro_analysis.production.first_quadrant_cloud_extraction import first_quad_dendrogram, export_firstquad_catalog
 from astrodendro_analysis.production.new_cloud_extractor_q1 import first_quad_cloud_catalog, compile_firstquad_catalog
 from astrodendro_analysis.production.new_cloud_extractor_q1 import d as quad1_d
+
 from astrodendro_analysis.production.new_cloud_extractor_q2 import export_secondquad_catalog
 from astrodendro_analysis.production.new_cloud_extractor_q2 import d as quad2_d
-from astrodendro_analysis.production.third_quadrant_cloud_extraction import third_quad_dendrogram, export_thirdquad_catalog
-# from astrodendro_analysis.production.fourth_quadrant_cloud_extraction import fourth_quad_dendrogram, export_carina_catalog
+
+from astrodendro_analysis.production.new_cloud_extractor_q3 import export_thirdquad_catalog
+from astrodendro_analysis.production.new_cloud_extractor_q3 import d as quad3_d
+
 from astrodendro_analysis.production.new_cloud_extractor_q4 import fourth_quad_cloud_catalog, compile_fourthquad_catalog
 from astrodendro_analysis.production.new_cloud_extractor_q4 import d as quad4_d
+
 from astrodendro_analysis.production.new_cloud_extractor_carina import carina_cloud_catalog, compile_carina_catalog
 from astrodendro_analysis.production.new_cloud_extractor_carina import d as carina_d
 
@@ -129,16 +132,8 @@ def second_quadrant_figures(args=None, save=True):
 def third_quadrant_figures(args=None, save=True):
     """ Creates the figures for the third quadrant and saves them. """
 
-    # if args is None, the dendrogram will be computed fresh
-    if args is None:
-        d, catalog, header, metadata = third_quad_dendrogram()
-        args = (d, catalog, header, metadata)
-    else:
-        d, catalog, header, metadata = args
-
-    cloud_catalog = export_thirdquad_catalog(args=args)
-
-    cloud_selection = selection_from_catalog(d, cloud_catalog)
+    cloud_catalog = export_thirdquad_catalog()
+    d = quad3_d
 
     # iv_thirdquad = make_quadrant_lbv_map(cloud_catalog, d, alignment='horizontal', aspect=2, vscale=1.3)
     # iv_thirdquad.fig.set_figheight(5.7)
@@ -146,9 +141,9 @@ def third_quadrant_figures(args=None, save=True):
     # iv_thirdquad.fig.canvas.draw()
     # iv_thirdquad.fig.savefig(output_path+'quad3_map.pdf', bbox_inches='tight')
 
-    imf_thirdquad = make_lv_map_new(cloud_catalog, d, integration_limits=(-1.9,2))
-    imf_thirdquad.ax.coords['glon'].set_ticks(spacing=10*u.deg, color='white', exclude_overlapping=True)
-    imf_thirdquad.ax.set_xlim(135, 778)
+    imf_thirdquad = make_lv_map_new(cloud_catalog, d, integration_limits=(-1.9,3))
+    imf_thirdquad.ax.coords['glon'].set_ticks(spacing=5*u.deg, color='white', exclude_overlapping=True)
+    imf_thirdquad.ax.set_xlim(135, 744)
     imf_thirdquad.fig.canvas.draw()
     imf_thirdquad.fig.savefig(output_path+'quad3_map.pdf', bbox_inches='tight')
 
