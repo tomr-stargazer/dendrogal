@@ -43,6 +43,7 @@ def multipanel_size_linewidth():
 
     overall = fig.add_subplot(331)
     plt.setp(overall.get_xticklabels(), visible=False)
+    overall.text(1, 1.3, "All clouds", fontsize=18)
 
     size_array = all_catalog['size']
     linewidth_array = all_catalog['v_rms']
@@ -50,7 +51,8 @@ def multipanel_size_linewidth():
     overall.plot(np.log10(size_array), np.log10(linewidth_array), 'k.')
 
     outer_N = fig.add_subplot(337, sharex=overall, sharey=overall)
-    outer_N.set_xlabel(r"$log_{10}(R/\rm{pc})$")
+    outer_N.set_xlabel(r"$\log_{10}(R/\rm{pc})$")
+    outer_N.text(1, 1.3, "Outer (North)", fontsize=18)    
 
     N = all_catalog['x_cen'] < 180
     N_catalog = all_catalog[N]
@@ -62,6 +64,7 @@ def multipanel_size_linewidth():
 
     inner_N = fig.add_subplot(334, sharex=overall, sharey=overall)
     plt.setp(inner_N.get_xticklabels(), visible=False)
+    inner_N.text(1, 1.3, "Inner (North)", fontsize=18)    
 
     size_array = extract_inner_galaxy(N_catalog)['size']
     linewidth_array = extract_inner_galaxy(N_catalog)['v_rms']
@@ -70,6 +73,8 @@ def multipanel_size_linewidth():
 
 
     outer_S = fig.add_subplot(338, sharex=overall, sharey=overall)
+    outer_S.set_xlabel(r"$\log_{10}(R/\rm{pc})$")    
+    outer_S.text(1, 1.3, "Outer (South)", fontsize=18)        
     plt.setp(outer_S.get_yticklabels(), visible=False)
 
     S = all_catalog['x_cen'] > 180
@@ -81,6 +86,7 @@ def multipanel_size_linewidth():
     outer_S.plot(np.log10(size_array), np.log10(linewidth_array), 'k.')
 
     inner_S = fig.add_subplot(335, sharex=overall, sharey=overall)
+    inner_S.text(1, 1.3, "Inner (South)", fontsize=18)        
     plt.setp(inner_S.get_xticklabels(), visible=False)
     plt.setp(inner_S.get_yticklabels(), visible=False)
 
@@ -91,6 +97,8 @@ def multipanel_size_linewidth():
 
     outer_combined = fig.add_subplot(339, sharex=overall, sharey=overall)
     plt.setp(outer_combined.get_yticklabels(), visible=False)
+    outer_combined.set_xlabel(r"$\log_{10}(R/\rm{pc})$")
+    outer_combined.text(1, 1.3, "Outer (all)", fontsize=18)            
 
     size_array = extract_outer_galaxy(all_catalog)['size']
     linewidth_array = extract_outer_galaxy(all_catalog)['v_rms']
@@ -98,6 +106,7 @@ def multipanel_size_linewidth():
     outer_combined.plot(np.log10(size_array), np.log10(linewidth_array), 'k.')
 
     inner_combined = fig.add_subplot(336, sharex=overall, sharey=overall)
+    inner_combined.text(1, 1.3, "Inner (all)", fontsize=18)                
     plt.setp(inner_combined.get_xticklabels(), visible=False)
     plt.setp(inner_combined.get_yticklabels(), visible=False)
 
@@ -110,9 +119,11 @@ def multipanel_size_linewidth():
     overall.set_xticks(np.linspace(0.5,2.5, 25), minor=True)
     overall.set_xlim([0.7, 2.6])
 
-    overall.set_yticks(np.linspace(-0.25, 1.0, 6))
-    overall.set_yticks(np.linspace(-0.25, 1.0, 6, 30), minor=True)
-    overall.set_ylim([-0.3, 1.1])
+    overall.set_yticks(np.linspace(-0, 1.5, 4))
+    overall.set_yticks(np.linspace(-0, 1.5, 4*5), minor=True)
+    overall.set_ylim([-0.3, 1.6])
+
+    plt.tight_layout(pad=0.5)
 
     return fig
 
