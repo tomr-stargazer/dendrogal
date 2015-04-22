@@ -5,11 +5,11 @@ from __future__ import division
 import numpy as np
 import astropy
 
-from astrodendro_analysis.production.new_cloud_extractor_q1 import export_firstquad_catalog
-from astrodendro_analysis.production.new_cloud_extractor_q2 import export_secondquad_catalog
-from astrodendro_analysis.production.new_cloud_extractor_q3 import export_thirdquad_catalog
-from astrodendro_analysis.production.new_cloud_extractor_q4 import export_fourthquad_catalog
-from astrodendro_analysis.production.new_cloud_extractor_carina import export_carina_catalog
+from astrodendro_analysis.production.cloud_extractor_q1 import export_firstquad_catalog
+from astrodendro_analysis.production.cloud_extractor_q2 import export_secondquad_catalog
+from astrodendro_analysis.production.cloud_extractor_q3 import export_thirdquad_catalog
+from astrodendro_analysis.production.cloud_extractor_q4 import export_fourthquad_catalog
+from astrodendro_analysis.production.cloud_extractor_carina import export_carina_catalog
 
 def extract_and_combine_catalogs():
 
