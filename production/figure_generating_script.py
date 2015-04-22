@@ -48,25 +48,11 @@ def first_quadrant_figures(args=None, save=True):
     cloud_catalog = compile_firstquad_catalog(first_quad_cloud_catalog())
     d = quad1_d
 
-    # cloud_selection = selection_from_catalog(d, cloud_catalog)
-
     imf_dame_a = make_lv_map_new(cloud_catalog, d)
     imf_dame_a.ax.set_xlim(135, 496)
     imf_dame_a.ax.set_ylim(138, 380)
     plot_dame_ellipses_on_imf(imf_dame_a)
     imf_dame_a.fig.savefig(output_path+"quad1_comparison_a.pdf", bbox_inches='tight')
-    # # make the first one
-    # iv_dame_a = make_quadrant_lbv_map(cloud_catalog, d)
-    # iv_dame_a.ax_lv.set_xlim(115, 496.5)
-    # iv_dame_a.ax_lv.set_ylim(120, 413)
-    # iv_dame_a.fig.savefig(output_path+"quad1_comparison_a.pdf", bbox_inches='tight')
-
-    # iv_dame_b = make_quadrant_lbv_map(cloud_catalog, d, contour_select=False)
-    # plot_dame_ellipses_on_integrated_viewer(iv_dame_b)
-    # iv_dame_b.ax_lv.set_xlim(115, 496.5)
-    # iv_dame_b.ax_lv.set_ylim(120, 413)
-
-    # iv_dame_b.fig.savefig(output_path+"quad1_comparison_b.pdf", bbox_inches='tight')
 
     imf_firstquad = make_lv_map_new(cloud_catalog, d)
     # imf_firstquad.fig.set_figheight(5.7)
@@ -95,14 +81,6 @@ def second_quadrant_figures(args=None, save=True):
 
     cloud_catalog = export_secondquad_catalog()
     d = quad2_d
-
-    # cloud_selection = selection_from_catalog(d, cloud_catalog)
-
-    # iv_secondquad = make_quadrant_lbv_map(cloud_catalog, d, alignment='horizontal', aspect=2, vscale=1.3)
-    # iv_secondquad.fig.set_figheight(5.7)
-    # iv_secondquad.fig.set_figwidth(10)
-    # iv_secondquad.fig.canvas.draw()
-    # iv_secondquad.fig.savefig(output_path+'quad2_map.pdf', bbox_inches='tight')
 
     imf_secondquad = make_lv_map_new(cloud_catalog, d, integration_limits=(-2,2))
     imf_secondquad.ax.coords['glon'].set_ticks(spacing=10*u.deg, color='white', exclude_overlapping=True)    
@@ -135,12 +113,6 @@ def third_quadrant_figures(args=None, save=True):
     cloud_catalog = export_thirdquad_catalog()
     d = quad3_d
 
-    # iv_thirdquad = make_quadrant_lbv_map(cloud_catalog, d, alignment='horizontal', aspect=2, vscale=1.3)
-    # iv_thirdquad.fig.set_figheight(5.7)
-    # iv_thirdquad.fig.set_figwidth(10)
-    # iv_thirdquad.fig.canvas.draw()
-    # iv_thirdquad.fig.savefig(output_path+'quad3_map.pdf', bbox_inches='tight')
-
     imf_thirdquad = make_lv_map_new(cloud_catalog, d, integration_limits=(-1.9,3))
     imf_thirdquad.ax.coords['glon'].set_ticks(spacing=5*u.deg, color='white', exclude_overlapping=True)
     imf_thirdquad.ax.set_xlim(135, 744)
@@ -169,24 +141,6 @@ def fourth_quadrant_figures(args=None, save=True):
 
     cloud_catalog = compile_fourthquad_catalog(fourth_quad_cloud_catalog())
     d = quad4_d
-
-
-    # # if args is None, the dendrogram will be computed fresh
-    # if args is None:
-    #     d, catalog, header, metadata = fourth_quad_dendrogram()
-    #     args = (d, catalog, header, metadata)
-    # else:
-    #     d, catalog, header, metadata = args
-
-    # cloud_catalog = export_fourthquad_catalog(args=args)
-
-    # cloud_selection = selection_from_catalog(d, cloud_catalog)
-
-    # iv_fourthquad = make_quadrant_lbv_map(cloud_catalog, d, alignment='horizontal', aspect=1/2, vscale=1.3)
-    # iv_fourthquad.fig.set_figheight(8)
-    # iv_fourthquad.fig.set_figwidth(8)
-    # iv_fourthquad.fig.canvas.draw()
-    # iv_fourthquad.fig.savefig(output_path+'quad4_map.pdf', bbox_inches='tight')
 
     imf_fourthquad = make_lv_map_new(cloud_catalog, d)
     imf_fourthquad.ax.set_ylim(20,245) # found via trial & error
