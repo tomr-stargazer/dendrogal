@@ -57,9 +57,9 @@ def get_positive_velocity_clouds(input_catalog, max_descendants=15):
 
     # narrow down how we select clouds
     disqualified_location = (
-        ((catalog['v_cen'] < 25) & (catalog['x_cen'] > 205)) |
-        ((catalog['v_cen'] < 12) & (catalog['x_cen'] < 205)) |
+        (catalog['v_cen'] < 25) |
         (catalog['x_cen'] > 280) |
+        (catalog['x_cen'] < 205) |
         (catalog['on_edge'] == 1) |
         (catalog['x_sol'] < -7) 
     )
