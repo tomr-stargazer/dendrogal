@@ -6,21 +6,16 @@ import numpy as np
 import astropy
 
 from astrodendro_analysis.production.new_cloud_extractor_q1 import export_firstquad_catalog
-from astrodendro_analysis.production.second_quadrant_cloud_extraction import export_secondquad_catalog
-from astrodendro_analysis.production.third_quadrant_cloud_extraction import export_thirdquad_catalog
+from astrodendro_analysis.production.new_cloud_extractor_q2 import export_secondquad_catalog
+from astrodendro_analysis.production.new_cloud_extractor_q3 import export_thirdquad_catalog
 from astrodendro_analysis.production.new_cloud_extractor_q4 import export_fourthquad_catalog
 from astrodendro_analysis.production.new_cloud_extractor_carina import export_carina_catalog
 
-def extract_and_combine_catalogs(args=[None]*4):
-
-    # The keyword exists so that if you have already computed
-    # a dendrogram and catalog for any of the quadrants,
-    # you can pass its `d, catalog, header, metadata` tuple
-    # in as an element of `args` and skip the longish computation.
+def extract_and_combine_catalogs():
 
     first_cat = export_firstquad_catalog()
-    second_cat = export_secondquad_catalog(args[1])
-    third_cat = export_thirdquad_catalog(args[2])
+    second_cat = export_secondquad_catalog()
+    third_cat = export_thirdquad_catalog()
     fourth_cat = export_fourthquad_catalog()
     carina_cat = export_carina_catalog()
 
