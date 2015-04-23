@@ -66,10 +66,6 @@ def first_quad_cloud_catalog():
     KDA_resolution_column[no_degeneracy] = 'U'
 
     assign_distance_columns(catalog_cp, distance_column, KDA_resolution_column, np.zeros_like(distance_column), np.zeros_like(distance_column))
-    # catalog_cp['distance'] = distance_column
-    # catalog_cp['KDA_resolution'] = KDA_resolution_column
-    # catalog_cp['p_near'] = np.zeros_like(distance_column)
-    # catalog_cp['p_far'] = np.zeros_like(distance_column)
 
     # assignment of physical properties to unambigously-distanced structures
     # let's think critically about whether this step is needed.
@@ -123,11 +119,6 @@ def get_positive_velocity_clouds(input_catalog, max_descendants=30):
 
     # disambiguate distances here
     assign_distance_columns(almost_output_catalog, *distance_disambiguator(almost_output_catalog))
-    # best_distance, KDA_resolution, p_near, p_far = 
-    # almost_output_catalog['distance'] = best_distance
-    # almost_output_catalog['KDA_resolution'] = KDA_resolution
-    # almost_output_catalog['p_near'] = p_near
-    # almost_output_catalog['p_far'] = p_far
 
     assign_properties(almost_output_catalog)
 
@@ -247,11 +238,6 @@ def get_low_velocity_perseus_clouds(input_catalog, max_descendants=30):
 
     # disambiguate distances here
     assign_distance_columns(almost_output_catalog, *distance_disambiguator(almost_output_catalog))
-    # best_distance, KDA_resolution, p_near, p_far = 
-    # almost_output_catalog['distance'] = best_distance
-    # almost_output_catalog['KDA_resolution'] = KDA_resolution
-    # almost_output_catalog['p_near'] = p_near
-    # almost_output_catalog['p_far'] = p_far
 
     assign_properties(almost_output_catalog)
 

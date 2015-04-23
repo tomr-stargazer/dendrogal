@@ -14,7 +14,7 @@ from dendrogal.production.convenience_function import load_permute_dendro_catalo
 from dendrogal.production.calculate_distance_dependent_properties import assign_properties
 from dendrogal.production.remove_degenerate_structures import reduce_catalog
 from dendrogal.production.disqualify_edge_structures import identify_edge_structures
-from dendrogal.production.distance_disambiguate import distance_disambiguator
+from dendrogal.production.distance_disambiguate import distance_disambiguator, assign_distance_columns
 
 
 from dendrogal.reid_distance_assigner import make_reid_distance_column
@@ -61,7 +61,12 @@ def carina_cloud_catalog():
     distance_column = np.zeros_like(near_distance_column) * np.nan
     distance_column[no_degeneracy] = catalog_cp['near_distance'][no_degeneracy]
 
-    catalog_cp['distance'] = distance_column
+    KDA_resolution_column = np.array(['-']*len(distance_column))
+
+    distance_column[no_degeneracy] = catalog_cp['near_distance'][no_degeneracy]
+    KDA_resolution_column[no_degeneracy] = 'U'
+
+    assign_distance_columns(catalog_cp, distance_column, KDA_resolution_column, np.zeros_like(distance_column), np.zeros_like(distance_column))
 
     # assignment of physical properties to unambigously-distanced structures
     # let's think critically about whether this step is needed.
@@ -114,8 +119,8 @@ def get_negative_velocity_clouds(input_catalog, max_descendants=10):
     almost_output_catalog = reduce_catalog(d, pre_output_catalog)
 
     # disambiguate distances here
-    best_distance = distance_disambiguator(almost_output_catalog)
-    almost_output_catalog['distance'] = best_distance
+    assign_distance_columns(almost_output_catalog, *distance_disambiguator(almost_output_catalog))
+
     assign_properties(almost_output_catalog)
 
     # now let's do a thing
