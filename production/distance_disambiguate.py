@@ -142,3 +142,12 @@ def assign_distance_columns(catalog, best_distance, KDA_resolution, p_near, p_fa
     catalog['p_near'] = p_near
     catalog['p_far'] = p_far
 
+
+def assign_distance_columns_trivial(catalog):
+    """ Use this in the 2nd and 3rd quadrants. """
+
+    catalog['distance'] = catalog['distance']
+    catalog['KDA_resolution'] = np.array(['U']*len(catalog['distance']))
+    catalog['p_near'] = np.zeros_like(catalog['distance'])
+    catalog['p_far'] = np.zeros_like(catalog['distance'])
+

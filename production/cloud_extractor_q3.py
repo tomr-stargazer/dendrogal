@@ -13,6 +13,7 @@ from dendrogal.production.calculate_distance_dependent_properties import assign_
 from dendrogal.production.remove_degenerate_structures import reduce_catalog
 from dendrogal.production.disqualify_edge_structures import identify_edge_structures
 from dendrogal.production.convenience_function import load_permute_dendro_catalog
+from dendrogal.production.distance_disambiguate import assign_distance_columns_trivial
 
 from dendrogal.reid_distance_assigner import make_reid_distance_column
 from dendrogal.catalog_tree_stats import compute_tree_stats
@@ -44,6 +45,7 @@ def third_quad_cloud_catalog():
     # DISTANCE assignment
     distance_table = make_reid_distance_column(catalog, nearfar='near')
     catalog_cp['distance'] = distance_table['D_k']
+    assign_distance_columns_trivial(catalog_cp)
 
     # assignment of physical properties to unambigously-distanced structures
     assign_properties(catalog_cp)
