@@ -157,3 +157,42 @@ def plot_size_linewidth_with_nearfar_fig(catalog):
     ax = fig.add_subplot(111)
 
     return fig, plot_size_linewidth_with_nearfar(catalog, ax)
+
+
+def plot_cmf_except_farU(catalog, ax, bins=20, hist_range=(4, 7), **kwargs):
+
+    unambiguous_far = (catalog['KDA_resolution'] == 'U') & (catalog['distance'] >= 9)
+
+    number_in_bin_q2, bin_edges, ch = ax.hist(np.log10(catalog[~unambiguous_far]['mass']), cumulative=-1, log=True, bins=bins, range=hist_range)
+    bin_centers_q2 = (bin_edges[1:] + bin_edges[:-1])/2.
+    # plt.clf()
+    ax.plot(bin_centers_q2, number_in_bin_q2, 'ko' )
+    ax.semilogy()
+    ax.set_xlabel(r"log$_{10}$ (M$_{GMC}$ / M$_\odot$)")
+    ax.set_ylabel("n(M > M')")
+    cmf_output = cumulative_massfunction_fit(catalog[~unambiguous_far], bins=bins, mass_column_name='mass', **kwargs)
+
+    M_0, N_0, gamma = cmf_output[0]
+
+    m_array = np.linspace(min(bin_edges), max(bin_edges), 50)
+    n_array = truncated_cloudmass_function([M_0, N_0, gamma], 10**m_array)
+
+    plt.plot(m_array, n_array, label="$\\gamma = {0:.2f}$,\n$M_0={1:.2e}$,\n$N_0={2:.1f}$".format(gamma, M_0, N_0))
+
+    text_string = r"$N(M' > M) = N_0 \left [ \left ( \frac{M}{M_0} \right )^{\gamma+1} - 1 \right ]$"
+
+    ax.text(4.1, 3, text_string, fontsize=18)
+    ax.set_xlim(*hist_range)
+    ax.set_ylim(0.7, 1e3)
+
+    ax.legend(loc='upper right')
+
+    return cmf_output
+
+
+def plot_cmf_with_fit_fig(catalog, **kwargs):
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+
+    return fig, plot_cmf_except_farU(catalog, ax, **kwargs)
