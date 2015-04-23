@@ -116,11 +116,29 @@ def distance_disambiguator(catalog, **kwargs):
     p_near, p_far = calculate_p_nearfar(catalog, False, **kwargs)
 
     best_distance = np.zeros_like(catalog['near_distance'])
+    KDA_resolution = np.array(['-']*len(best_distance))
 
     use_near_distance = (p_near >= p_far)
     use_far_distance = (p_far > p_near)
+    same_distances = catalog['near_distance'] == catalog['far_distance']
 
     best_distance[use_near_distance] = catalog['near_distance'][use_near_distance]
     best_distance[use_far_distance] = catalog['far_distance'][use_far_distance]
 
-    return best_distance
+    KDA_resolution[use_near_distance] = 'N'
+    KDA_resolution[use_far_distance] = 'F'
+    KDA_resolution[same_distances] = 'U'
+
+    return best_distance, KDA_resolution, p_near, p_far
+
+def assign_distance_columns(catalog, best_distance, KDA_resolution, p_near, p_far):
+    """
+    Takes the output of the above function and assigns it to columns in the table.
+
+    """
+
+    catalog['distance'] = best_distance
+    catalog['KDA_resolution'] = KDA_resolution
+    catalog['p_near'] = p_near
+    catalog['p_far'] = p_far
+
