@@ -57,8 +57,16 @@ def catalog_from_selection(struct_list, catalog):
 
     return selected_catalog
 
-def selection_from_catalog(d, catalog):
+def selection_from_catalog(d, catalog, subtree=False):
 
     struct_list = [d[idx] for idx in catalog['_idx']]
+
+    if subtree:
+        substructure_list = []
+        for struct in struct_list:
+            substructure_list.extend(struct.descendants)
+
+        struct_list.extend(substructure_list)
+
 
     return struct_list
