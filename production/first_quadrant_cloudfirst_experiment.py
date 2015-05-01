@@ -16,7 +16,7 @@ from dendrogal.production.disqualify_edge_structures import identify_edge_struct
 from dendrogal.reid_distance_assigner import make_reid_distance_column
 from dendrogal.catalog_tree_stats import compute_tree_stats
 
-from make_firstquad_stub import d, catalog, header, metadata
+from dendrogal.production.make_firstquad_stub import d, catalog, header, metadata
 
 
 def first_quad_cloud_catalog():
