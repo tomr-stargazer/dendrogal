@@ -82,7 +82,7 @@ def get_negative_velocity_clouds(input_catalog, max_descendants=10):
     clouds based on (a) position in velocity space, (b) a cloud is not
     on an edge, (c) line widths between 1-10 km/s, (d) a cloud has less
     than `max_descendants` descendants, (e) the `fractional_gain` is
-    below 0.81.
+    below 0.9.
 
     Structures that meet the above criteria go into a pre-candidate-cloud
     list, and that list is "flattened" or "reduced" to remove degenerate
@@ -109,7 +109,7 @@ def get_negative_velocity_clouds(input_catalog, max_descendants=10):
 
     qualified = (
         (catalog['n_descendants'] < max_descendants) &
-        (catalog['fractional_gain'] < 0.81))
+        (catalog['fractional_gain'] < 0.9))
 
     pre_output_catalog = catalog[~disqualified & qualified]
 
@@ -137,7 +137,7 @@ def get_positive_velocity_clouds(input_catalog, max_descendants=30):
     (a) position in velocity space, 
     (b) a cloud is not on an edge, 
     (c) a cloud has less than `max_descendants` descendants, 
-    (d) the `fractional_gain` is below 0.81.
+    (d) the `fractional_gain` is below 0.9.
 
     Structures that meet the above criteria go into a pre-candidate-cloud
     list, and that list is "flattened" or "reduced" to remove degenerate
@@ -167,7 +167,7 @@ def get_positive_velocity_clouds(input_catalog, max_descendants=30):
 
     disqualified_tree = (
         (catalog['n_descendants'] > max_descendants) &
-        (catalog['fractional_gain'] > 0.81))
+        (catalog['fractional_gain'] > 0.9))
 
     # this step excludes the weird tail near the galactic center
     disqualified_extreme_positive_velocities_near_GC = (

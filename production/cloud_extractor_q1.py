@@ -74,7 +74,7 @@ def first_quad_cloud_catalog():
     return catalog_cp
 
 
-def get_positive_velocity_clouds(input_catalog, max_descendants=30):
+def get_positive_velocity_clouds(input_catalog, max_descendants=30, fractional_gain=0.9):
     """
     Extracts clouds from the positive-velocity region of the first quad.
 
@@ -83,7 +83,7 @@ def get_positive_velocity_clouds(input_catalog, max_descendants=30):
     clouds based on (a) position in velocity space, (b) a cloud is not
     on an edge, (c) line widths between 1-10 km/s, (d) a cloud has less
     than `max_descendants` descendants, (e) the `fractional_gain` is
-    below 0.81.
+    below 0.9.
 
     Structures that meet the above criteria go into a pre-candidate-cloud
     list, and that list is "flattened" or "reduced" to remove degenerate
@@ -110,7 +110,7 @@ def get_positive_velocity_clouds(input_catalog, max_descendants=30):
 
     qualified = (
         (catalog['n_descendants'] < max_descendants) &
-        (catalog['fractional_gain'] < 0.81))
+        (catalog['fractional_gain'] < fractional_gain))
 
     pre_output_catalog = catalog[~disqualified & qualified]
 
@@ -129,7 +129,7 @@ def get_positive_velocity_clouds(input_catalog, max_descendants=30):
     return output_catalog
 
 
-def get_negative_velocity_clouds(input_catalog, max_descendants=30):
+def get_negative_velocity_clouds(input_catalog, max_descendants=30, fractional_gain=0.9):
     """
     Extracts clouds from the negative-velocity region of the first quad.
 
@@ -138,7 +138,7 @@ def get_negative_velocity_clouds(input_catalog, max_descendants=30):
     (a) position in velocity space, 
     (b) a cloud is not on an edge, 
     (c) a cloud has less than `max_descendants` descendants, 
-    (d) the `fractional_gain` is below 0.81.
+    (d) the `fractional_gain` is below 0.9.
 
     Structures that meet the above criteria go into a pre-candidate-cloud
     list, and that list is "flattened" or "reduced" to remove degenerate
@@ -168,7 +168,7 @@ def get_negative_velocity_clouds(input_catalog, max_descendants=30):
 
     disqualified_tree = (
         (catalog['n_descendants'] > max_descendants) &
-        (catalog['fractional_gain'] > 0.81))
+        (catalog['fractional_gain'] > fractional_gain))
 
     # this step excludes the weird tail near the galactic center
     disqualified_extreme_negative_velocities_near_GC = (
@@ -187,7 +187,7 @@ def get_negative_velocity_clouds(input_catalog, max_descendants=30):
     return output_catalog
 
 
-def get_low_velocity_perseus_clouds(input_catalog, max_descendants=30):
+def get_low_velocity_perseus_clouds(input_catalog, max_descendants=30, fractional_gain=0.9):
     """
     Extracts clouds from the low-velocity Perseus region of Q1.
 
@@ -199,7 +199,7 @@ def get_low_velocity_perseus_clouds(input_catalog, max_descendants=30):
     (b) a cloud is not on an edge,
     (c) line widths between 1-10 km/s, 
     (d) a cloud has less than `max_descendants` descendants, 
-    (e) the `fractional_gain` is below 0.81,
+    (e) the `fractional_gain` is below 0.9,
 
     Structures that meet the above criteria go into a pre-candidate-cloud
     list, and that list is "flattened" or "reduced" to remove degenerate
@@ -229,7 +229,7 @@ def get_low_velocity_perseus_clouds(input_catalog, max_descendants=30):
 
     qualified = (
         (catalog['n_descendants'] < max_descendants) &
-        (catalog['fractional_gain'] < 0.81))
+        (catalog['fractional_gain'] < fractional_gain))
 
     pre_output_catalog = catalog[~disqualified & qualified]
 
