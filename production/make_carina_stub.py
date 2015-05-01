@@ -14,7 +14,7 @@ from dendrogal.production.convenience_function import load_permute_dendro_catalo
 
 min_value = 0.17
 min_delta = 0.17
-min_npix = 10
+min_npix = 20
 
 data_filename = "DHT33_Carina_mominterp.fits"
 dendrogram_kwargs = {'min_value': min_value,

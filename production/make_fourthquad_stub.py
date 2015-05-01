@@ -14,7 +14,7 @@ from dendrogal.production.convenience_function import load_permute_dendro_catalo
 
 min_value = 0.12
 min_delta = 0.12
-min_npix = 10
+min_npix = 20
 
 data_filename = "DHT36_Quad4_interp_mom.fits"
 dendrogram_kwargs = {'min_value': min_value,
