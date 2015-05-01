@@ -18,7 +18,7 @@ from dendrogal.production.distance_disambiguate import distance_disambiguator, a
 from dendrogal.reid_distance_assigner import make_reid_distance_column
 from dendrogal.catalog_tree_stats import compute_tree_stats
 
-from make_fourthquad_stub import d, catalog, header, metadata
+from dendrogal.production.make_fourthquad_stub import d, catalog, header, metadata
 
 
 def fourth_quad_cloud_catalog():
