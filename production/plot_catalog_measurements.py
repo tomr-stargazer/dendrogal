@@ -118,10 +118,10 @@ def plot_mass_density_radius(catalog, bins=20):
     return mass_per_radius, mass_density_per_radius
 
 
-def plot_size_linewidth_with_nearfar(catalog, ax):
+def plot_size_linewidth_with_nearfar(catalog, ax, labels=True):
 
-    unambiguous_nearby = (catalog['KDA_resolution'] == 'U') & (catalog['distance'] < 9)
-    unambiguous_far = (catalog['KDA_resolution'] == 'U') & (catalog['distance'] >= 9)
+    unambiguous_nearby = (catalog['KDA_resolution'] == 'U') & (catalog['distance'] < 8)
+    unambiguous_far = (catalog['KDA_resolution'] == 'U') & (catalog['distance'] >= 8)
     near = catalog['KDA_resolution'] == 'N'
     far = catalog['KDA_resolution'] == 'F'
 
@@ -136,18 +136,24 @@ def plot_size_linewidth_with_nearfar(catalog, ax):
     fit_xs = np.logspace(-2, 8, 20)
     fit_ys = fit_coefficient * fit_xs ** fit_exponent
 
-    ax.plot(np.log10(size_array[unambiguous_nearby]), np.log10(linewidth_array[unambiguous_nearby]), 'k.', ms=10, label='unambiguous_nearby')
-    ax.plot(np.log10(size_array[unambiguous_far]), np.log10(linewidth_array[unambiguous_far]), 'wo', label='unambiguous_far', ms=3)
-    ax.plot(np.log10(size_array[near]), np.log10(linewidth_array[near]), 'o', markerfacecolor='none', markeredgecolor='b', mew=1.5, label='near')
-    ax.plot(np.log10(size_array[far]), np.log10(linewidth_array[far]), 'o', markerfacecolor='none', markeredgecolor='r', mew=1.5, label='far')
+    ax.plot(np.log10(size_array[unambiguous_nearby]), np.log10(linewidth_array[unambiguous_nearby]), 'k.', ms=6, label='unambiguous (nearby)')
+    ax.plot(np.log10(size_array[unambiguous_far]), np.log10(linewidth_array[unambiguous_far]), 'wo', label='unambiguous (far)', ms=3)
+    ax.plot(np.log10(size_array[near]), np.log10(linewidth_array[near]), 'o', markerfacecolor='none', markeredgecolor='b', mew=0.5, ms=3.5, label='near')
+    ax.plot(np.log10(size_array[far]), np.log10(linewidth_array[far]), 'o', markerfacecolor='none', markeredgecolor='r', mew=0.5, ms=3.5, label='far')
+
+    if labels:
+        fit_label = r"$\sigma_v$ = {0:.2f} $\times$ R$^{{{1:.2f}}}$".format(fit_coefficient, fit_exponent) 
+    else:
+        fit_label = r"$\sigma_v = A \times R^\beta$"
 
     ax.plot(np.log10(fit_xs), np.log10(fit_ys), 'g--', zorder=0, scalex=False, scaley=False,
-             label=r"$\sigma_v$ = {0:.2f} $\times$ R$^{{{1:.2f}}}$".format(fit_coefficient, fit_exponent))
+             label=fit_label)
 
-    ax.legend(loc='lower right')
+    if labels:
+        ax.legend(loc='lower right')
 
-    ax.set_xlabel(r"$\log (R/\rm{pc})$", fontsize=18)
-    ax.set_ylabel(r"$\log (\sigma_v / \rm{km s}^{-1})$", fontsize=18)
+        ax.set_xlabel(r"$\log (R/\rm{pc})$", fontsize=18)
+        ax.set_ylabel(r"$\log (\sigma_v / \rm{km s}^{-1})$", fontsize=18)
 
     return size_linewidth_output
 
