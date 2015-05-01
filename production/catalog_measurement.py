@@ -78,7 +78,7 @@ def truncated_cloudmass_function(parameter_list, mass_array):
     return N_by_mass
 
 
-def cumulative_massfunction_fit(catalog, min_mass=1e5, bins=20, mass_column_name='mass'):
+def cumulative_massfunction_fit(catalog, min_mass=1e5, max_mass=3e7, bins=20, mass_column_name='mass'):
     """
     Measures a catalog's mass function slope using .
 
@@ -102,7 +102,7 @@ def cumulative_massfunction_fit(catalog, min_mass=1e5, bins=20, mass_column_name
         raise ValueError("'mass' must be column in `catalog`!")
 
     # make a reversely-summed histogram (the [::-1]'s ensure it's reversed properly)
-    hist, bin_edges = np.histogram( np.log10(catalog[mass_column_name]), range=[np.log10(min_mass), 7.5], bins=bins)
+    hist, bin_edges = np.histogram( np.log10(catalog[mass_column_name]), range=[np.log10(min_mass), np.log10(max_mass)], bins=bins)
     cum_hist = np.cumsum(hist[::-1])[::-1]
     bin_centers = (bin_edges[1:] + bin_edges[:-1])/2.
 
