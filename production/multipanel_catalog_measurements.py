@@ -137,7 +137,11 @@ def multipanel_size_linewidth():
     overall.set_yticks(np.linspace(-0, 1.5, 4*5), minor=True)
     overall.set_ylim([-0.3, 1.6])
 
-    # plt.tight_layout(pad=0.5)
+    # there's a bug with tight_layout in mac os x, hence all the draw()s.
+    # workaround from https://github.com/matplotlib/matplotlib/issues/2654
+    fig.canvas.draw()
+    fig.tight_layout(pad=0.5)
+    fig.canvas.draw() 
 
     return fig
 
