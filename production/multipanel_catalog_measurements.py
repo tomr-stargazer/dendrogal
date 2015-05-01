@@ -60,8 +60,8 @@ def multipanel_size_linewidth():
 
             subplot_number = 3*(gal_to_row_dict[galactic_region]-1) + sky_to_column_dict[sky_region]
 
-            ax = fig.add_subplot(3, 3, subplot_number
-                , sharex=share_ax, sharey=share_ax)
+            ax = fig.add_subplot(3, 3, subplot_number,
+                sharex=share_ax, sharey=share_ax)
 
             fig.axes_list.append(ax)
 
