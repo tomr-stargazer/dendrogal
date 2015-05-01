@@ -165,17 +165,19 @@ def plot_size_linewidth_with_nearfar_fig(catalog):
     return fig, plot_size_linewidth_with_nearfar(catalog, ax)
 
 
-def plot_cmf_except_farU(catalog, ax, bins=20, hist_range=(4, 7), **kwargs):
+def plot_cmf_except_farU(catalog, ax, bins=20, hist_range=(4, 7), labels=True, **kwargs):
 
-    unambiguous_far = (catalog['KDA_resolution'] == 'U') & (catalog['distance'] >= 9)
+    unambiguous_far = (catalog['KDA_resolution'] == 'U') & (catalog['distance'] >= 8)
 
     number_in_bin_q2, bin_edges, ch = ax.hist(np.log10(catalog[~unambiguous_far]['mass']), cumulative=-1, log=True, bins=bins, range=hist_range)
     bin_centers_q2 = (bin_edges[1:] + bin_edges[:-1])/2.
     # plt.clf()
     ax.plot(bin_centers_q2, number_in_bin_q2, 'ko' )
     ax.semilogy()
-    ax.set_xlabel(r"log$_{10}$ (M$_{GMC}$ / M$_\odot$)")
-    ax.set_ylabel("n(M > M')")
+    if labels:
+        ax.set_xlabel(r"log$_{10}$ (M$_{GMC}$ / M$_\odot$)")
+        ax.set_ylabel("n(M > M')")
+
     cmf_output = cumulative_massfunction_fit(catalog[~unambiguous_far], bins=bins, mass_column_name='mass', **kwargs)
 
     M_0, N_0, gamma = cmf_output[0]
@@ -185,13 +187,15 @@ def plot_cmf_except_farU(catalog, ax, bins=20, hist_range=(4, 7), **kwargs):
 
     plt.plot(m_array, n_array, label="$\\gamma = {0:.2f}$,\n$M_0={1:.2e}$,\n$N_0={2:.1f}$".format(gamma, M_0, N_0))
 
-    text_string = r"$N(M' > M) = N_0 \left [ \left ( \frac{M}{M_0} \right )^{\gamma+1} - 1 \right ]$"
+    if labels:
+        text_string = r"$N(M' > M) = N_0 \left [ \left ( \frac{M}{M_0} \right )^{\gamma+1} - 1 \right ]$"
 
-    ax.text(4.1, 3, text_string, fontsize=18)
+        ax.text(4.1, 3, text_string, fontsize=18)
+        ax.legend(loc='upper right')
+
     ax.set_xlim(*hist_range)
     ax.set_ylim(0.7, 1e3)
 
-    ax.legend(loc='upper right')
 
     return cmf_output
 
