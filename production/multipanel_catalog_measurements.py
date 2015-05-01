@@ -199,7 +199,7 @@ def multipanel_size_linewidth2():
 
             fit_string = "$A = {{{0:.2f}}}$,\n$\\beta ={{{1:.2f}}}$".format(fit_coefficient, fit_exponent)
 
-            plt.text(1,1, sky_text_dict[sky_region]+gal_text_dict[galactic_region], fontsize=14)
+            plt.text(0.9, 1.1, sky_text_dict[sky_region]+gal_text_dict[galactic_region], fontsize=14)
 
             plt.text(2, -0.2, fit_string, fontsize=14)
 
@@ -218,6 +218,9 @@ def multipanel_size_linewidth2():
 
             if subplot_number in ( 9,):
                 ax.set_xlabel(r"$\log(R/\rm{pc})$", fontsize=16)
+
+            if subplot_number == 9:
+                ax.legend(bbox_to_anchor=(0.45, 0.3), bbox_transform=fig.transFigure)
 
 
 
