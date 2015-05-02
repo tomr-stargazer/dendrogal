@@ -38,6 +38,7 @@ from dendrogal.comparison_to_other_catalogs import plot_dame_ellipses_on_integra
 from dendrogal.production.remove_degenerate_structures import reduce_catalog, selection_from_catalog
 from dendrogal.production.map_figures import make_quadrant_lbv_map, make_quadrant_topdown_map, make_lv_map_new
 from dendrogal.production.plot_catalog_measurements import plot_cmf, plot_size_linewidth_fit
+from dendrogal.production.multipanel_catalog_measurements import multipanel_size_linewidth, multipanel_cmf
 
 
 output_path = os.path.expanduser("~/Dropbox/Grad School/Research/Milkyway/paper/")
@@ -206,6 +207,12 @@ def combined_galaxy_figures(catalog):
 
     cmf_allquad = plot_cmf(catalog)[0]
     cmf_allquad.savefig(output_path+"allquads_cmf.pdf", bbox_inches='tight')
+
+    cmf_multipanel = multipanel_cmf()
+    cmf_multipanel.savefig(output_path+"multipanel_cmf.pdf", bbox_inches='tight')
+
+    size_linewidth_multipanel = multipanel_size_linewidth()
+    size_linewidth_multipanel.savefig(output_path+'multipanel_size_linewidth.pdf', bbox_inches='tight')
 
     size_linewidth_allquad = plot_size_linewidth_fit(catalog)[0]
     plt.xlim(6, 300)

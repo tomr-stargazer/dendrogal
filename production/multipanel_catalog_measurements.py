@@ -9,8 +9,6 @@ Front-loads the data as needed.
 
 from __future__ import division
 
-import pdb
-
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -74,7 +72,7 @@ def multipanel_size_linewidth():
 
             fit_string = "$A = {{{0:.2f}}}$,\n$\\beta ={{{1:.2f}}}$".format(fit_coefficient, fit_exponent)
 
-            plt.text(0.9, 1.1, sky_text_dict[sky_region]+gal_text_dict[galactic_region], fontsize=14)
+            plt.text(0.9, 1.1, sky_text_dict[sky_region]+gal_text_dict[galactic_region], fontsize=10)
 
             plt.text(2, -0.2, fit_string, fontsize=14)
 
@@ -181,12 +179,12 @@ def multipanel_cmf():
             M_0_power = int(np.floor(np.log10(M_0)))
             M_0_coeff = M_0 / (10**M_0_power)
 
-            plt.text(4.5, 3e2, sky_text_dict[sky_region]+gal_text_dict[galactic_region], fontsize=14)
+            plt.text(4.5, 3e2, sky_text_dict[sky_region]+gal_text_dict[galactic_region], fontsize=10)
 
             fit_string = ("$\gamma = {{{0:.2f}}}$\n"
                           "$M_0 = {{{1:.1f}}} \\times 10^{{{2}}}$".format(gamma, M_0_coeff, M_0_power))
 
-            plt.text(3.9, 0.75, fit_string, fontsize=14)
+            plt.text(3.9, 1, fit_string, fontsize=14)
 
             if sky_to_column_dict[sky_region] != 1:
                 plt.setp(ax.get_yticklabels(), visible=False)
