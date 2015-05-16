@@ -116,6 +116,8 @@ def distance_disambiguator(catalog, **kwargs):
     p_near, p_far = calculate_p_nearfar(catalog, False, **kwargs)
 
     best_distance = np.zeros_like(catalog['near_distance'])
+    error_best_distance_plus = np.zeros_like(catalog['error_near_distance_plus'])
+    error_best_distance_minus = np.zeros_like(catalog['error_near_distance_minus'])
     KDA_resolution = np.array(['-']*len(best_distance))
 
     use_near_distance = (p_near >= p_far)
@@ -124,20 +126,27 @@ def distance_disambiguator(catalog, **kwargs):
 
     best_distance[use_near_distance] = catalog['near_distance'][use_near_distance]
     best_distance[use_far_distance] = catalog['far_distance'][use_far_distance]
+    error_best_distance_plus[use_near_distance] = catalog['error_near_distance_plus'][use_near_distance]
+    error_best_distance_plus[use_far_distance] = catalog['error_far_distance_plus'][use_far_distance]
+    error_best_distance_minus[use_near_distance] = catalog['error_near_distance_minus'][use_near_distance]
+    error_best_distance_minus[use_far_distance] = catalog['error_far_distance_minus'][use_far_distance]
 
     KDA_resolution[use_near_distance] = 'N'
     KDA_resolution[use_far_distance] = 'F'
     KDA_resolution[same_distances] = 'U'
 
-    return best_distance, KDA_resolution, p_near, p_far
+    return best_distance, KDA_resolution, p_near, p_far, error_best_distance_plus, error_best_distance_minus
 
-def assign_distance_columns(catalog, best_distance, KDA_resolution, p_near, p_far):
+def assign_distance_columns(catalog, best_distance, KDA_resolution, p_near, p_far, 
+                            error_best_distance_plus, error_best_distance_minus):
     """
     Takes the output of the above function and assigns it to columns in the table.
 
     """
 
     catalog['distance'] = best_distance
+    catalog['error_distance_plus'] = error_best_distance_plus
+    catalog['error_distance_minus'] = error_best_distance_minus
     catalog['KDA_resolution'] = KDA_resolution
     catalog['p_near'] = p_near
     catalog['p_far'] = p_far
@@ -147,6 +156,8 @@ def assign_distance_columns_trivial(catalog):
     """ Use this in the 2nd and 3rd quadrants. """
 
     catalog['distance'] = catalog['distance']
+    catalog['error_distance_plus'] = catalog['error_distance_plus']
+    catalog['error_distance_minus'] = catalog['error_distance_minus']
     catalog['KDA_resolution'] = np.array(['U']*len(catalog['distance']))
     catalog['p_near'] = np.zeros_like(catalog['distance'])
     catalog['p_far'] = np.zeros_like(catalog['distance'])
