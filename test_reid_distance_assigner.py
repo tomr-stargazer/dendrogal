@@ -5,13 +5,23 @@ To be run with py.test.
 
 from __future__ import division
 
+import pytest
+
 import astropy.table
 import numpy as np
 
-from .reid_distance_assigner import distance_assigner_with_plusminus_errors
+def reid_import_fails():
+    try:
+        from .reid_distance_assigner import distance_assigner_with_plusminus_errors
+        return False
+    except ImportError:
+        return True
 
-
+@pytest.mark.skipif(reid_import_fails(),
+                    reason="requires Reid kdist tool installed")
 def test_distance_assigner_with_plusminus_errors():
+
+    from .reid_distance_assigner import distance_assigner_with_plusminus_errors
 
     test_structure_table = astropy.table.Table()
 
