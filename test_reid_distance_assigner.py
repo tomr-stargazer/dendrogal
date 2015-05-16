@@ -5,8 +5,6 @@ To be run with py.test.
 
 from __future__ import division
 
-import pdb
-
 import astropy.table
 import numpy as np
 
@@ -29,6 +27,16 @@ def test_distance_assigner_with_plusminus_errors():
 
     distance_assigner_with_plusminus_errors(test_structure_table, test_kdist_catalog, distance_column_name='distance')
 
-    pdb.set_trace()
-
     assert (expected_structure_table == test_structure_table).all()
+
+    test_structure_table2 = astropy.table.Table()
+
+    expected_structure_table2 = astropy.table.Table()
+    expected_structure_table2['near_distance'] = np.ones(10)
+    expected_structure_table2['error_near_distance_plus'] = np.ones(10)
+    expected_structure_table2['error_near_distance_minus'] = -np.ones(10)    
+
+    distance_assigner_with_plusminus_errors(test_structure_table2, test_kdist_catalog, distance_column_name='near_distance')
+
+    assert (expected_structure_table2 == test_structure_table2).all()
+
