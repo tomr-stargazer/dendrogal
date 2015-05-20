@@ -148,8 +148,8 @@ def make_reid_distance_column(catalog, nearfar='near', executable_path=executabl
 def distance_assigner_with_plusminus_errors(structure_catalog, kdist_catalog, distance_column_name='distance'):
 
     structure_catalog[distance_column_name] = kdist_catalog['D_k']
-    structure_catalog['error_'+distance_column_name+'_plus'] = kdist_catalog['error_D_k_plus']
-    structure_catalog['error_'+distance_column_name+'_minus'] = kdist_catalog['error_D_k_minus']
+    structure_catalog['error_'+distance_column_name+'_plus'] = np.abs(kdist_catalog['error_D_k_plus'])
+    structure_catalog['error_'+distance_column_name+'_minus'] = np.abs(kdist_catalog['error_D_k_minus'])
 
 """
 ! Source     Gal Long  Gal Lat    V_lsr     V_rev    Rev. D_k     +/-
