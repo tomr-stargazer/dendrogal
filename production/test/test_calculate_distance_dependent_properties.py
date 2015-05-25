@@ -10,9 +10,10 @@ from __future__ import division
 from numpy.testing import assert_allclose, assert_equal, assert_almost_equal
 import numpy as np
 
+import astropy.table
 import astropy.units as u
 
-from ..calculate_distance_dependent_properties import compute_galactic_coordinates
+from ..calculate_distance_dependent_properties import compute_galactic_coordinates, assign_size_with_uncertainties
 
 def test_compute_galactic_coordinates():
 
@@ -49,4 +50,29 @@ def test_compute_galactic_coordinates():
     assert_allclose(gal_cylindrical[0], R_gal_expected, atol=1e-7)
     assert_allclose(gal_cylindrical[1], phi_expected, rtol=1e-3)
 
+
+def test_size():
+
+    distance = 1 * u.kpc
+    error_distance_plus = 0.3 * u.kpc
+    error_distance_minus = 0.2 * u.kpc
+
+    radius = 1 * u.deg
+
+    expected_size = 33.16125578789226 * u.pc
+    expected_error_size_plus = 9.948376736367678 * u.pc
+    expected_error_size_minus = 6.632251157578453 * u.pc
+
+    catalog = astropy.table.Table()
+    catalog['distance'] = u.Quantity([distance])
+    catalog['error_distance_plus'] = u.Quantity([error_distance_plus])
+    catalog['error_distance_minus'] = u.Quantity([error_distance_minus])
+
+    catalog['radius'] = u.Quantity([radius])
+
+    assign_size_with_uncertainties(catalog)
+
+    assert_allclose(catalog['size'][0], expected_size)
+    assert_allclose(catalog['error_size_plus'][0], expected_error_size_plus)
+    assert_allclose(catalog['error_size_minus'][0], expected_error_size_minus)
 
