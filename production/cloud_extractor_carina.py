@@ -17,7 +17,7 @@ from dendrogal.production.disqualify_edge_structures import identify_edge_struct
 from dendrogal.production.distance_disambiguate import distance_disambiguator, assign_distance_columns
 
 
-from dendrogal.reid_distance_assigner import make_reid_distance_column
+from dendrogal.reid_distance_assigner import make_reid_distance_column, distance_assigner_with_plusminus_errors
 from dendrogal.catalog_tree_stats import compute_tree_stats
 
 from dendrogal.production.make_carina_stub import d, catalog, header, metadata
@@ -49,24 +49,25 @@ def carina_cloud_catalog():
     near_distance_table = make_reid_distance_column(catalog, nearfar='near')
     far_distance_table = make_reid_distance_column(catalog, nearfar='far')
 
-    near_distance_column = near_distance_table['D_k']
-    far_distance_column = far_distance_table['D_k']
-
     # DISTANCE assignment
-    catalog_cp['near_distance'] = near_distance_column
-    catalog_cp['far_distance'] = far_distance_column
+    distance_assigner_with_plusminus_errors(catalog_cp, near_distance_table, distance_column_name='near_distance')
+    distance_assigner_with_plusminus_errors(catalog_cp, far_distance_table, distance_column_name='far_distance')
 
     # where there's no degeneracy, go ahead and apply the thing
     no_degeneracy = catalog_cp['near_distance'] == catalog_cp['far_distance']
-    distance_column = np.zeros_like(near_distance_column) * np.nan
-    distance_column[no_degeneracy] = catalog_cp['near_distance'][no_degeneracy]
-
+    distance_column = np.zeros_like(near_distance_table['D_k']) * np.nan
+    error_distance_column_plus = np.zeros_like(near_distance_table['D_k']) * np.nan
+    error_distance_column_minus = np.zeros_like(near_distance_table['D_k']) * np.nan
     KDA_resolution_column = np.array(['-']*len(distance_column))
 
     distance_column[no_degeneracy] = catalog_cp['near_distance'][no_degeneracy]
+    error_distance_column_plus[no_degeneracy] = catalog_cp['error_near_distance_plus'][no_degeneracy]
+    error_distance_column_minus[no_degeneracy] = catalog_cp['error_near_distance_minus'][no_degeneracy]
     KDA_resolution_column[no_degeneracy] = 'U'
 
-    assign_distance_columns(catalog_cp, distance_column, KDA_resolution_column, np.zeros_like(distance_column), np.zeros_like(distance_column))
+    assign_distance_columns(catalog_cp, distance_column, KDA_resolution_column, 
+                            np.zeros_like(distance_column), np.zeros_like(distance_column),
+                            error_distance_column_plus, error_distance_column_minus)
 
     # assignment of physical properties to unambigously-distanced structures
     # let's think critically about whether this step is needed.
