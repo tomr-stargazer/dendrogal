@@ -10,6 +10,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse
 
+import astropy.units as u
+
 from dendrogal.production.integrated_map_figure import integrated_map_axes_lb, integrated_map_axes_lv
 
 path = os.path.expanduser("~/Dropbox/Grad School/Research/Milkyway/paper/")
@@ -83,7 +85,8 @@ def single_cloud_lb_thumbnail(fig, ax_limits, dendrogram, catalog, cloud_idx):
     cloud_mask = d[cloud_idx].get_mask()
     mask_lb = np.sum(cloud_mask, axis=0).astype('bool')
 
-    ax_lb.contour(mask_lb, levels=[0.5], color=colorbrewer_blue, lw=2)
+    ax_lb.contour(mask_lb, levels=[0.5], colors=colorbrewer_blue, linewidths=2, zorder=0.85)
+    ax_lb.contour(mask_lb, levels=[0.5], colors='white', linewidths=3, zorder=0.8)
 
     ax_lb.set_xlim(l_lbv_pixels-3.5/l_scale_lbv, l_lbv_pixels+3.5/l_scale_lbv)
     ax_lb.set_ylim(b_lbv_pixels-3.5/b_scale_lbv, b_lbv_pixels+3.5/b_scale_lbv)
@@ -151,7 +154,8 @@ def single_cloud_lv_thumbnail(fig, ax_limits, dendrogram, catalog, cloud_idx):
     cloud_mask = d[cloud_idx].get_mask()
     mask_lv = np.sum(cloud_mask, axis=1).astype('bool')
 
-    ax_lv.contour(mask_lv, levels=[0.5], color=colorbrewer_blue, lw=2)
+    ax_lv.contour(mask_lv, levels=[0.5], colors=colorbrewer_blue, linewidths=2, zorder=0.85)
+    ax_lv.contour(mask_lv, levels=[0.5], colors='white', linewidths=3, zorder=0.8)
 
     # set x & y limits
     ax_lv.set_xlim(l_lbv_pixels-3.5/l_scale_lbv, l_lbv_pixels+3.5/l_scale_lbv)
@@ -183,15 +187,15 @@ def single_cloud_dendro_thumbnail(ax, dendrogram, cloud_idx):
     structure_positions = [p._cached_positions[x] for x in structures]
     min_position = min(structure_positions)
     max_position = max(structure_positions)
-    range_positions = max_position - min_position
+    range_positions = max(max_position - min_position, 10)
 
-    ax.set_xlim(min_position - range_positions/4, max_position + range_positions/4)
+    ax.set_xlim(min_position - range_positions/2, max_position + range_positions/2)
 
     vmin_list = [x.vmin for x in structures]
     vmax_list = [x.vmax for x in structures]
 
     min_vmin = min(vmin_list)
-    max_vmax = max(vmax_list)
+    max_vmax = max(max(vmax_list),1)
     v_range = max_vmax - min_vmin
 
     ax.set_ylim(min_vmin - v_range/10, max_vmax + v_range/10)
@@ -211,12 +215,37 @@ def make_thumbnail_dendro_figure(dendrogram, catalog, cloud_idx):
     ax_dendro = fig.add_subplot(122)
     p = single_cloud_dendro_thumbnail(ax_dendro, d, cloud_idx)
 
+    ax_dendro.set_ylabel("Intensity (K)")
+    ax_dendro.set_title('cloud structure IDx: {0}'.format(cloud_idx))
+
     # draw maps on ax_lb & ax_lv
     ax_lb_limits = [0.1, 0.55, 0.35, 0.35]
     ax_lb = single_cloud_lb_thumbnail(fig, ax_lb_limits, d, catalog, cloud_idx)
 
+    lb_lon = ax_lb.coords['glon']
+    lb_lon.set_ticks(spacing=2*u.deg, color='white', exclude_overlapping=True)
+    lb_lon.display_minor_ticks(True)
+    lb_lon.set_axislabel(r"$l$ (deg)", minpad=1.5)
+
+    lb_lat = ax_lb.coords['glat']
+    lb_lat.set_ticks(spacing=2*u.deg, color='white', exclude_overlapping=True)
+    lb_lat.display_minor_ticks(True)
+    lb_lat.set_axislabel(r"$l$ (deg)", minpad=1.5)
+
+
     ax_lv_limits =  [0.1, 0.1, 0.35, 0.35]  
     ax_lv = single_cloud_lv_thumbnail(fig, ax_lv_limits, d, catalog, cloud_idx)      
+
+    lv_lon = ax_lv.coords['glon']
+    lv_lon.set_ticks(spacing=2*u.deg, color='white', exclude_overlapping=True)
+    lv_lon.display_minor_ticks(True)
+    lv_lon.set_axislabel(r"$l$ (deg)", minpad=1.5)
+
+    vlsr = ax_lv.coords['vopt']
+    vlsr.set_ticks(spacing=10*u.m/u.s, color='white', exclude_overlapping=True) # erroneous units - why!?
+    vlsr.display_minor_ticks(True)
+    vlsr.set_axislabel(r"$v_{LSR}$ (km s$^{-1}$)")
+    vlsr.set_ticklabel_position('lr')
 
     fig.ax_dendro = ax_dendro
     fig.ax_lb = ax_lb
