@@ -33,10 +33,10 @@ def single_cloud_lb_thumbnail(fig, ax_limits, dendrogram, catalog, cloud_idx):
 
     cloud_row = catalog[catalog['_idx'] == cloud_idx]
 
-    velocity_integration = [(cloud_row['v_cen']-2*cloud_row['v_rms']).data[0],
-                            (cloud_row['v_cen']+2*cloud_row['v_rms']).data[0]]
+    velocity_integration = [(cloud_row['v_cen']-3*cloud_row['v_rms']).data[0],
+                            (cloud_row['v_cen']+3*cloud_row['v_rms']).data[0]]
 
-    print velocity_integration
+    print "Velocity integration limits: {0} km/s".format(velocity_integration)
 
     ax_lb = integrated_map_axes_lb(fig, ax_limits, d.data, d.wcs, integration_limits=velocity_integration)
 
@@ -69,14 +69,14 @@ def single_cloud_lb_thumbnail(fig, ax_limits, dendrogram, catalog, cloud_idx):
         ax_lb.add_artist(e)
         e.set_facecolor('none')
         e.set_edgecolor(colorbrewer_red)
-        e.set_linewidth(1.25)
+        e.set_linewidth(1.5)
         e.set_zorder(0.95)
 
     for e in lb_ell2:
         ax_lb.add_artist(e)
         e.set_facecolor('none')
         e.set_edgecolor('white')
-        e.set_linewidth(4)
+        e.set_linewidth(5)
         e.set_alpha(0.8)
         e.set_zorder(0.9)
 
@@ -84,6 +84,9 @@ def single_cloud_lb_thumbnail(fig, ax_limits, dendrogram, catalog, cloud_idx):
     mask_lb = np.sum(cloud_mask, axis=0).astype('bool')
 
     ax_lb.contour(mask_lb, levels=[0.5], color=colorbrewer_blue, lw=2)
+
+    ax_lb.set_xlim(l_lbv_pixels-3.5/l_scale_lbv, l_lbv_pixels+3.5/l_scale_lbv)
+    ax_lb.set_ylim(b_lbv_pixels-3.5/b_scale_lbv, b_lbv_pixels+3.5/b_scale_lbv)
 
     return ax_lb
 
@@ -102,10 +105,10 @@ def single_cloud_lv_thumbnail(fig, ax_limits, dendrogram, catalog, cloud_idx):
 
     cloud_row = catalog[catalog['_idx'] == cloud_idx]
 
-    latitude_integration = [(cloud_row['y_cen']-2*cloud_row['radius']).data[0],
-                            (cloud_row['y_cen']+2*cloud_row['radius']).data[0]]
+    latitude_integration = [(cloud_row['y_cen']-3*cloud_row['radius']).data[0],
+                            (cloud_row['y_cen']+3*cloud_row['radius']).data[0]]
 
-    print latitude_integration
+    print "Latitude integration limits: {0} deg".format(latitude_integration)
 
     ax_lv = integrated_map_axes_lv(fig, ax_limits, d.data, d.wcs, integration_limits=latitude_integration)
 
@@ -134,14 +137,14 @@ def single_cloud_lv_thumbnail(fig, ax_limits, dendrogram, catalog, cloud_idx):
         ax_lv.add_artist(e)
         e.set_facecolor('none')
         e.set_edgecolor(colorbrewer_red)
-        e.set_linewidth(1.25)
+        e.set_linewidth(1.5)
         e.set_zorder(0.95)
 
     for e in lv_ells2:
         ax_lv.add_artist(e)
         e.set_facecolor('none')
         e.set_edgecolor('white')
-        e.set_linewidth(4)
+        e.set_linewidth(5)
         e.set_alpha(0.8)
         e.set_zorder(0.9)    
 
@@ -151,7 +154,8 @@ def single_cloud_lv_thumbnail(fig, ax_limits, dendrogram, catalog, cloud_idx):
     ax_lv.contour(mask_lv, levels=[0.5], color=colorbrewer_blue, lw=2)
 
     # set x & y limits
-
+    ax_lv.set_xlim(l_lbv_pixels-3.5/l_scale_lbv, l_lbv_pixels+3.5/l_scale_lbv)
+    ax_lv.set_ylim(v_lbv_pixels-17.5/v_scale_lbv, v_lbv_pixels+17.5/v_scale_lbv)
 
     return ax_lv
 
@@ -213,13 +217,6 @@ def make_thumbnail_dendro_figure(dendrogram, catalog, cloud_idx):
 
     ax_lv_limits =  [0.1, 0.1, 0.35, 0.35]  
     ax_lv = single_cloud_lv_thumbnail(fig, ax_lv_limits, d, catalog, cloud_idx)      
-
-    # ax_lb.set_xlim(cloud_row['x_cen']-6, cloud_row['x_cen']+6)
-    # ax_lb.set_ylim(cloud_row['y_cen']-4, cloud_row['y_cen']+4)
-
-    # ax_lv.set_xlim(cloud_row['x_cen']-6, cloud_row['x_cen']+6)
-    # ax_lv.set_ylim(cloud_row['v_cen']-25, cloud_row['v_cen']+25)
-
 
     fig.ax_dendro = ax_dendro
     fig.ax_lb = ax_lb
