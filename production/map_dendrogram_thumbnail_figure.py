@@ -230,7 +230,7 @@ def make_thumbnail_dendro_figure(dendrogram, catalog, cloud_idx):
     lb_lat = ax_lb.coords['glat']
     lb_lat.set_ticks(spacing=2*u.deg, color='white', exclude_overlapping=True)
     lb_lat.display_minor_ticks(True)
-    lb_lat.set_axislabel(r"$l$ (deg)", minpad=1.5)
+    lb_lat.set_axislabel(r"$b$ (deg)", minpad=1.5)
 
 
     ax_lv_limits =  [0.1, 0.1, 0.35, 0.35]  
