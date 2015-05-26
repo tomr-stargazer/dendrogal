@@ -43,7 +43,7 @@ def single_cloud_lv_thumbnail():
     pass
 
 
-def single_cloud_dendro_thumbnail():
+def single_cloud_dendro_thumbnail(ax, dendrogram, cloud_idx):
     """
     Makes a dendrogram thumbnail for a single cloud.
 
@@ -52,7 +52,35 @@ def single_cloud_dendro_thumbnail():
     Zooms the dendrogram to the right location.
 
     """
-    pass
+
+    d = dendrogram
+
+    p = d.plotter()
+
+    p.plot_tree(ax, color='black')
+
+    p.plot_tree(ax, structure=[d[cloud_idx]], color=colorbrewer_blue, lw=2)
+
+    # everything below is machinery to zoom the figure reasonably
+    structures = d[cloud_idx].descendants + [d[cloud_idx]]
+    structure_positions = [p._cached_positions[x] for x in structures]
+    min_position = min(structure_positions)
+    max_position = max(structure_positions)
+    range_positions = max_position - min_position
+
+    ax.set_xlim(min_position - range_positions/4, max_position + range_positions/4)
+
+    vmin_list = [x.vmin for x in structures]
+    vmax_list = [x.vmax for x in structures]
+
+    min_vmin = min(vmin_list)
+    max_vmax = max(vmax_list)
+    v_range = max_vmax - min_vmin
+
+    ax.set_ylim(min_vmin - v_range/10, max_vmax + v_range/10)
+
+    return p
+
 
 
 def make_thumbnail_dendro_figure(dendrogram, catalog, cloud_idx):
@@ -71,6 +99,8 @@ def make_thumbnail_dendro_figure(dendrogram, catalog, cloud_idx):
     fig = plt.figure()
 
     ax_dendro = fig.add_subplot(122)
+
+    single_cloud_dendro_thumbnail(ax_dendro, d, cloud_idx)
 
     # draw a map on ax_map
     ax_map_limits = [0.1, 0.55, 0.35, 0.35]
