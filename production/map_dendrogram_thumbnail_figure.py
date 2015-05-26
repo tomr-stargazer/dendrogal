@@ -19,7 +19,7 @@ colorbrewer_blue = '#377eb8'
 colorbrewer_green = '#4daf4a'
 
 
-def single_cloud_lb_thumbnail():
+def single_cloud_lb_thumbnail(fig, ax_limits, dendrogram, catalog, cloud_idx):
     """
     Makes an l, b thumbnail of a single cloud.
 
@@ -28,10 +28,67 @@ def single_cloud_lb_thumbnail():
     Integrates only over the relevant velocities (twice the RMS in each direction).
 
     """
-    pass
+
+    d = dendrogram
+
+    cloud_row = catalog[catalog['_idx'] == cloud_idx]
+
+    velocity_integration = [(cloud_row['v_cen']-2*cloud_row['v_rms']).data[0],
+                            (cloud_row['v_cen']+2*cloud_row['v_rms']).data[0]]
+
+    print velocity_integration
+
+    ax_lb = integrated_map_axes_lb(fig, ax_limits, d.data, d.wcs, integration_limits=velocity_integration)
+
+    # draw ellipse
+
+    world_coordinates = np.vstack([cloud_row['x_cen'], cloud_row['y_cen'], cloud_row['v_cen']]).T
+    lbv_pixels = d.wcs.wcs_world2pix(world_coordinates, 0)
+
+    l_lbv_pixels = lbv_pixels[:,0]
+    b_lbv_pixels = lbv_pixels[:,1]
+    v_lbv_pixels = lbv_pixels[:,2]
+
+    l_scale_lbv = ax_lb.spatial_scale.value
+    b_scale_lbv = ax_lb.spatial_scale.value
+    v_scale_lbv = ax_lb.velocity_scale.value
+
+    lb_ell = [Ellipse(xy=zip(l_lbv_pixels, b_lbv_pixels)[i], 
+                          angle=cloud_row['position_angle'][i],
+                          width=2*cloud_row['major_sigma'][i]/l_scale_lbv, 
+                          height=2*cloud_row['minor_sigma'][i]/b_scale_lbv) 
+                  for i in range(len(cloud_row))]
+
+    lb_ell2 = [Ellipse(xy=zip(l_lbv_pixels, b_lbv_pixels)[i], 
+                          angle=cloud_row['position_angle'][i],
+                          width=2*cloud_row['major_sigma'][i]/l_scale_lbv, 
+                          height=2*cloud_row['minor_sigma'][i]/b_scale_lbv) 
+                  for i in range(len(cloud_row))]
+
+    for e in lb_ell:
+        ax_lb.add_artist(e)
+        e.set_facecolor('none')
+        e.set_edgecolor(colorbrewer_red)
+        e.set_linewidth(1.25)
+        e.set_zorder(0.95)
+
+    for e in lb_ell2:
+        ax_lb.add_artist(e)
+        e.set_facecolor('none')
+        e.set_edgecolor('white')
+        e.set_linewidth(4)
+        e.set_alpha(0.8)
+        e.set_zorder(0.9)
+
+    cloud_mask = d[cloud_idx].get_mask()
+    mask_lb = np.sum(cloud_mask, axis=0).astype('bool')
+
+    ax_lb.contour(mask_lb, levels=[0.5], color=colorbrewer_blue, lw=2)
+
+    return ax_lb
 
 
-def single_cloud_lv_thumbnail():
+def single_cloud_lv_thumbnail(fig, ax_limits, dendrogram, catalog, cloud_idx):
     """
     Makes an l, v thumbnail of a single cloud.
 
@@ -40,7 +97,63 @@ def single_cloud_lv_thumbnail():
     Integrates only over the relevant latitudes (twice the sigma_r in each direction).
 
     """    
-    pass
+
+    d = dendrogram
+
+    cloud_row = catalog[catalog['_idx'] == cloud_idx]
+
+    latitude_integration = [(cloud_row['y_cen']-2*cloud_row['radius']).data[0],
+                            (cloud_row['y_cen']+2*cloud_row['radius']).data[0]]
+
+    print latitude_integration
+
+    ax_lv = integrated_map_axes_lv(fig, ax_limits, d.data, d.wcs, integration_limits=latitude_integration)
+
+    # draw ellipse
+
+    world_coordinates = np.vstack([cloud_row['x_cen'], cloud_row['y_cen'], cloud_row['v_cen']]).T
+    lbv_pixels = d.wcs.wcs_world2pix(world_coordinates, 0)
+
+    l_lbv_pixels = lbv_pixels[:,0]
+    b_lbv_pixels = lbv_pixels[:,1]
+    v_lbv_pixels = lbv_pixels[:,2]
+
+    l_scale_lbv = ax_lv.spatial_scale.value
+    b_scale_lbv = ax_lv.spatial_scale.value
+    v_scale_lbv = ax_lv.velocity_scale.value
+
+    lv_ells = [Ellipse(xy=zip(l_lbv_pixels, v_lbv_pixels)[i], 
+                       width=2*cloud_row['major_sigma'][i]/l_scale_lbv, 
+                       height=2*cloud_row['v_rms'][i]/v_scale_lbv) for i in range(len(cloud_row))]
+
+    lv_ells2 = [Ellipse(xy=zip(l_lbv_pixels, v_lbv_pixels)[i], 
+                       width=2*cloud_row['major_sigma'][i]/l_scale_lbv, 
+                       height=2*cloud_row['v_rms'][i]/v_scale_lbv) for i in range(len(cloud_row))]
+
+    for e in lv_ells:
+        ax_lv.add_artist(e)
+        e.set_facecolor('none')
+        e.set_edgecolor(colorbrewer_red)
+        e.set_linewidth(1.25)
+        e.set_zorder(0.95)
+
+    for e in lv_ells2:
+        ax_lv.add_artist(e)
+        e.set_facecolor('none')
+        e.set_edgecolor('white')
+        e.set_linewidth(4)
+        e.set_alpha(0.8)
+        e.set_zorder(0.9)    
+
+    cloud_mask = d[cloud_idx].get_mask()
+    mask_lv = np.sum(cloud_mask, axis=1).astype('bool')
+
+    ax_lv.contour(mask_lv, levels=[0.5], color=colorbrewer_blue, lw=2)
+
+    # set x & y limits
+
+
+    return ax_lv
 
 
 def single_cloud_dendro_thumbnail(ax, dendrogram, cloud_idx):
@@ -86,91 +199,30 @@ def single_cloud_dendro_thumbnail(ax, dendrogram, cloud_idx):
 def make_thumbnail_dendro_figure(dendrogram, catalog, cloud_idx):
 
     d = dendrogram
-    data = d.data
-    struct = d[cloud_idx]
-
-    cloud_row = catalog[catalog['_idx'] == cloud_idx]
-
-    velocity_integration = [cloud_row['v_cen']-2*cloud_row['v_rms'],
-                            cloud_row['v_cen']+2*cloud_row['v_rms']]
-
-    print velocity_integration
+    cloud_row = catalog[catalog['_idx'] == cloud_idx]    
 
     fig = plt.figure()
 
+    # draw a dendrogram on ax_dendro
     ax_dendro = fig.add_subplot(122)
+    p = single_cloud_dendro_thumbnail(ax_dendro, d, cloud_idx)
 
-    single_cloud_dendro_thumbnail(ax_dendro, d, cloud_idx)
-
-    # draw a map on ax_map
-    ax_map_limits = [0.1, 0.55, 0.35, 0.35]
-    ax_map = integrated_map_axes_lb(fig, ax_map_limits, data, d.wcs)
+    # draw maps on ax_lb & ax_lv
+    ax_lb_limits = [0.1, 0.55, 0.35, 0.35]
+    ax_lb = single_cloud_lb_thumbnail(fig, ax_lb_limits, d, catalog, cloud_idx)
 
     ax_lv_limits =  [0.1, 0.1, 0.35, 0.35]  
-    ax_lv = integrated_map_axes_lv(fig, ax_lv_limits, data, d.wcs)      
+    ax_lv = single_cloud_lv_thumbnail(fig, ax_lv_limits, d, catalog, cloud_idx)      
 
-    # A. draw ellipse
-    world_coordinates = np.vstack([cloud_row['x_cen'], cloud_row['y_cen'], cloud_row['v_cen']]).T
-    lbv_pixels = d.wcs.wcs_world2pix(world_coordinates, 0)
+    # ax_lb.set_xlim(cloud_row['x_cen']-6, cloud_row['x_cen']+6)
+    # ax_lb.set_ylim(cloud_row['y_cen']-4, cloud_row['y_cen']+4)
 
-    l_lbv_pixels = lbv_pixels[:,0]
-    b_lbv_pixels = lbv_pixels[:,1]
-    v_lbv_pixels = lbv_pixels[:,2]
-
-    l_scale_lbv = ax_lv.spatial_scale.value
-    b_scale_lbv = ax_lv.spatial_scale.value
-    v_scale_lbv = ax_lv.velocity_scale.value
-
-    lb_ell = [Ellipse(xy=zip(l_lbv_pixels, b_lbv_pixels)[i], 
-                          angle=cloud_row['position_angle'][i],
-                          width=2*cloud_row['major_sigma'][i]/l_scale_lbv, 
-                          height=2*cloud_row['minor_sigma'][i]/b_scale_lbv) 
-                  for i in range(len(cloud_row))]
-
-    lb_ell2 = [Ellipse(xy=zip(l_lbv_pixels, b_lbv_pixels)[i], 
-                          angle=cloud_row['position_angle'][i],
-                          width=2*cloud_row['major_sigma'][i]/l_scale_lbv, 
-                          height=2*cloud_row['minor_sigma'][i]/b_scale_lbv) 
-                  for i in range(len(cloud_row))]
-
-    for e in lb_ell:
-        ax_map.add_artist(e)
-        e.set_facecolor('none')
-        e.set_edgecolor(colorbrewer_red)
-        e.set_linewidth(1.25)
-        e.set_zorder(0.95)
-
-    for e in lb_ell2:
-        ax_map.add_artist(e)
-        e.set_facecolor('none')
-        e.set_edgecolor('white')
-        e.set_linewidth(4)
-        e.set_alpha(0.8)
-        e.set_zorder(0.9)
-
-    lv_ells = [Ellipse(xy=zip(l_lbv_pixels, v_lbv_pixels)[i], 
-                       width=2*cloud_row['major_sigma'][i]/l_scale_lbv, 
-                       height=2*cloud_row['v_rms'][i]/v_scale_lbv) for i in range(len(cloud_row))]
-
-    lv_ells2 = [Ellipse(xy=zip(l_lbv_pixels, v_lbv_pixels)[i], 
-                       width=2*cloud_row['major_sigma'][i]/l_scale_lbv, 
-                       height=2*cloud_row['v_rms'][i]/v_scale_lbv) for i in range(len(cloud_row))]
-
-    for e in lv_ells:
-        ax_lv.add_artist(e)
-        e.set_facecolor('none')
-        e.set_edgecolor(colorbrewer_red)
-        e.set_linewidth(1.25)
-        e.set_zorder(0.95)
-
-    for e in lv_ells2:
-        ax_lv.add_artist(e)
-        e.set_facecolor('none')
-        e.set_edgecolor('white')
-        e.set_linewidth(4)
-        e.set_alpha(0.8)
-        e.set_zorder(0.9)
+    # ax_lv.set_xlim(cloud_row['x_cen']-6, cloud_row['x_cen']+6)
+    # ax_lv.set_ylim(cloud_row['v_cen']-25, cloud_row['v_cen']+25)
 
 
-    # draw a dendrogram on ax_dendro
+    fig.ax_dendro = ax_dendro
+    fig.ax_lb = ax_lb
+    fig.ax_lv = ax_lv
 
+    return fig
