@@ -19,6 +19,42 @@ colorbrewer_blue = '#377eb8'
 colorbrewer_green = '#4daf4a'
 
 
+def single_cloud_lb_thumbnail():
+    """
+    Makes an l, b thumbnail of a single cloud.
+
+    Shows a contour of the emission region used, and a representative ellipse.
+
+    Integrates only over the relevant velocities (twice the RMS in each direction).
+
+    """
+    pass
+
+
+def single_cloud_lv_thumbnail():
+    """
+    Makes an l, v thumbnail of a single cloud.
+
+    Shows a contour of the emission region used, and a representative ellipse.
+
+    Integrates only over the relevant latitudes (twice the sigma_r in each direction).
+
+    """    
+    pass
+
+
+def single_cloud_dendro_thumbnail():
+    """
+    Makes a dendrogram thumbnail for a single cloud.
+
+    Highlights the appropriate branches (and substructure of course).
+
+    Zooms the dendrogram to the right location.
+
+    """
+    pass
+
+
 def make_thumbnail_dendro_figure(dendrogram, catalog, cloud_idx):
 
     d = dendrogram
