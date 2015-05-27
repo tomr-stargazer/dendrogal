@@ -88,11 +88,10 @@ def recenter_wcs_header(input_header, central_value=0):
     return new_header
 
 
-datacube, datacube_header = getdata(data_path+data_file, memmap=True,
-	header=True)
+datacube, datacube_header = getdata(data_path+data_file, header=True)
 
 datacube_dt, datacube_dt_header = \
-	downsample_and_transpose_data_and_header(datacube, datacube_header, 1, (2,0,1), resample=False, recenter=True)
+    downsample_and_transpose_data_and_header(datacube, datacube_header, 1, (2,0,1), resample=False, recenter=True)
 datacube_dt_wcs = wcs.wcs.WCS(datacube_dt_header)
 
 datacube_dt_wcs.wcs.bounds_check(pix2world=False, world2pix=False)
