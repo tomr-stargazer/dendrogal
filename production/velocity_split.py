@@ -41,3 +41,30 @@ def calculate_velocity_split(d, catalog):
     return velocity_split
 
 
+def descendants_max_vsplit(d, catalog):
+    """
+    Assigns each structure the biggest v_split of itself or its descendants
+
+    """
+
+    unchecked = -1
+
+    max_vsplit = np.ones(len(catalog)) * unchecked
+
+    # if you're a single feature you get zero
+    max_vsplit[catalog['n_descendants'] == 0] = 0
+
+    for i, struct in enumerate(d):
+
+        if max_vsplit[struct.idx] == unchecked:
+
+            # probably hella slow. IDC.
+            descendant_idx_list = [x.idx for x in struct.descendants] + [struct.idx]
+            descendant_vsplit_list = catalog['v_split'][np.in1d(catalog['_idx'], descendant_idx_list)]
+
+            max_vsplit[struct.idx] = max(descendant_vsplit_list)
+
+    return max_vsplit
+
+
+
