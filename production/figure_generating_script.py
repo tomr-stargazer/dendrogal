@@ -19,7 +19,7 @@ import astropy.constants as c
 
 from dendrogal.integrated_viewer import IntegratedViewer
 
-from dendrogal.production.cloud_extractor_q1 import first_quad_cloud_catalog, compile_firstquad_catalog
+from dendrogal.production.cloud_extractor_q1 import first_quad_cloud_catalog, compile_firstquad_catalog, export_firstquad_catalog
 from dendrogal.production.cloud_extractor_q1 import d as quad1_d
 
 from dendrogal.production.cloud_extractor_q2 import export_secondquad_catalog
@@ -28,7 +28,7 @@ from dendrogal.production.cloud_extractor_q2 import d as quad2_d
 from dendrogal.production.cloud_extractor_q3 import export_thirdquad_catalog
 from dendrogal.production.cloud_extractor_q3 import d as quad3_d
 
-from dendrogal.production.cloud_extractor_q4 import fourth_quad_cloud_catalog, compile_fourthquad_catalog
+from dendrogal.production.cloud_extractor_q4 import fourth_quad_cloud_catalog, compile_fourthquad_catalog, export_fourthquad_catalog
 from dendrogal.production.cloud_extractor_q4 import d as quad4_d
 
 from dendrogal.production.cloud_extractor_carina import carina_cloud_catalog, compile_carina_catalog
@@ -39,6 +39,8 @@ from dendrogal.production.remove_degenerate_structures import reduce_catalog, se
 from dendrogal.production.map_figures import make_quadrant_lbv_map, make_quadrant_topdown_map, make_lv_map_new
 from dendrogal.production.plot_catalog_measurements import plot_cmf, plot_size_linewidth_fit
 from dendrogal.production.multipanel_catalog_measurements import multipanel_size_linewidth, multipanel_cmf
+
+from dendrogal.production.map_dendrogram_thumbnail_figure import make_thumbnail_dendro_figure
 
 
 output_path = os.path.expanduser("~/Dropbox/Grad School/Research/Milkyway/paper/")
@@ -220,7 +222,39 @@ def combined_galaxy_figures(catalog):
     size_linewidth_allquad.savefig(output_path+"allquads_size_linewidth.pdf", bbox_inches='tight')   
      
 
+def make_thumbnail_figures():
 
+    quad1_cloud_idx = 2772
+    quad1_cat = export_firstquad_catalog()
+
+    quad1_fig = make_thumbnail_dendro_figure(quad1_d, quad1_cat, quad1_cloud_idx)
+    quad1_fig.savefig(output_path+"quad1_thumbnail.pdf", bbox_inches='tight')
+
+
+    quad2_cloud_idx = 45
+    quad2_cat = export_secondquad_catalog()
+
+    quad2_fig = make_thumbnail_dendro_figure(quad2_d, quad2_cat, quad2_cloud_idx)
+    quad2_fig.savefig(output_path+"quad2_thumbnail.pdf", bbox_inches='tight')
+
+    # pseudo 3rd quadrant
+    quad2b_cloud_idx = 1506
+    quad3_fig = make_thumbnail_dendro_figure(quad2_d, quad2_cat, quad2b_cloud_idx)
+    quad3_fig.savefig(output_path+"quad3_thumbnail.pdf", bbox_inches='tight')
+
+    # quad3_cloud_idx = 726
+    # quad3_cat = export_thirdquad_catalog()
+
+    # quad3_fig = make_thumbnail_dendro_figure(quad3_d, quad3_cat, quad3_cloud_idx)
+    # quad3_fig.ax_lb.set_ylim(0+2, 45-2)
+    # quad3_fig.savefig(output_path+"quad3_thumbnail.pdf", bbox_inches='tight')
+
+
+    quad4_cloud_idx = 947
+    quad4_cat = export_fourthquad_catalog()
+
+    quad4_fig = make_thumbnail_dendro_figure(quad4_d, quad4_cat, quad4_cloud_idx)
+    quad4_fig.savefig(output_path+"quad4_thumbnail.pdf", bbox_inches='tight')
 
 
 
