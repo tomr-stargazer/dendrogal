@@ -16,7 +16,7 @@ from dendrogal.production.remove_degenerate_structures import reduce_catalog
 from dendrogal.production.detect_disparate_distances import detect_disparate_distances
 from dendrogal.production.disqualify_edge_structures import identify_edge_structures
 from dendrogal.production.distance_disambiguate import distance_disambiguator, assign_distance_columns
-from dendrogal.production.velocity_split import calculate_velocity_split
+from dendrogal.production.velocity_split import calculate_velocity_split, descendants_max_vsplit
 
 from dendrogal.reid_distance_assigner import make_reid_distance_column, distance_assigner_with_plusminus_errors
 from dendrogal.catalog_tree_stats import compute_tree_stats
@@ -50,6 +50,7 @@ def first_quad_cloud_catalog():
 
     # calculate velocity split
     catalog_cp['v_split'] = calculate_velocity_split(d, catalog_cp)
+    catalog_cp['max_vsplit'] = descendants_max_vsplit(d, catalog_cp)
 
     near_distance_table = make_reid_distance_column(catalog, nearfar='near')
     far_distance_table = make_reid_distance_column(catalog, nearfar='far')
@@ -112,7 +113,8 @@ def get_positive_velocity_clouds(input_catalog, max_descendants=30):
         (catalog['v_cen'] < 20) |
         (catalog['on_edge'] == 1) |
         (catalog['v_rms'] <= 1) |
-        (catalog['v_rms'] > 10)
+        (catalog['v_rms'] > 10) |
+        (catalog['max_vsplit'] > 4)
     )
 
     qualified = (
