@@ -23,8 +23,8 @@ from dendrogal.production.cloud_extractor_carina import d as carina_d
 from dendrogal.production.cloud_extractor_q4 import d as quad4_d
 from dendrogal.production.map_dendrogram_thumbnail_figure import make_thumbnail_dendro_figure
 
-super_directory = os.path.expanduser("~/Dropbox/Grad School/Research/Milkyway/supermassive/")
-massive_directory = os.path.expanduser("~/Dropbox/Grad School/Research/Milkyway/massive/")
+super_directory = os.path.expanduser("~/Dropbox/Grad School/Research/Milkyway/supermassive2/")
+massive_directory = os.path.expanduser("~/Dropbox/Grad School/Research/Milkyway/massive2/")
 
 allcat = extract_and_combine_catalogs()
 cat1 = export_firstquad_catalog()
