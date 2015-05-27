@@ -63,8 +63,9 @@ for row in supermassive_cat:
     D: {0} +{1} -{2} kpc
     KDA: {5}
     M: {3}x10^{4} Msun 
+    v_split: {6} km/s 
     """.format(row['distance'], row['error_distance_plus'], row['error_distance_minus'], str(row['mass'])[0], 
-        int(np.floor(np.log10(row['mass']))), row['KDA_resolution'] )
+        int(np.floor(np.log10(row['mass']))), row['KDA_resolution'], row['v_split'] )
     fig.text(0.2, -0.15, catalog_properties)
 
     fig.savefig(super_directory+"{0}.pdf".format(idx), bbox_inches='tight')
@@ -87,7 +88,7 @@ for row in massive_cat:
     """.format(row['distance'], row['error_distance_plus'], row['error_distance_minus'], str(row['mass'])[0], 
         int(np.floor(np.log10(row['mass']))), row['KDA_resolution'] )
     fig.text(0.2, -0.15, catalog_properties)
-    
+
 
     fig.savefig(massive_directory+"{0}.pdf".format(idx), bbox_inches='tight')    
 
