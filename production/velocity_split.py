@@ -1,7 +1,7 @@
 """
 Calculates the velocity split of a given structure.
 
-The velocity split is defined as the v_cen difference between a structure's two children.
+The velocity split is defined as the minimum v_cen difference between a structure and its two children.
 
 """
 
@@ -17,6 +17,7 @@ def calculate_velocity_split(d, catalog):
     for i in range(len(catalog)):
 
         idx = catalog['_idx'][i]
+        vcen = catalog['v_cen'][i]
 
         struct = d[idx]
 
@@ -30,7 +31,10 @@ def calculate_velocity_split(d, catalog):
         vcen1 = catalog['v_cen'][catalog['_idx']==idx1]
         vcen2 = catalog['v_cen'][catalog['_idx']==idx2]
 
-        split = np.abs(vcen2 - vcen1)
+        delta1 = np.abs(vcen - vcen1)
+        delta2 = np.abs(vcen - vcen2)
+
+        split = min(delta1, delta2)
 
         velocity_split[i] = split
 
