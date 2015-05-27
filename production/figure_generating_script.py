@@ -238,16 +238,16 @@ def make_thumbnail_figures():
     quad2_fig.savefig(output_path+"quad2_thumbnail.pdf", bbox_inches='tight')
 
     # pseudo 3rd quadrant
-    quad2b_cloud_idx = 1506
-    quad3_fig = make_thumbnail_dendro_figure(quad2_d, quad2_cat, quad2b_cloud_idx)
-    quad3_fig.savefig(output_path+"quad3_thumbnail.pdf", bbox_inches='tight')
-
-    # quad3_cloud_idx = 726
-    # quad3_cat = export_thirdquad_catalog()
-
-    # quad3_fig = make_thumbnail_dendro_figure(quad3_d, quad3_cat, quad3_cloud_idx)
-    # quad3_fig.ax_lb.set_ylim(0+2, 45-2)
+    # quad2b_cloud_idx = 1506
+    # quad3_fig = make_thumbnail_dendro_figure(quad2_d, quad2_cat, quad2b_cloud_idx)
     # quad3_fig.savefig(output_path+"quad3_thumbnail.pdf", bbox_inches='tight')
+
+    quad3_cloud_idx = 726
+    quad3_cat = export_thirdquad_catalog()
+
+    quad3_fig = make_thumbnail_dendro_figure(quad3_d, quad3_cat, quad3_cloud_idx)
+    # quad3_fig.ax_lb.set_ylim(0+2, 45-2)
+    quad3_fig.savefig(output_path+"quad3_thumbnail.pdf", bbox_inches='tight')
 
 
     quad4_cloud_idx = 947
