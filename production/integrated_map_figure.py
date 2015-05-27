@@ -42,6 +42,16 @@ def velocity_world2pix(wcs, velocities):
     return pixels[:,2]
 
 
+def sanitize_integration_limits(limits, datacube, axis):
+
+    low_limit, high_limit = limits
+
+    sanitized_low_limit = max(0, low_limit)
+    sanitized_high_limit = min(datacube.shape[axis], high_limit)
+
+    return (sanitized_low_limit, sanitized_high_limit)
+
+
 class IntegratedMapFigure(object):
 
     def __init__(self, datacube, wcs_object,  
@@ -105,6 +115,7 @@ def integrated_map_axes_lb(fig, ax_limits, datacube, wcs_object, integration_lim
     fig.add_axes(ax)
 
     min_v_px, max_v_px = velocity_world2pix(wcs_object, integration_limits)
+    min_v_px, max_v_px = sanitize_integration_limits((min_v_px, max_v_px), datacube, axis=0)
 
     array_lb = np.nansum(datacube[min_v_px:max_v_px,:,:], axis=0)
     array_lb[(array_lb < 0) | np.isinf(array_lb) | np.isnan(array_lb)] = 0
@@ -131,6 +142,7 @@ def integrated_map_axes_lv(fig, ax_limits, datacube, wcs_object, integration_lim
     fig.add_axes(ax)
 
     min_b_px, max_b_px = latitude_world2pix(wcs_object, integration_limits)
+    min_b_px, max_b_px = sanitize_integration_limits((min_b_px, max_b_px), datacube, axis=1)
 
     array_lv = np.nansum(datacube[:,min_b_px:max_b_px,:], axis=1)
     array_lv[(array_lv < 0) | np.isinf(array_lv) | np.isnan(array_lv)] = 0
