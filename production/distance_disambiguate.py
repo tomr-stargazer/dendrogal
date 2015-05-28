@@ -107,9 +107,11 @@ def calculate_p_nearfar(catalog, return_intermediates=False,
         return p_near, p_far
 
 
-def distance_disambiguator(catalog, **kwargs):
+def distance_disambiguator(catalog, ambiguous_threshold=0.1, **kwargs):
     """
     Chooses the best distance based on size-linewidth fit & latitude.
+
+    If neither distance is preferred at the 10\% level then don't pick either.
 
     """
 
@@ -120,20 +122,26 @@ def distance_disambiguator(catalog, **kwargs):
     error_best_distance_minus = np.zeros_like(catalog['error_near_distance_minus'])
     KDA_resolution = np.array(['-']*len(best_distance))
 
-    use_near_distance = (p_near >= p_far)
-    use_far_distance = (p_far > p_near)
+    # if neither distance has a p >~ 10%, then don't pick either.
+    use_near_distance = (p_near >= p_far) & ((p_near > ambiguous_threshold) | (p_far > ambiguous_threshold))
+    use_far_distance = (p_far > p_near) & ((p_near > ambiguous_threshold) | (p_far > ambiguous_threshold))
     same_distances = catalog['near_distance'] == catalog['far_distance']
+    ambiguous_distance = ((p_near <= ambiguous_threshold) & (p_far <= ambiguous_threshold) & ~same_distances)
 
     best_distance[use_near_distance] = catalog['near_distance'][use_near_distance]
     best_distance[use_far_distance] = catalog['far_distance'][use_far_distance]
+    best_distance[ambiguous_distance] = np.nan
     error_best_distance_plus[use_near_distance] = catalog['error_near_distance_plus'][use_near_distance]
     error_best_distance_plus[use_far_distance] = catalog['error_far_distance_plus'][use_far_distance]
+    error_best_distance_plus[ambiguous_distance] = np.nan
     error_best_distance_minus[use_near_distance] = catalog['error_near_distance_minus'][use_near_distance]
     error_best_distance_minus[use_far_distance] = catalog['error_far_distance_minus'][use_far_distance]
+    error_best_distance_minus[ambiguous_distance] = np.nan
 
     KDA_resolution[use_near_distance] = 'N'
     KDA_resolution[use_far_distance] = 'F'
     KDA_resolution[same_distances] = 'U'
+    KDA_resolution[ambiguous_distance] = 'A'
 
     return best_distance, KDA_resolution, p_near, p_far, error_best_distance_plus, error_best_distance_minus
 

@@ -11,6 +11,7 @@ import numpy as np
 from numpy.testing import assert_allclose, assert_equal, assert_almost_equal
 
 import astropy.units as u
+import astropy.table
 
 from ..distance_disambiguate import (p_given_sigmas, p_from_size_linewidth,
                                      p_from_latitude, calculate_p_nearfar,
@@ -77,3 +78,52 @@ def test_p_from_latitude():
     p_far = p_from_latitude(z_far, HWHM)
 
     assert p_near > p_far
+
+
+def test_distance_disambiguator():
+    """
+    Makes sure that we can determine near/far/ambiguous properly.
+
+    """
+
+    mock_catalog = astropy.table.Table()
+
+    mock_catalog['distance'] = u.Quantity([np.nan]*3, unit=u.kpc)
+    mock_catalog['error_distance_plus'] = u.Quantity([np.nan]*3, unit=u.kpc)
+    mock_catalog['error_distance_minus'] = u.Quantity([np.nan]*3, unit=u.kpc)
+
+    # the idea is to test that one of them resolves "near" and one "far"
+    mock_catalog['near_distance'] = u.Quantity([2]*3, unit=u.kpc)
+    mock_catalog['error_near_distance_plus'] = u.Quantity([0.1]*3, unit=u.kpc)
+    mock_catalog['error_near_distance_minus'] = u.Quantity([0.1]*3, unit=u.kpc)
+    mock_catalog['far_distance'] = u.Quantity([10]*3, unit=u.kpc)
+    mock_catalog['error_far_distance_plus'] = u.Quantity([0.1]*3, unit=u.kpc)
+    mock_catalog['error_far_distance_minus'] = u.Quantity([0.1]*3, unit=u.kpc)
+
+    # this whole mess is overly coupled...
+    mock_catalog['flux_true'] = [1]*3
+    mock_catalog['flux_true'].unit = 'K km sr / s'
+
+    # remember R = 1.9 sigma_r d
+    mock_catalog['radius'] = [0.015, 0.003, 1]
+    mock_catalog['radius'].unit = u.deg
+
+    mock_catalog['v_rms'] = [1]
+    mock_catalog['v_rms'].unit = u.km/u.s
+
+    mock_catalog['x_cen'] = [30]*3
+    mock_catalog['y_cen'] = [0, 0, 10]
+
+    A_coefficient=1
+    B_coefficient=1
+
+    (best_distance, KDA_resolution, p_near, p_far, 
+        error_best_distance_plus, 
+        error_best_distance_minus) = distance_disambiguator(
+        mock_catalog, A_coefficient=A_coefficient, B_coefficient=B_coefficient)
+
+    expected_KDA_resolution = ['N', 'F', 'A']
+    expected_distance = [2, 10, np.nan]
+
+    assert_equal(KDA_resolution, expected_KDA_resolution)
+    assert_equal(best_distance, expected_distance)
