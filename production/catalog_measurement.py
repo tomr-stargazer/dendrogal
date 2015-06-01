@@ -38,7 +38,14 @@ def size_linewidth_slope(catalog):
     if 'size' not in catalog.colnames or 'v_rms' not in catalog.colnames:
         raise ValueError("'size' and 'v_rms' must be columns in `catalog`!")
 
-    size_linewidth_data = RealData(catalog['size'], catalog['v_rms'])
+    if 'error_size_plus' not in catalog.colnames or 'error_size_minus' not in catalog.colnames:
+        mean_size_error = None
+    else:
+        mean_size_error = (catalog['error_size_plus']*catalog['error_size_minus'])**(1/2)
+        # if any clouds have no error in their size, the procedure will puke unless we do this:
+        mean_size_error[mean_size_error==0] = 0.01
+
+    size_linewidth_data = RealData(catalog['size'], catalog['v_rms'], sx=mean_size_error)
 
     powerlaw_model = Model(powerlaw_function)
     # The provided `beta0` is a throwaway guess that shouldn't change the outcome.
