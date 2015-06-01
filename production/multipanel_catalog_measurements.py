@@ -68,13 +68,15 @@ def multipanel_size_linewidth():
             size_linewidth_output = plot_size_linewidth_with_nearfar(catalog, ax, labels=False)
 
             fit_coefficient = size_linewidth_output.beta[0]
+            sd_coefficient = size_linewidth_output.sd_beta[0]
             fit_exponent = size_linewidth_output.beta[1]
+            sd_exponent = size_linewidth_output.sd_beta[1]
 
-            fit_string = "$A = {{{0:.2f}}}$,\n$\\beta ={{{1:.2f}}}$".format(fit_coefficient, fit_exponent)
+            fit_string = "$A = {{{0:.2f} \pm {2:.2f}}}$,\n$\\beta ={{{1:.2f} \pm {3:.2f}}}$".format(fit_coefficient, fit_exponent, sd_coefficient, sd_exponent) 
 
             plt.text(0.9, 1.1, sky_text_dict[sky_region]+gal_text_dict[galactic_region], fontsize=10)
 
-            plt.text(2, -0.2, fit_string, fontsize=14)
+            plt.text(1.85, -0.2, fit_string, fontsize=12)
 
             if sky_to_column_dict[sky_region] != 1:
                 plt.setp(ax.get_yticklabels(), visible=False)
@@ -113,6 +115,13 @@ def multipanel_size_linewidth():
     fig.canvas.draw()
     fig.tight_layout(pad=0.5)
     fig.canvas.draw() 
+
+    xl = fig.axes_list[6].get_xlabel()
+    fig.axes_list[1].set_xlabel(xl, fontsize=16)
+    fig.axes_list[3].set_xlabel(xl, fontsize=16)
+
+    yl = fig.axes_list[0].get_ylabel()
+    fig.axes_list[6].set_ylabel(yl, fontsize=16)
 
     return fig
 
@@ -211,5 +220,12 @@ def multipanel_cmf():
     fig.canvas.draw()
     fig.tight_layout(pad=0.5)
     fig.canvas.draw() 
+
+    xl = fig.axes_list[6].get_xlabel()
+    fig.axes_list[1].set_xlabel(xl, fontsize=14)
+    fig.axes_list[3].set_xlabel(xl, fontsize=14)
+
+    yl = fig.axes_list[0].get_ylabel()
+    fig.axes_list[6].set_ylabel(yl)
 
     return fig
