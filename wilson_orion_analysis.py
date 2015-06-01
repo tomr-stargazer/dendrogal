@@ -57,3 +57,24 @@ def load_orion_catalog_from_template():
 
     return d, catalog, header, metadata, template_cube, template_header, new_selection_dictionary, selection_ID_dictionary
 
+
+def make_orion_thumbnail_figure():
+    from dendrogal.production.map_dendrogram_thumbnail_figure import make_thumbnail_dendro_figure    
+
+    d, catalog, header, metadata, template_cube, template_header, new_selection_dictionary, selection_ID_dictionary = load_orion_catalog_from_template()
+
+    fig = make_thumbnail_dendro_figure(d, catalog, 72, panel_width=10*u.deg)
+
+    return fig
+
+def save_orion_thumbnail_figure():
+    import os.path
+
+    output_path = os.path.expanduser("~/Dropbox/Grad School/Research/Milkyway/paper/")
+
+    filename = 'orion_B_thumbnail.pdf'
+
+    fig = make_orion_thumbnail_figure()
+
+    fig.savefig(output_path+filename, bbox_inches='tight')
+
