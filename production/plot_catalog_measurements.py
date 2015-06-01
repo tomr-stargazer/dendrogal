@@ -131,7 +131,9 @@ def plot_size_linewidth_with_nearfar(catalog, ax, labels=True):
     linewidth_array = catalog['v_rms']
 
     fit_coefficient = size_linewidth_output.beta[0]
+    sd_coefficient = size_linewidth_output.sd_beta[0]
     fit_exponent = size_linewidth_output.beta[1]
+    sd_exponent = size_linewidth_output.sd_beta[1]
 
     fit_xs = np.logspace(-2, 8, 20)
     fit_ys = fit_coefficient * fit_xs ** fit_exponent
@@ -142,7 +144,7 @@ def plot_size_linewidth_with_nearfar(catalog, ax, labels=True):
     ax.plot(np.log10(size_array[far]), np.log10(linewidth_array[far]), 'o', markerfacecolor='none', markeredgecolor='r', mew=0.5, ms=3.5, label='far')
 
     if labels:
-        fit_label = r"$\sigma_v$ = {0:.2f} $\times$ R$^{{{1:.2f}}}$".format(fit_coefficient, fit_exponent) 
+        fit_label = r"$\sigma_v$ = {0:.2f}$\pm${2:.2f} $\times$ R$^{{{1:.2f} \pm {3:.2f}}}$".format(fit_coefficient, fit_exponent, sd_coefficient, sd_exponent) 
     else:
         fit_label = r"$\sigma_v = A \times R^\beta$"
 
