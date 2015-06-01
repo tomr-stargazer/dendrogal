@@ -21,7 +21,7 @@ colorbrewer_blue = '#377eb8'
 colorbrewer_green = '#4daf4a'
 
 
-def single_cloud_lb_thumbnail(fig, ax_limits, dendrogram, catalog, cloud_idx):
+def single_cloud_lb_thumbnail(fig, ax_limits, dendrogram, catalog, cloud_idx, panel_width=7*u.deg):
     """
     Makes an l, b thumbnail of a single cloud.
 
@@ -88,13 +88,15 @@ def single_cloud_lb_thumbnail(fig, ax_limits, dendrogram, catalog, cloud_idx):
     ax_lb.contour(mask_lb, levels=[0.5], colors=colorbrewer_blue, linewidths=2, zorder=0.85)
     ax_lb.contour(mask_lb, levels=[0.5], colors='white', linewidths=3, zorder=0.8)
 
-    ax_lb.set_xlim(l_lbv_pixels-3.5/l_scale_lbv, l_lbv_pixels+3.5/l_scale_lbv)
-    ax_lb.set_ylim(b_lbv_pixels-3.5/b_scale_lbv, b_lbv_pixels+3.5/b_scale_lbv)
+    half_width = (panel_width/2).to(u.deg).value
+
+    ax_lb.set_xlim(l_lbv_pixels-half_width/l_scale_lbv, l_lbv_pixels+half_width/l_scale_lbv)
+    ax_lb.set_ylim(b_lbv_pixels-half_width/b_scale_lbv, b_lbv_pixels+half_width/b_scale_lbv)
 
     return ax_lb
 
 
-def single_cloud_lv_thumbnail(fig, ax_limits, dendrogram, catalog, cloud_idx):
+def single_cloud_lv_thumbnail(fig, ax_limits, dendrogram, catalog, cloud_idx, panel_width=7*u.deg):
     """
     Makes an l, v thumbnail of a single cloud.
 
@@ -157,9 +159,12 @@ def single_cloud_lv_thumbnail(fig, ax_limits, dendrogram, catalog, cloud_idx):
     ax_lv.contour(mask_lv, levels=[0.5], colors=colorbrewer_blue, linewidths=2, zorder=0.85)
     ax_lv.contour(mask_lv, levels=[0.5], colors='white', linewidths=3, zorder=0.8)
 
+    half_width = (panel_width/2).to(u.deg).value
+    velocity_half_width = (v_scale_lbv/l_scale_lbv) * half_width
+
     # set x & y limits
-    ax_lv.set_xlim(l_lbv_pixels-3.5/l_scale_lbv, l_lbv_pixels+3.5/l_scale_lbv)
-    ax_lv.set_ylim(v_lbv_pixels-17.5/v_scale_lbv, v_lbv_pixels+17.5/v_scale_lbv)
+    ax_lv.set_xlim(l_lbv_pixels-half_width/l_scale_lbv, l_lbv_pixels+half_width/l_scale_lbv)
+    ax_lv.set_ylim(v_lbv_pixels-velocity_half_width/v_scale_lbv, v_lbv_pixels+velocity_half_width/v_scale_lbv)
 
     return ax_lv
 
@@ -204,7 +209,7 @@ def single_cloud_dendro_thumbnail(ax, dendrogram, cloud_idx):
 
 
 
-def make_thumbnail_dendro_figure(dendrogram, catalog, cloud_idx):
+def make_thumbnail_dendro_figure(dendrogram, catalog, cloud_idx, panel_width=7*u.deg):
 
     d = dendrogram
     cloud_row = catalog[catalog['_idx'] == cloud_idx]    
@@ -220,7 +225,7 @@ def make_thumbnail_dendro_figure(dendrogram, catalog, cloud_idx):
 
     # draw maps on ax_lb & ax_lv
     ax_lb_limits = [0.1, 0.55, 0.35, 0.35]
-    ax_lb = single_cloud_lb_thumbnail(fig, ax_lb_limits, d, catalog, cloud_idx)
+    ax_lb = single_cloud_lb_thumbnail(fig, ax_lb_limits, d, catalog, cloud_idx, panel_width=panel_width)
 
     lb_lon = ax_lb.coords['glon']
     lb_lon.set_ticks(spacing=2*u.deg, color='white', exclude_overlapping=True)
@@ -234,7 +239,7 @@ def make_thumbnail_dendro_figure(dendrogram, catalog, cloud_idx):
 
 
     ax_lv_limits =  [0.1, 0.1, 0.35, 0.35]  
-    ax_lv = single_cloud_lv_thumbnail(fig, ax_lv_limits, d, catalog, cloud_idx)      
+    ax_lv = single_cloud_lv_thumbnail(fig, ax_lv_limits, d, catalog, cloud_idx, panel_width=panel_width)      
 
     lv_lon = ax_lv.coords['glon']
     lv_lon.set_ticks(spacing=2*u.deg, color='white', exclude_overlapping=True)
