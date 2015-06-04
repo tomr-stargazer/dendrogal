@@ -1,22 +1,39 @@
+"""
+A custom colormap based on RgGy_r that is "stretched" in a way I think Tom Dame will like.
+
+"""
+
 from __future__ import division
+
+import numpy as np
 
 # custom colormap - inspired by
 # http://stackoverflow.com/questions/16152052/matplotlib-python-change-single-color-in-colormap/16163481
 from matplotlib.colors import LinearSegmentedColormap
 
+halfway = 0.6
+first_half_power = 1/3
+second_half_power = 3/4
+
+stretches_first_half = (np.linspace(0, halfway, 6) / halfway)**(first_half_power) * halfway
+xx, stretch_1, stretch_2, stretch_3, stretch_4, stretch_5 = stretches_first_half
+
+stretches_second_half = (np.linspace(halfway, 1, 6) / halfway)**(second_half_power) * halfway
+xx, stretch_6, stretch_7, stretch_8, stretch_9, yy = stretches_second_half
+
+# stretch_1 = 0.1
+# stretch_2 = 0.2
+# stretch_3 = 0.3
+# stretch_4 = 0.4
+# stretch_5 = 0.5
+# stretch_6 = 0.6
+# stretch_7 = 0.7
+# stretch_8 = 0.8
+# stretch_9 = 0.9
+
 # derived from:
 # from matplotlib import cm
 # cm.RdGy_r._segmentdata
-
-stretch_1 = 0.1
-stretch_2 = 0.2
-stretch_3 = 0.3
-stretch_4 = 0.4
-stretch_5 = 0.5
-stretch_6 = 0.6
-stretch_7 = 0.7
-stretch_8 = 0.8
-stretch_9 = 0.9
 
 color_dict = \
 {u'blue': [(0.0, 0.10196078568696976, 0.10196078568696976),
@@ -52,4 +69,5 @@ color_dict = \
   (stretch_8, 0.8392156958580017, 0.8392156958580017),
   (stretch_9, 0.6980392336845398, 0.6980392336845398),
   (1.0, 0.40392157435417175, 0.40392157435417175)]}
-galactic_cmap = LinearSegmentedColormap('galactic_cmap', color_dict)
+
+dame_cmap = LinearSegmentedColormap('dame_cmap', color_dict)
