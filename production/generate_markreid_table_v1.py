@@ -24,8 +24,13 @@ import astropy.table
 data_path = os.path.expanduser("~/Dropbox/Grad School/Research/Milkyway/other_catalogs/")
 
 
-
 def id_string_maker(cloud_id):
+    """
+    Appends the correct number of underscores to the start of an ID.
+
+    This is done to comply with the requirements above.
+
+    """
 
     string_id = str(cloud_id)
 
@@ -50,6 +55,7 @@ def make_reid_table(catalog):
     reid_table['mass'] = catalog['mass']
 
     return reid_table
+
 
 def save_reid_table(reid_table):
 
