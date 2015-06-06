@@ -82,7 +82,7 @@ def first_quad_cloud_catalog():
     return catalog_cp
 
 
-def get_positive_velocity_clouds(input_catalog, max_descendants=30):
+def get_positive_velocity_clouds(input_catalog, max_descendants=10):
     """
     Extracts clouds from the positive-velocity region of the first quad.
 
@@ -114,12 +114,12 @@ def get_positive_velocity_clouds(input_catalog, max_descendants=30):
         (catalog['on_edge'] == 1) |
         (catalog['v_rms'] <= 1) |
         (catalog['v_rms'] > 10) |
-        (catalog['max_vsplit'] > 4)
+        (catalog['max_vsplit'] > 3)
     )
 
     qualified = (
         (catalog['n_descendants'] < max_descendants) &
-        (catalog['fractional_gain'] < 0.81))
+        (catalog['fractional_gain'] < 0.9))
 
     pre_output_catalog = catalog[~disqualified & qualified]
 
@@ -127,7 +127,7 @@ def get_positive_velocity_clouds(input_catalog, max_descendants=30):
     almost_output_catalog = reduce_catalog(d, pre_output_catalog)
 
     # disambiguate distances here
-    assign_distance_columns(almost_output_catalog, *distance_disambiguator(almost_output_catalog))
+    assign_distance_columns(almost_output_catalog, *distance_disambiguator(almost_output_catalog, ambiguous_threshold=0.001))
 
     assign_properties(almost_output_catalog)
 
@@ -196,7 +196,7 @@ def get_negative_velocity_clouds(input_catalog, max_descendants=30):
     return output_catalog
 
 
-def get_low_velocity_perseus_clouds(input_catalog, max_descendants=30):
+def get_low_velocity_perseus_clouds(input_catalog, max_descendants=10):
     """
     Extracts clouds from the low-velocity Perseus region of Q1.
 
@@ -238,7 +238,7 @@ def get_low_velocity_perseus_clouds(input_catalog, max_descendants=30):
 
     qualified = (
         (catalog['n_descendants'] < max_descendants) &
-        (catalog['fractional_gain'] < 0.81))
+        (catalog['fractional_gain'] < 0.9))
 
     pre_output_catalog = catalog[~disqualified & qualified]
 
@@ -246,7 +246,7 @@ def get_low_velocity_perseus_clouds(input_catalog, max_descendants=30):
     almost_output_catalog = reduce_catalog(d, pre_output_catalog)
 
     # disambiguate distances here
-    assign_distance_columns(almost_output_catalog, *distance_disambiguator(almost_output_catalog))
+    assign_distance_columns(almost_output_catalog, *distance_disambiguator(almost_output_catalog, ambiguous_threshold=0.001))
 
     assign_properties(almost_output_catalog)
 
@@ -266,7 +266,7 @@ def compile_firstquad_catalog(input_catalog):
 
     negative_v_catalog = get_negative_velocity_clouds(input_catalog)
     positive_v_catalog = get_positive_velocity_clouds(input_catalog)
-    low_v_catalog = get_low_velocity_perseus_clouds(input_catalog, max_descendants=10)
+    low_v_catalog = get_low_velocity_perseus_clouds(input_catalog)
 
     composite_unreduced_catalog = astropy.table.vstack([negative_v_catalog, positive_v_catalog, low_v_catalog])
 

@@ -107,16 +107,16 @@ def get_negative_velocity_clouds(input_catalog, max_descendants=10):
 
     # one. grab the clouds we think are real
     disqualified = (
-        (catalog['v_cen'] > -5) |
+        (catalog['v_cen'] > -3) |
         (catalog['on_edge'] == 1) |
         (catalog['v_rms'] <= 1) |
         (catalog['v_rms'] > 10) |
-        (catalog['max_vsplit'] > 4)
+        (catalog['max_vsplit'] > 3)
     )
 
     qualified = (
         (catalog['n_descendants'] < max_descendants) &
-        (catalog['fractional_gain'] < 0.81))
+        (catalog['fractional_gain'] < 0.9))
 
     pre_output_catalog = catalog[~disqualified & qualified]
 
@@ -124,7 +124,7 @@ def get_negative_velocity_clouds(input_catalog, max_descendants=10):
     almost_output_catalog = reduce_catalog(d, pre_output_catalog)
 
     # disambiguate distances here
-    assign_distance_columns(almost_output_catalog, *distance_disambiguator(almost_output_catalog))
+    assign_distance_columns(almost_output_catalog, *distance_disambiguator(almost_output_catalog, ambiguous_threshold=0.001))
 
     assign_properties(almost_output_catalog)
 
@@ -135,7 +135,7 @@ def get_negative_velocity_clouds(input_catalog, max_descendants=10):
     return output_catalog
 
 
-def get_positive_velocity_clouds(input_catalog, max_descendants=30):
+def get_positive_velocity_clouds(input_catalog, max_descendants=10):
     """
     Extracts clouds from the positive-velocity region of the fourth quad.
 
@@ -173,8 +173,8 @@ def get_positive_velocity_clouds(input_catalog, max_descendants=30):
     )
 
     disqualified_tree = (
-        (catalog['n_descendants'] > max_descendants) &
-        (catalog['fractional_gain'] > 0.81))
+        (catalog['n_descendants'] > max_descendants) |
+        (catalog['fractional_gain'] > 0.9))
 
     # this step excludes the weird tail near the galactic center
     disqualified_extreme_positive_velocities_near_GC = (
