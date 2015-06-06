@@ -16,6 +16,8 @@ import astropy.units as u
 
 from wcsaxes import WCSAxes
 
+from dendrogal.production.dame_color_dict import dame_cmap
+
 colorbrewer_red = '#e41a1c' 
 colorbrewer_blue = '#377eb8'
 colorbrewer_green = '#4daf4a'
@@ -55,7 +57,7 @@ def sanitize_integration_limits(limits, datacube, axis):
 class IntegratedMapFigure(object):
 
     def __init__(self, datacube, wcs_object,  
-                 aspect_in_units=5*(u.km/u.s)/u.deg, cmap='RdGy_r',
+                 aspect_in_units=5*(u.km/u.s)/u.deg, cmap=dame_cmap,
                  integration_limits=(-1,1), figsize=(10,9) ):
 
         self.datacube = datacube
@@ -102,7 +104,7 @@ class IntegratedMapFigure(object):
 
 
 def integrated_map_axes_lb(fig, ax_limits, datacube, wcs_object, integration_limits,
-                           cmap='RdGy_r' ):
+                           cmap=dame_cmap ):
     """ 
     Hackish way of exporting the above behavior to an ax object.
 
@@ -131,7 +133,7 @@ def integrated_map_axes_lb(fig, ax_limits, datacube, wcs_object, integration_lim
 
 def integrated_map_axes_lv(fig, ax_limits, datacube, wcs_object, integration_limits,
                            aspect_in_units=5*(u.km/u.s)/u.deg,
-                           cmap='RdGy_r'):
+                           cmap=dame_cmap):
     """ 
     Hackish way of exporting the above behavior to an ax object.
 
