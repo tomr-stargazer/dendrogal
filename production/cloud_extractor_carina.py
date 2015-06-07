@@ -130,7 +130,7 @@ def get_negative_velocity_clouds(input_catalog, max_descendants=10):
 
     return output_catalog
 
-def get_positive_velocity_clouds(input_catalog, max_descendants=30):
+def get_positive_velocity_clouds(input_catalog, max_descendants=10):
     """
     Extracts clouds from the positive-velocity region of Carina.
 

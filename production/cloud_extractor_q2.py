@@ -54,7 +54,7 @@ def second_quad_cloud_catalog():
     return catalog_cp
 
 
-def get_negative_velocity_clouds(input_catalog, max_descendants=15):
+def get_negative_velocity_clouds(input_catalog, max_descendants=10):
 
     catalog = input_catalog.copy(copy_data=True)
 
@@ -82,7 +82,7 @@ def get_negative_velocity_clouds(input_catalog, max_descendants=15):
 
     return output_catalog
 
-def get_positive_velocity_clouds(input_catalog, max_descendants=15):
+def get_positive_velocity_clouds(input_catalog, max_descendants=10):
 
     catalog = input_catalog.copy(copy_data=True)
 
