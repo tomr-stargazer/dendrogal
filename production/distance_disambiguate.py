@@ -86,9 +86,9 @@ def calculate_p_nearfar(catalog, return_intermediates=False,
     assign_properties(far_catalog)
 
     p_near_larson = p_from_size_linewidth(near_catalog['size'], near_catalog['v_rms'],
-                                          A_coefficient, B_coefficient)
+                                          A_coefficient, B_coefficient, scatter_in_log10_R=scatter_in_log10_R)
     p_far_larson = p_from_size_linewidth(far_catalog['size'], far_catalog['v_rms'],
-                                         A_coefficient, B_coefficient)
+                                         A_coefficient, B_coefficient, scatter_in_log10_R=scatter_in_log10_R)
 
     p_near_latitude = p_from_latitude((near_catalog['z_gal']).to(u.pc),
                                       molecular_HWHM_height=molecular_HWHM_height)
