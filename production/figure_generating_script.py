@@ -116,6 +116,7 @@ def third_quadrant_figures(args=None, save=True):
     cloud_catalog = export_thirdquad_catalog()
     d = quad3_d
 
+    # these bizarre "integration limits" have to do with a bug in the WCS for the third quadrant.
     imf_thirdquad = make_lv_map_new(cloud_catalog, d, integration_limits=(-1.9,3), ellipse_thickness_inner=0.6, ellipse_thickness_outer=1.4)
     imf_thirdquad.ax.coords['glon'].set_ticks(spacing=5*u.deg, color='white', exclude_overlapping=True)
     imf_thirdquad.ax.set_xlim(135, 744)
@@ -237,20 +238,17 @@ def make_thumbnail_figures():
     quad2_fig = make_thumbnail_dendro_figure(quad2_d, quad2_cat, quad2_cloud_idx)
     quad2_fig.savefig(output_path+"quad2_thumbnail.pdf", bbox_inches='tight')
 
-    # pseudo 3rd quadrant
-    # quad2b_cloud_idx = 1506
-    # quad3_fig = make_thumbnail_dendro_figure(quad2_d, quad2_cat, quad2b_cloud_idx)
-    # quad3_fig.savefig(output_path+"quad3_thumbnail.pdf", bbox_inches='tight')
-
-    quad3_cloud_idx = 726
+    quad3_cloud_idx = 697
     quad3_cat = export_thirdquad_catalog()
 
-    quad3_fig = make_thumbnail_dendro_figure(quad3_d, quad3_cat, quad3_cloud_idx)
-    # quad3_fig.ax_lb.set_ylim(0+2, 45-2)
+    quad3_fig = make_thumbnail_dendro_figure(quad3_d, quad3_cat, quad3_cloud_idx, panel_width=3.5*u.deg, latitude_px_override=[22, 32])
     quad3_fig.savefig(output_path+"quad3_thumbnail.pdf", bbox_inches='tight')
 
+    quad3b_cloud_idx = 710
+    quad3b_fig = make_thumbnail_dendro_figure(quad3_d, quad3_cat, quad3b_cloud_idx, latitude_px_override=[17, 34])
+    quad3b_fig.savefig(output_path+"quad3b_thumbnail.pdf", bbox_inches='tight')
 
-    quad4_cloud_idx = 947
+    quad4_cloud_idx = 484
     quad4_cat = export_fourthquad_catalog()
 
     quad4_fig = make_thumbnail_dendro_figure(quad4_d, quad4_cat, quad4_cloud_idx)
