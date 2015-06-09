@@ -132,7 +132,7 @@ def integrated_map_axes_lb(fig, ax_limits, datacube, wcs_object, integration_lim
 
 
 def integrated_map_axes_lv(fig, ax_limits, datacube, wcs_object, integration_limits,
-                           aspect_in_units=5*(u.km/u.s)/u.deg,
+                           aspect_in_units=5*(u.km/u.s)/u.deg, latitude_px_override=None,
                            cmap=dame_cmap):
     """ 
     Hackish way of exporting the above behavior to an ax object.
@@ -143,9 +143,12 @@ def integrated_map_axes_lv(fig, ax_limits, datacube, wcs_object, integration_lim
                      slices=('x', 0, 'y'))
     fig.add_axes(ax)
 
-    min_b_px, max_b_px = latitude_world2pix(wcs_object, integration_limits)
-    min_b_px, max_b_px = sanitize_integration_limits((min_b_px, max_b_px), datacube, axis=1)
-
+    if latitude_px_override is None:
+        min_b_px, max_b_px = latitude_world2pix(wcs_object, integration_limits)
+        min_b_px, max_b_px = sanitize_integration_limits((min_b_px, max_b_px), datacube, axis=1)
+    else:
+        min_b_px, max_b_px = latitude_px_override
+        
     array_lv = np.nansum(datacube[:,min_b_px:max_b_px,:], axis=1)
     array_lv[(array_lv < 0) | np.isinf(array_lv) | np.isnan(array_lv)] = 0
 
