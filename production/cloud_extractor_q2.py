@@ -60,15 +60,15 @@ def get_negative_velocity_clouds(input_catalog, max_descendants=10):
 
     # narrow down how we select clouds
     disqualified_location = (
-        (catalog['v_cen'] > -20) |
+        (catalog['v_cen'] > -8) |
         (catalog['on_edge'] == 1) |
         (catalog['v_cen'] < -100) |
         (catalog['x_sol'] < -7.5)
     )
 
     disqualified_tree = (
-        (catalog['n_descendants'] > max_descendants) &
-        (catalog['fractional_gain'] > 0.81))
+        (catalog['n_descendants'] > max_descendants) |
+        (catalog['fractional_gain'] > 0.9))
 
 
     pre_output_catalog = catalog[~disqualified_tree & ~disqualified_location]
@@ -95,8 +95,8 @@ def get_positive_velocity_clouds(input_catalog, max_descendants=10):
     )
 
     disqualified_tree = (
-        (catalog['n_descendants'] > max_descendants) &
-        (catalog['fractional_gain'] > 0.81))
+        (catalog['n_descendants'] > max_descendants) |
+        (catalog['fractional_gain'] > 0.9))
 
     pre_output_catalog = catalog[~disqualified_tree & ~disqualified_location]
 
