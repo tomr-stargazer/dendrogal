@@ -23,8 +23,8 @@ from dendrogal.production.cloud_extractor_carina import d as carina_d
 from dendrogal.production.cloud_extractor_q4 import d as quad4_d
 from dendrogal.production.map_dendrogram_thumbnail_figure import make_thumbnail_dendro_figure
 
-super_directory = os.path.expanduser("~/Dropbox/Grad School/Research/Milkyway/supermassive2/")
-massive_directory = os.path.expanduser("~/Dropbox/Grad School/Research/Milkyway/massive2/")
+super_directory = os.path.expanduser("~/Dropbox/Grad School/Research/Milkyway/supermassive3/")
+massive_directory = os.path.expanduser("~/Dropbox/Grad School/Research/Milkyway/massive3/")
 
 allcat = extract_and_combine_catalogs()
 cat1 = export_firstquad_catalog()
@@ -62,10 +62,10 @@ for row in supermassive_cat:
     catalog_properties = """
     D: {0} +{1} -{2} kpc
     KDA: {5}
+    p_near/far: {6:.3f} _ {7:.3f} 
     M: {3}x10^{4} Msun 
-    v_split: {6} km/s 
     """.format(row['distance'], row['error_distance_plus'], row['error_distance_minus'], str(row['mass'])[0], 
-        int(np.floor(np.log10(row['mass']))), row['KDA_resolution'], row['v_split'] )
+        int(np.floor(np.log10(row['mass']))), row['KDA_resolution'], row['p_near'], row['p_far'] )
     fig.text(0.2, -0.15, catalog_properties)
 
     fig.savefig(super_directory+"{0}.pdf".format(idx), bbox_inches='tight')
@@ -73,7 +73,6 @@ for row in supermassive_cat:
     
 
 for row in massive_cat:
-    
 
     idx = row['_idx']
     d = survey_d_map[row['survey']]
