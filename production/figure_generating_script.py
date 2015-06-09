@@ -51,13 +51,13 @@ def first_quadrant_figures(args=None, save=True):
     cloud_catalog = compile_firstquad_catalog(first_quad_cloud_catalog())
     d = quad1_d
 
-    imf_dame_a = make_lv_map_new(cloud_catalog, d)
+    imf_dame_a = make_lv_map_new(cloud_catalog, d, integration_limits=(-2, 2), ellipse_thickness_inner=1.2, ellipse_thickness_outer=2.4)
     imf_dame_a.ax.set_xlim(135, 496)
     imf_dame_a.ax.set_ylim(138, 380)
     plot_dame_ellipses_on_imf(imf_dame_a)
     imf_dame_a.fig.savefig(output_path+"quad1_comparison_a.pdf", bbox_inches='tight')
 
-    imf_firstquad = make_lv_map_new(cloud_catalog, d)
+    imf_firstquad = make_lv_map_new(cloud_catalog, d, integration_limits=(-2, 2), ellipse_thickness_inner=1.2, ellipse_thickness_outer=2.4)
     # imf_firstquad.fig.set_figheight(5.7)
     # imf_firstquad.fig.set_figwidth(10)
     imf_firstquad.fig.canvas.draw()
@@ -85,7 +85,7 @@ def second_quadrant_figures(args=None, save=True):
     cloud_catalog = export_secondquad_catalog()
     d = quad2_d
 
-    imf_secondquad = make_lv_map_new(cloud_catalog, d, integration_limits=(-2,2))
+    imf_secondquad = make_lv_map_new(cloud_catalog, d, integration_limits=(-2,2), ellipse_thickness_inner=0.6, ellipse_thickness_outer=1.4)
     imf_secondquad.ax.coords['glon'].set_ticks(spacing=10*u.deg, color='white', exclude_overlapping=True)    
     imf_secondquad.ax.set_xlim(30,1100)
     imf_secondquad.ax.set_ylim(30,145)
@@ -116,7 +116,7 @@ def third_quadrant_figures(args=None, save=True):
     cloud_catalog = export_thirdquad_catalog()
     d = quad3_d
 
-    imf_thirdquad = make_lv_map_new(cloud_catalog, d, integration_limits=(-1.9,3))
+    imf_thirdquad = make_lv_map_new(cloud_catalog, d, integration_limits=(-1.9,3), ellipse_thickness_inner=0.6, ellipse_thickness_outer=1.4)
     imf_thirdquad.ax.coords['glon'].set_ticks(spacing=5*u.deg, color='white', exclude_overlapping=True)
     imf_thirdquad.ax.set_xlim(135, 744)
     imf_thirdquad.fig.canvas.draw()
@@ -145,8 +145,8 @@ def fourth_quadrant_figures(args=None, save=True):
     cloud_catalog = compile_fourthquad_catalog(fourth_quad_cloud_catalog())
     d = quad4_d
 
-    imf_fourthquad = make_lv_map_new(cloud_catalog, d)
-    imf_fourthquad.ax.set_ylim(20,245) # found via trial & error
+    imf_fourthquad = make_lv_map_new(cloud_catalog, d, integration_limits=(-2, 2))
+    imf_fourthquad.ax.set_ylim(45,216) # found via trial & error
     imf_fourthquad.fig.canvas.draw()
     imf_fourthquad.fig.savefig(output_path+'quad4_map.pdf', bbox_inches='tight')
 
@@ -174,7 +174,7 @@ def carina_figures(args=None, save=True):
     cloud_catalog = compile_carina_catalog(carina_cloud_catalog())
     d = carina_d
 
-    imf_carina = make_lv_map_new(cloud_catalog, d)
+    imf_carina = make_lv_map_new(cloud_catalog, d, integration_limits=(-2, 2))
     imf_carina.ax.set_ylim(70,200)
     imf_carina.fig.canvas.draw()
     imf_carina.fig.savefig(output_path+'carina_map.pdf', bbox_inches='tight')
@@ -224,14 +224,14 @@ def combined_galaxy_figures(catalog):
 
 def make_thumbnail_figures():
 
-    quad1_cloud_idx = 2772
+    quad1_cloud_idx = 2868
     quad1_cat = export_firstquad_catalog()
 
     quad1_fig = make_thumbnail_dendro_figure(quad1_d, quad1_cat, quad1_cloud_idx)
     quad1_fig.savefig(output_path+"quad1_thumbnail.pdf", bbox_inches='tight')
 
 
-    quad2_cloud_idx = 45
+    quad2_cloud_idx = 66
     quad2_cat = export_secondquad_catalog()
 
     quad2_fig = make_thumbnail_dendro_figure(quad2_d, quad2_cat, quad2_cloud_idx)
