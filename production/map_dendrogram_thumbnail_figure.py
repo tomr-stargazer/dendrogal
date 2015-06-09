@@ -160,7 +160,7 @@ def single_cloud_lv_thumbnail(fig, ax_limits, dendrogram, catalog, cloud_idx, pa
     ax_lv.contour(mask_lv, levels=[0.5], colors='white', linewidths=3, zorder=0.8)
 
     half_width = (panel_width/2).to(u.deg).value
-    velocity_half_width = (v_scale_lbv/l_scale_lbv) * half_width
+    velocity_half_width = 17.5/3.5 * half_width
 
     # set x & y limits
     ax_lv.set_xlim(l_lbv_pixels-half_width/l_scale_lbv, l_lbv_pixels+half_width/l_scale_lbv)
