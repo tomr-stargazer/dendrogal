@@ -128,11 +128,11 @@ def make_quadrant_topdown_map(cloud_catalog, loc=None, figsize=(10,8)):
     bigs = cloud_catalog[(cloud_catalog['mass'] < 1e7) & (cloud_catalog['mass'] > 1e6)]
     giants = cloud_catalog[cloud_catalog['mass'] > 1e7]
 
-    plt.plot(smalls['y_sol'], smalls['x_sol'], 'co', ms=4, label=r"$10^4 M_\odot$")
-    plt.plot(mediums['y_sol'], mediums['x_sol'], 'co', ms=7, label=r"$10^5 M_\odot$")
-    plt.plot(bigs['y_sol'], bigs['x_sol'], 'co', ms=9, label=r"$10^6 M_\odot$")
+    plt.plot(smalls['y_sol'], smalls['x_sol'], 'co', ms=3, label=r"$10^4 M_\odot$")
+    plt.plot(mediums['y_sol'], mediums['x_sol'], 'co', ms=5, label=r"$10^5 M_\odot$")
+    plt.plot(bigs['y_sol'], bigs['x_sol'], 'co', ms=8, label=r"$10^6 M_\odot$")
     if len(giants) > 0:
-        plt.plot(giants['y_sol'], giants['x_sol'], 'co', ms=10, label=r"$10^7 M_\odot$")
+        plt.plot(giants['y_sol'], giants['x_sol'], 'o', markerfacecolor='cyan', markeredgecolor='red', markeredgewidth=1.4, ms=11, label=r"$10^7 M_\odot$")
 
     leg = plt.legend(loc=loc, numpoints=1)
     leg.get_frame().set_alpha(0.5)
@@ -141,7 +141,9 @@ def make_quadrant_topdown_map(cloud_catalog, loc=None, figsize=(10,8)):
 
     return fig
 
-def make_lv_map_new(cloud_catalog, dendrogram, ellipse_color=colorbrewer_red, **kwargs):
+def make_lv_map_new(cloud_catalog, dendrogram, ellipse_color=colorbrewer_red, 
+                    ellipse_thickness_inner=0.9, ellipse_thickness_outer=1.9, 
+                    **kwargs):
 
     d = dendrogram
 
@@ -176,15 +178,15 @@ def make_lv_map_new(cloud_catalog, dendrogram, ellipse_color=colorbrewer_red, **
         imf.ax.add_artist(e)
         e.set_facecolor('none')
         e.set_edgecolor(ellipse_color)
-        e.set_linewidth(1.25)
+        e.set_linewidth(ellipse_thickness_inner)
         e.set_zorder(0.95)
 
     for e in lv_ells2:
         imf.ax.add_artist(e)
         e.set_facecolor('none')
         e.set_edgecolor('white')
-        e.set_linewidth(4)
-        e.set_alpha(0.8)
+        e.set_linewidth(ellipse_thickness_outer)
+        # e.set_alpha(0.8)
         e.set_zorder(0.9)
 
     lon = imf.ax.coords['glon']
