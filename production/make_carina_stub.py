@@ -12,7 +12,7 @@ from __future__ import division
 
 from dendrogal.production.convenience_function import load_permute_dendro_catalog
 
-min_value = 0.17
+min_value = 0.17*2
 min_delta = 0.17
 min_npix = 20
 

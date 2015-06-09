@@ -13,7 +13,7 @@ from __future__ import division
 from dendrogal.production.convenience_function import load_permute_dendro_catalog
 
 data_filename = "DHT31_Quad3_mominterp.fits"
-dendrogram_kwargs = {'min_value' : 0.12,
+dendrogram_kwargs = {'min_value' : 0.12*2,
                      'min_delta' : 0.12,
                      'min_npix' : 20}
 
