@@ -96,7 +96,7 @@ def single_cloud_lb_thumbnail(fig, ax_limits, dendrogram, catalog, cloud_idx, pa
     return ax_lb
 
 
-def single_cloud_lv_thumbnail(fig, ax_limits, dendrogram, catalog, cloud_idx, panel_width=7*u.deg):
+def single_cloud_lv_thumbnail(fig, ax_limits, dendrogram, catalog, cloud_idx, panel_width=7*u.deg, latitude_px_override=None):
     """
     Makes an l, v thumbnail of a single cloud.
 
@@ -115,7 +115,7 @@ def single_cloud_lv_thumbnail(fig, ax_limits, dendrogram, catalog, cloud_idx, pa
 
     print "Latitude integration limits: {0} deg".format(latitude_integration)
 
-    ax_lv = integrated_map_axes_lv(fig, ax_limits, d.data, d.wcs, integration_limits=latitude_integration)
+    ax_lv = integrated_map_axes_lv(fig, ax_limits, d.data, d.wcs, integration_limits=latitude_integration, latitude_px_override=latitude_px_override)
 
     # draw ellipse
 
@@ -209,7 +209,7 @@ def single_cloud_dendro_thumbnail(ax, dendrogram, cloud_idx):
 
 
 
-def make_thumbnail_dendro_figure(dendrogram, catalog, cloud_idx, panel_width=7*u.deg):
+def make_thumbnail_dendro_figure(dendrogram, catalog, cloud_idx, panel_width=7*u.deg, latitude_px_override=None):
 
     d = dendrogram
     cloud_row = catalog[catalog['_idx'] == cloud_idx]    
@@ -239,7 +239,7 @@ def make_thumbnail_dendro_figure(dendrogram, catalog, cloud_idx, panel_width=7*u
 
 
     ax_lv_limits =  [0.1, 0.1, 0.35, 0.35]  
-    ax_lv = single_cloud_lv_thumbnail(fig, ax_lv_limits, d, catalog, cloud_idx, panel_width=panel_width)      
+    ax_lv = single_cloud_lv_thumbnail(fig, ax_lv_limits, d, catalog, cloud_idx, panel_width=panel_width, latitude_px_override=latitude_px_override)
 
     lv_lon = ax_lv.coords['glon']
     lv_lon.set_ticks(spacing=2*u.deg, color='white', exclude_overlapping=True)
