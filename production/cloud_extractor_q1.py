@@ -138,7 +138,7 @@ def get_positive_velocity_clouds(input_catalog, max_descendants=10):
     return output_catalog
 
 
-def get_negative_velocity_clouds(input_catalog, max_descendants=30):
+def get_negative_velocity_clouds(input_catalog, max_descendants=10):
     """
     Extracts clouds from the negative-velocity region of the first quad.
 
@@ -176,7 +176,7 @@ def get_negative_velocity_clouds(input_catalog, max_descendants=30):
     )
 
     disqualified_tree = (
-        (catalog['n_descendants'] > max_descendants) &
+        (catalog['n_descendants'] > max_descendants) |
         (catalog['fractional_gain'] > 0.9))
 
     # this step excludes the weird tail near the galactic center
