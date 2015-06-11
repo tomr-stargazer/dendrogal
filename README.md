@@ -1,4 +1,4 @@
-astrodendro_analysis
+dendrogal
 ====================
 
 Analysis tools for my dendrogram decomposition of the Milky Way.
