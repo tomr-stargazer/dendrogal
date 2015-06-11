@@ -51,15 +51,9 @@ def first_quadrant_figures(args=None, save=True):
     cloud_catalog = compile_firstquad_catalog(first_quad_cloud_catalog())
     d = quad1_d
 
-    imf_dame_a = make_lv_map_new(cloud_catalog, d, integration_limits=(-2, 2), ellipse_thickness_inner=1.2, ellipse_thickness_outer=2.4)
-    imf_dame_a.ax.set_xlim(135, 496)
-    imf_dame_a.ax.set_ylim(138, 380)
-    plot_dame_ellipses_on_imf(imf_dame_a)
-    imf_dame_a.fig.savefig(output_path+"quad1_comparison_a.pdf", bbox_inches='tight')
-
     imf_firstquad = make_lv_map_new(cloud_catalog, d, integration_limits=(-2, 2), ellipse_thickness_inner=1.2, ellipse_thickness_outer=2.4)
-    # imf_firstquad.fig.set_figheight(5.7)
-    # imf_firstquad.fig.set_figwidth(10)
+    imf_firstquad.ax.set_ylim(15, 392)    
+    plot_dame_ellipses_on_imf(imf_firstquad)    
     imf_firstquad.fig.canvas.draw()
     imf_firstquad.fig.savefig(output_path+'quad1_map.pdf', bbox_inches='tight')
 
