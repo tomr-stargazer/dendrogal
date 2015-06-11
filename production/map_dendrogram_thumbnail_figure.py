@@ -204,6 +204,7 @@ def single_cloud_dendro_thumbnail(ax, dendrogram, cloud_idx):
     v_range = max_vmax - min_vmin
 
     ax.set_ylim(min_vmin - v_range/10, max_vmax + v_range/10)
+    plt.setp(ax.get_xticklabels(), visible=False)
 
     return p
 
