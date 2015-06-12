@@ -141,6 +141,37 @@ def make_quadrant_topdown_map(cloud_catalog, loc=None, figsize=(10,8)):
 
     return fig
 
+
+def draw_solar_and_tangent_circles(fig):
+    """ 
+    Slightly hacky way to draw the two circles on the top-down map.
+
+    """
+
+    # assumes there's just one ax here
+
+    ax = fig.get_axes()[0]
+
+    R_0 = 8.34
+
+    array_length = 100
+    theta_array = np.linspace(0, 360, array_length)
+    R_array_solar = np.repeat(R_0, array_length)
+    R_array_tangent = np.repeat(R_0/2, array_length)
+
+    x_solar_circle = R_array_solar * np.cos(np.radians(theta_array)) + R_0
+    y_solar_circle = R_array_solar * np.sin(np.radians(theta_array))
+
+    x_tangent_circle = R_array_tangent * np.cos(np.radians(theta_array)) + R_0/2
+    y_tangent_circle = R_array_tangent * np.sin(np.radians(theta_array)) 
+
+    lines1 = ax.plot(y_solar_circle, x_solar_circle, 'm', lw=2.5)
+
+    lines2 = ax.plot(y_tangent_circle, x_tangent_circle, 'm--', lw=2)
+
+    return lines1, lines2
+
+
 def make_lv_map_new(cloud_catalog, dendrogram, ellipse_color=colorbrewer_red, 
                     ellipse_thickness_inner=0.9, ellipse_thickness_outer=1.9, 
                     **kwargs):
