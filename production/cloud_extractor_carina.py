@@ -112,7 +112,7 @@ def get_negative_velocity_clouds(input_catalog, max_descendants=10):
 
     qualified = (
         (catalog['n_descendants'] < max_descendants) &
-        (catalog['fractional_gain'] < 0.81))
+        (catalog['fractional_gain'] < 0.9))
 
     pre_output_catalog = catalog[~disqualified & qualified]
 
@@ -166,8 +166,8 @@ def get_positive_velocity_clouds(input_catalog, max_descendants=10):
     )
 
     disqualified_tree = (
-        (catalog['n_descendants'] > max_descendants) &
-        (catalog['fractional_gain'] > 0.81))
+        (catalog['n_descendants'] > max_descendants) |
+        (catalog['fractional_gain'] > 0.9))
 
     pre_output_catalog = catalog[~disqualified_location & ~disqualified_tree]
 
