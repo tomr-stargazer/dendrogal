@@ -169,8 +169,9 @@ def carina_figures(args=None, save=True):
     cloud_catalog = compile_carina_catalog(carina_cloud_catalog())
     d = carina_d
 
-    imf_carina = make_lv_map_new(cloud_catalog, d, integration_limits=(-2, 2))
-    imf_carina.ax.set_ylim(70,200)
+    imf_carina = make_lv_map_new(cloud_catalog, d, integration_limits=(-2, 2), ellipse_thickness_inner=1.5, ellipse_thickness_outer=2.5)
+    imf_carina.ax.set_ylim(88,170)
+    imf_carina.ax.set_xlim(-0.5,160.1)
     imf_carina.fig.canvas.draw()
     imf_carina.fig.savefig(output_path+'carina_map.pdf', bbox_inches='tight')
 
