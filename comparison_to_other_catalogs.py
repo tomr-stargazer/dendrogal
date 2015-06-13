@@ -122,12 +122,25 @@ def plot_dame_ellipses_on_imf(imf):
     lv_ells = [Ellipse(xy=zip(l_lv_pixels, v_lv_pixels)[i], 
                        width=2*sky_radius_column[i]/l_scale_lv, 
                        height=dame86_catalog['DV'][i]/v_scale_lv) for i in range(len(dame86_catalog))]
+
+    lv_ells2 = [Ellipse(xy=zip(l_lv_pixels, v_lv_pixels)[i], 
+                       width=2*sky_radius_column[i]/l_scale_lv, 
+                       height=dame86_catalog['DV'][i]/v_scale_lv) for i in range(len(dame86_catalog))]
+
     for e in lv_ells:
         imf.ax.add_artist(e)
         e.set_facecolor('none')
         e.set_edgecolor('green')
         e.set_linewidth(2)
         e.set_zorder(2)
+
+    for e in lv_ells2:
+        imf.ax.add_artist(e)
+        e.set_facecolor('none')
+        e.set_edgecolor('white')
+        e.set_linewidth(3)
+        e.set_zorder(1.9)
+
 
     imf.fig.canvas.draw()
 
