@@ -22,7 +22,8 @@ from dendrogal.production.make_firstquad_stub import d
 from dendrogal.production.cloud_extractor_q1 import first_quad_cloud_catalog
 
 from dendrogal.integrated_viewer import IntegratedViewer
-from dendrogal.comparison_to_other_catalogs import plot_dame_ellipses_on_integrated_viewer
+from dendrogal.production.integrated_map_figure import IntegratedMapFigure
+from dendrogal.comparison_to_other_catalogs import plot_dame_ellipses_on_integrated_viewer, plot_dame_ellipses_on_imf
 from dendrogal.production.dame_color_dict import dame_cmap
 from dendrogal.production.integrated_map_figure import colorbrewer_blue
 
@@ -33,18 +34,20 @@ output_path = os.path.expanduser("~/Dropbox/Grad School/Research/Milkyway/paper/
 
 
 dv = d.viewer()
-iv = IntegratedViewer(d, dv.hub, clip_velocity=False, aspect=1, alignment='lv', cmap=dame_cmap, linewidths=2.3, figsize=(11,6))
-iv.ax_lv.set_xlim(135, 496)
-iv.ax_lv.set_ylim(150, 336)
 
-plot_dame_ellipses_on_integrated_viewer(iv)
+imf = IntegratedMapFigure(d.data, d.wcs, integration_limits=(-1.5, 1.5))
 
-lon = iv.ax_lv.coords['glon']
+imf.ax.set_xlim(135, 496)
+imf.ax.set_ylim(150, 336)
+
+plot_dame_ellipses_on_imf(imf)
+
+lon = imf.ax.coords['glon']
 lon.set_ticks(spacing=5*u.deg, color='white', exclude_overlapping=True)
 lon.display_minor_ticks(True)
 lon.set_axislabel(r"$l$ (deg)", minpad=1.5)
 
-vlsr = iv.ax_lv.coords['vopt']
+vlsr = imf.ax.coords['vopt']
 vlsr.set_ticks(spacing=25*u.m/u.s, color='white', exclude_overlapping=True) # erroneous units - why!?
 vlsr.display_minor_ticks(True)
 vlsr.set_axislabel(r"$v_{LSR}$ (km s$^{-1}$)")
@@ -52,9 +55,17 @@ vlsr.set_ticklabel_position('lr')
 
 cube, header, selection_dictionary, selection_ID_dictionary = load_template('Dame86_clouds_selections', dv=dv, selection_key=2)
 
-iv.fig.canvas.draw()
+for [struct] in selection_dictionary.values():
+    # the following code is cloned from the thumbnail thingy
+    cloud_mask = d[struct.idx].get_mask()
+    mask_lv = np.sum(cloud_mask, axis=1).astype('bool')
+
+    imf.ax.contour(mask_lv, levels=[0.5], colors=colorbrewer_blue, linewidths=2, zorder=0.85)
+    imf.ax.contour(mask_lv, levels=[0.5], colors='white', linewidths=3, zorder=0.8)
+
+imf.fig.canvas.draw()
 plt.show()
-iv.fig.savefig(output_path+'Dame86_contours.pdf', bbox_inches='tight')
+imf.fig.savefig(output_path+'Dame86_contours.pdf', bbox_inches='tight')
 
 catalog = first_quad_cloud_catalog()
 idx_list = [struct.idx for [struct] in selection_dictionary.values()]
