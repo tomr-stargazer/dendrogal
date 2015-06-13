@@ -89,11 +89,11 @@ def plot_mass_density_radius(catalog, bins=20):
 
     fig = plt.figure()
 
-    catalog_rgal = (catalog['x_gal']**2 + catalog['y_gal']**2)**(1/2)
+    catalog_rgal = catalog['R_gal']
 
     radii = np.arange(bins)
     mass_per_radius = np.zeros_like(radii) 
-    area_per_radius = np.zeros_like(radii)
+    area_per_radius = np.zeros_like(radii) * u.kpc**2
 
     for i, r in enumerate(radii):
 
@@ -107,7 +107,7 @@ def plot_mass_density_radius(catalog, bins=20):
 
         mass_per_radius[i] = mass_in_r
 
-        area_per_radius = np.pi*((radii[i+1])**2 - radii[i]**2) * u.kpc**2
+        area_per_radius[i] = np.pi*((radii[i+1])**2 - radii[i]**2) * u.kpc**2
 
     mass_density_per_radius = (mass_per_radius*u.solMass/area_per_radius).to(u.solMass / u.pc**2)
 
