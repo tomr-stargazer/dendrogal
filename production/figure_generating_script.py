@@ -57,21 +57,6 @@ def first_quadrant_figures(args=None, save=True):
     imf_firstquad.fig.canvas.draw()
     imf_firstquad.fig.savefig(output_path+'quad1_map.pdf', bbox_inches='tight')
 
-    topdown_1q = make_quadrant_topdown_map(cloud_catalog, figsize=(6,8))
-    topdown_1q.axes[0].set_xlim(0, 15)
-    topdown_1q.axes[0].set_ylim(17, -4.5)
-    topdown_1q.axes[0].set_xlabel("Solar-centric $y$ (kpc)")
-    topdown_1q.axes[0].set_ylabel("Solar-centric $x$ (kpc)")
-
-    topdown_1q.savefig(output_path+'quad1_topdown.pdf', bbox_inches='tight')
-
-    cmf_1q = plot_cmf(cloud_catalog)[0]
-    cmf_1q.savefig(output_path+"quad1_cmf.pdf", bbox_inches='tight')
-
-    size_linewidth_1q = plot_size_linewidth_fit(cloud_catalog)[0]
-    plt.xlim(3, 115)
-    plt.ylim(0.55, 29)
-    size_linewidth_1q.savefig(output_path+"quad1_size_linewidth.pdf", bbox_inches='tight')
 
 def second_quadrant_figures(args=None, save=True):
     """ Creates the figures for the second quadrant and saves them. """
@@ -83,26 +68,9 @@ def second_quadrant_figures(args=None, save=True):
     imf_secondquad.ax.coords['glon'].set_ticks(spacing=10*u.deg, color='white', exclude_overlapping=True)    
     imf_secondquad.ax.set_xlim(30,1100)
     imf_secondquad.ax.set_ylim(30,145)
-    # imf_secondquad.fig.set_figheight(5.7)
-    # imf_secondquad.fig.set_figwidth(10)
     imf_secondquad.fig.canvas.draw()
     imf_secondquad.fig.savefig(output_path+'quad2_map.pdf', bbox_inches='tight')
 
-    topdown_2q = make_quadrant_topdown_map(cloud_catalog, loc='lower right', figsize=(6,8))
-    topdown_2q.axes[0].set_xlim(-3, 12)
-    topdown_2q.axes[0].set_ylim(8.3, -7.6)
-    topdown_2q.axes[0].set_xlabel("Solar-centric $y$ (kpc)")
-    topdown_2q.axes[0].set_ylabel("Solar-centric $x$ (kpc)")
-
-    topdown_2q.savefig(output_path+'quad2_topdown.pdf', bbox_inches='tight')
-
-    cmf_2q = plot_cmf(cloud_catalog, min_mass=1e4)[0]
-    cmf_2q.savefig(output_path+"quad2_cmf.pdf", bbox_inches='tight')
-
-    size_linewidth_2q = plot_size_linewidth_fit(cloud_catalog)[0]
-    plt.xlim(3, 115)
-    plt.ylim(0.55, 29)
-    size_linewidth_2q.savefig(output_path+"quad2_size_linewidth.pdf", bbox_inches='tight')
 
 def third_quadrant_figures(args=None, save=True):
     """ Creates the figures for the third quadrant and saves them. """
@@ -117,21 +85,6 @@ def third_quadrant_figures(args=None, save=True):
     imf_thirdquad.fig.canvas.draw()
     imf_thirdquad.fig.savefig(output_path+'quad3_map.pdf', bbox_inches='tight')
 
-    topdown_3q = make_quadrant_topdown_map(cloud_catalog, loc='lower right', figsize=(6,8))
-    topdown_3q.axes[0].set_xlim(-11.4, 1.6)
-    topdown_3q.axes[0].set_ylim(5.3, -6.7)
-    topdown_3q.axes[0].set_xlabel("Solar-centric $y$ (kpc)")
-    topdown_3q.axes[0].set_ylabel("Solar-centric $x$ (kpc)")
-
-    topdown_3q.savefig(output_path+'quad3_topdown.pdf', bbox_inches='tight')
-
-    cmf_3q = plot_cmf(cloud_catalog, min_mass=1e4)[0]
-    cmf_3q.savefig(output_path+"quad3_cmf.pdf", bbox_inches='tight')
-
-    size_linewidth_3q = plot_size_linewidth_fit(cloud_catalog)[0]
-    plt.xlim(3, 115)
-    plt.ylim(0.55, 29)
-    size_linewidth_3q.savefig(output_path+"quad3_size_linewidth.pdf", bbox_inches='tight')    
 
 def fourth_quadrant_figures(args=None, save=True):
     """ Creates the figures for the fourth quadrant and saves them. """
@@ -144,22 +97,6 @@ def fourth_quadrant_figures(args=None, save=True):
     imf_fourthquad.ax.set_ylim(45,216) # found via trial & error
     imf_fourthquad.fig.canvas.draw()
     imf_fourthquad.fig.savefig(output_path+'quad4_map.pdf', bbox_inches='tight')
-
-    topdown_4q = make_quadrant_topdown_map(cloud_catalog, loc='lower right', figsize=(6,8))
-    topdown_4q.axes[0].set_xlim(-13.1, 5.1)
-    topdown_4q.axes[0].set_ylim(17.6, -0.05)
-    topdown_4q.axes[0].set_xlabel("Solar-centric $y$ (kpc)")
-    topdown_4q.axes[0].set_ylabel("Solar-centric $x$ (kpc)")
-
-    topdown_4q.savefig(output_path+'quad4_topdown.pdf', bbox_inches='tight')
-
-    cmf_4q = plot_cmf(cloud_catalog)[0]
-    cmf_4q.savefig(output_path+"quad4_cmf.pdf", bbox_inches='tight')
-
-    size_linewidth_4q = plot_size_linewidth_fit(cloud_catalog)[0]
-    plt.xlim(3, 115)
-    plt.ylim(0.55, 29)
-    size_linewidth_4q.savefig(output_path+"quad4_size_linewidth.pdf", bbox_inches='tight')    
 
 
 def carina_figures(args=None, save=True):
@@ -175,21 +112,6 @@ def carina_figures(args=None, save=True):
     imf_carina.fig.canvas.draw()
     imf_carina.fig.savefig(output_path+'carina_map.pdf', bbox_inches='tight')
 
-    topdown_carina = make_quadrant_topdown_map(cloud_catalog, loc='lower right', figsize=(6,8))
-    topdown_carina.axes[0].set_xlim(-13.1, 5.1)
-    topdown_carina.axes[0].set_ylim(17.6, -0.05)
-    topdown_carina.axes[0].set_xlabel("Solar-centric $y$ (kpc)")
-    topdown_carina.axes[0].set_ylabel("Solar-centric $x$ (kpc)")
-
-    topdown_carina.savefig(output_path+'carina_topdown.pdf', bbox_inches='tight')
-
-    cmf_carina = plot_cmf(cloud_catalog)[0]
-    cmf_carina.savefig(output_path+"carina_cmf.pdf", bbox_inches='tight')
-
-    size_linewidth_carina = plot_size_linewidth_fit(cloud_catalog)[0]
-    plt.xlim(3, 115)
-    plt.ylim(0.55, 29)
-    size_linewidth_carina.savefig(output_path+"carina_size_linewidth.pdf", bbox_inches='tight')    
 
 def combined_galaxy_figures(catalog):
 
@@ -203,19 +125,11 @@ def combined_galaxy_figures(catalog):
 
     topdown_all.savefig(output_path+"allquads_topdown.pdf", bbox_inches='tight')
 
-    cmf_allquad = plot_cmf(catalog)[0]
-    cmf_allquad.savefig(output_path+"allquads_cmf.pdf", bbox_inches='tight')
-
     cmf_multipanel = multipanel_cmf()
     cmf_multipanel.savefig(output_path+"multipanel_cmf.pdf", bbox_inches='tight')
 
     size_linewidth_multipanel = multipanel_size_linewidth()
     size_linewidth_multipanel.savefig(output_path+'multipanel_size_linewidth.pdf', bbox_inches='tight')
-
-    size_linewidth_allquad = plot_size_linewidth_fit(catalog)[0]
-    plt.xlim(6, 300)
-    plt.ylim(0.55, 13)
-    size_linewidth_allquad.savefig(output_path+"allquads_size_linewidth.pdf", bbox_inches='tight')   
      
 
 def make_thumbnail_figures():
