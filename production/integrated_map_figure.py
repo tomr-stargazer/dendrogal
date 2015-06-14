@@ -58,13 +58,15 @@ class IntegratedMapFigure(object):
 
     def __init__(self, datacube, wcs_object,  
                  aspect_in_units=5*(u.km/u.s)/u.deg, cmap=dame_cmap,
-                 integration_limits=(-1,1), figsize=(10,9) ):
+                 integration_limits=(-1,1), figsize=(10,9), vmin=None, vmax=None):
 
         self.datacube = datacube
         self.wcs = wcs_object
 
         self.fig = plt.figure(figsize=figsize)
         self.cmap = cmap
+        self.vmin = vmin
+        self.vmax = vmax
 
         ax = WCSAxes(self.fig, [0.1, 0.1, 0.8, 0.8], wcs=self.wcs, 
                      slices=('x', 0, 'y'))
@@ -86,7 +88,8 @@ class IntegratedMapFigure(object):
     def _draw_plot(self):
 
         self.image_lv = self.ax.imshow(np.log10(self.array_lv+1), origin='lower', 
-            interpolation='nearest', cmap=self.cmap, aspect=self.aspect_px)
+            interpolation='nearest', cmap=self.cmap, aspect=self.aspect_px,
+            vmin=self.vmin, vmax=self.vmax)
 
         self.fig.canvas.draw()
 
