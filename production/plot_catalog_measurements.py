@@ -118,10 +118,10 @@ def plot_mass_density_radius(catalog, bins=20):
     return mass_per_radius, mass_density_per_radius
 
 
-def plot_size_linewidth_with_nearfar(catalog, ax, labels=True):
+def plot_size_linewidth_with_nearfar(catalog, ax, labels=True, distance_threshold=8, alternate_style=False):
 
-    unambiguous_nearby = (catalog['KDA_resolution'] == 'U') & (catalog['distance'] < 8)
-    unambiguous_far = (catalog['KDA_resolution'] == 'U') & (catalog['distance'] >= 8)
+    unambiguous_nearby = (catalog['KDA_resolution'] == 'U') & (catalog['distance'] < distance_threshold)
+    unambiguous_far = (catalog['KDA_resolution'] == 'U') & (catalog['distance'] >= distance_threshold)
     near = catalog['KDA_resolution'] == 'N'
     far = catalog['KDA_resolution'] == 'F'
 
@@ -138,13 +138,27 @@ def plot_size_linewidth_with_nearfar(catalog, ax, labels=True):
     fit_xs = np.logspace(-2, 8, 20)
     fit_ys = fit_coefficient * fit_xs ** fit_exponent
 
-    ax.plot(np.log10(size_array[unambiguous_nearby]), np.log10(linewidth_array[unambiguous_nearby]), 'k.', ms=6, label='unambiguous (nearby)')
-    ax.plot(np.log10(size_array[unambiguous_far]), np.log10(linewidth_array[unambiguous_far]), 'wo', label='unambiguous (far)', ms=3)
+    if alternate_style:
+        label_string = 'unambiguous (tangent)'
+    else:
+        label_string = 'unambiguous (nearby)'
+
+    ax.plot(np.log10(size_array[unambiguous_nearby]), 
+            np.log10(linewidth_array[unambiguous_nearby]), 'k.', 
+            ms=6, label=label_string)
+
+    if alternate_style:
+        pass
+    else:
+        ax.plot(np.log10(size_array[unambiguous_far]), np.log10(linewidth_array[unambiguous_far]), 'wo', label='unambiguous (far)', ms=3)
+
     ax.plot(np.log10(size_array[near]), np.log10(linewidth_array[near]), 'o', markerfacecolor='none', markeredgecolor='b', mew=0.5, ms=3.5, label='near')
     ax.plot(np.log10(size_array[far]), np.log10(linewidth_array[far]), 'o', markerfacecolor='none', markeredgecolor='r', mew=0.5, ms=3.5, label='far')
 
     if labels:
         fit_label = r"$\sigma_v$ = {0:.2f}$\pm${2:.2f} $\times$ R$^{{{1:.2f} \pm {3:.2f}}}$".format(fit_coefficient, fit_exponent, sd_coefficient, sd_exponent) 
+    elif alternate_style:
+        fit_label = '_nolegend_'
     else:
         fit_label = r"$\sigma_v = A \times R^\beta$"
 
