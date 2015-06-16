@@ -97,7 +97,7 @@ def outer_galaxy_size_linewidth_with_residuals():
 
 def new_multipanel_outer_galaxy(allcat):
 
-    fig = plt.figure(figsize=(7,7))
+    fig = plt.figure(figsize=(6.5,6.5))
 
     ax1 = fig.add_subplot(2,2,1)
     ax2 = fig.add_subplot(2,2,2, sharex=ax1, sharey=ax1)
@@ -126,7 +126,7 @@ def new_multipanel_outer_galaxy(allcat):
         fit_string = "$A = {{{0:.2f} \pm {2:.2f}}}$,\n$\\beta ={{{1:.2f} \pm {3:.2f}}}$".format(fit_coefficient, fit_exponent, sd_coefficient, sd_exponent) 
 
         ax.text(1.85, -0.2, fit_string, fontsize=12)
-        ax.text(0.9, 1.1, name, fontsize=16, family='serif')
+        ax.text(0.9, 1.05, name, fontsize=20, family='serif')
 
     ax1.set_ylabel(r"$\log(\sigma_v)$", fontsize=16)
     ax3.set_ylabel(r"$\log(\sigma_v)$", fontsize=16)
@@ -153,7 +153,7 @@ def save_multipanel_outer_galaxy(allcat):
 
 def new_singlepanel_outer_galaxy(allcat):
 
-    fig = plt.figure(figsize=(7,7))
+    fig = plt.figure(figsize=(6.5,6.5))
 
     ax1 = fig.add_subplot(1,1,1)
 
@@ -177,7 +177,7 @@ def new_singlepanel_outer_galaxy(allcat):
     fit_string = "$A = {{{0:.2f} \pm {2:.2f}}}$,\n$\\beta ={{{1:.2f} \pm {3:.2f}}}$".format(fit_coefficient, fit_exponent, sd_coefficient, sd_exponent) 
 
     ax1.text(1.85, -0.1, fit_string, fontsize=24)
-    ax1.text(0.9, 1.1, "IIQ + IIIQ", fontsize=18, family='serif')
+    ax1.text(0.9, 1.05, "IIQ + IIIQ", fontsize=20, family='serif')
 
     ax1.set_ylabel(r"$\log(\sigma_v)$", fontsize=20)
     ax1.set_xlabel(r"$\log(R/\rm{pc})$", fontsize=20)
@@ -201,7 +201,7 @@ def save_singlepanel_outer_galaxy(allcat):
 
 def new_multipanel_inner_galaxy(allcat):
 
-    fig = plt.figure(figsize=(7,7))
+    fig = plt.figure(figsize=(6.5,6.5))
 
     # ax1 = fig.add_subplot(2,2,1)
     ax2 = fig.add_subplot(2,2,2)
@@ -234,7 +234,7 @@ def new_multipanel_inner_galaxy(allcat):
         fit_string = "$A = {{{0:.2f} \pm {2:.2f}}}$,\n$\\beta ={{{1:.2f} \pm {3:.2f}}}$".format(fit_coefficient, fit_exponent, sd_coefficient, sd_exponent) 
 
         ax.text(1.85, -0.2, fit_string, fontsize=12)
-        ax.text(0.9, 1.1, name, fontsize=16, family='serif')
+        ax.text(0.9, 1.05, name, fontsize=20, family='serif')
 
 
     ax3.legend(bbox_to_anchor=(0.49, 0.65), bbox_transform=fig.transFigure, numpoints=1)
@@ -265,3 +265,58 @@ def save_multipanel_inner_galaxy(allcat):
     fig.savefig(output_path+"inner_galaxy_threepanel_larson.pdf", bbox_inches='tight')
 
 
+
+def new_singlepanel_all_galaxy(allcat):
+
+    fig = plt.figure(figsize=(6.5,6.5))
+
+    ax1 = fig.add_subplot(1,1,1)
+
+    quad_1_outer_criteria = (allcat['v_cen']<-20 ) & (allcat['x_cen'] < 80) & (allcat['x_cen'] > 20) 
+    quad_2_outer_criteria = (np.abs(allcat['v_cen'])>20 ) & (allcat['x_cen'] < 160) & (allcat['x_cen'] > 80) 
+    quad_3_outer_criteria = (np.abs(allcat['v_cen'])>20 ) & (allcat['x_cen'] > 200) & (allcat['x_cen'] < 280) 
+    quad_4_outer_criteria = (allcat['v_cen']>20 ) & (allcat['x_cen'] < 340) & (allcat['x_cen'] > 280) 
+
+    quad_1_inner_criteria = (allcat['v_cen']>20 ) & (allcat['x_cen'] < 80) & (allcat['x_cen'] > 20)
+    quad_4_inner_criteria = (allcat['v_cen']<-20 ) & (allcat['x_cen'] < 340) & (allcat['x_cen'] > 280) 
+
+    selected_allcat = allcat[quad_1_outer_criteria | 
+                             quad_2_outer_criteria | 
+                             quad_3_outer_criteria | 
+                             quad_4_outer_criteria |
+                             quad_1_inner_criteria | 
+                             quad_4_inner_criteria ]
+
+    size_linewidth_output = plot_size_linewidth_with_nearfar(selected_allcat, ax1, labels=False, distance_threshold=20)
+
+    ax1.set_xlim(0.8, 2.5)
+    ax1.set_ylim(-0.4, 1)
+
+    fit_coefficient = size_linewidth_output.beta[0]
+    sd_coefficient = size_linewidth_output.sd_beta[0]
+    fit_exponent = size_linewidth_output.beta[1]
+    sd_exponent = size_linewidth_output.sd_beta[1]
+
+    fit_string = "$A = {{{0:.2f} \pm {2:.2f}}}$,\n$\\beta ={{{1:.2f} \pm {3:.2f}}}$".format(fit_coefficient, fit_exponent, sd_coefficient, sd_exponent) 
+
+    ax1.text(1.85, -0.1, fit_string, fontsize=24)
+    ax1.text(0.9, 1.05, "all Galaxy", fontsize=20, family='serif')
+
+    ax1.set_ylabel(r"$\log(\sigma_v)$", fontsize=20)
+    ax1.set_xlabel(r"$\log(R/\rm{pc})$", fontsize=20)
+
+    ax1.set_xticks([0.5, 1.0, 1.5, 2.0, 2.5, 3.0])
+    ax1.set_xticks(np.linspace(0.5,3, 30), minor=True)
+
+    ax1.set_yticks(np.linspace(-0, 1.5, 7))
+    ax1.set_yticks(np.linspace(-0, 1.5, 4*5), minor=True)
+
+    ax1.set_xlim(0.75, 3)
+    ax1.set_ylim(-0.25, 1.25)
+
+    return fig
+
+
+def save_singlepanel_all_galaxy(allcat):
+    fig = new_singlepanel_all_galaxy(allcat)
+    fig.savefig(output_path+"all_galaxy_onepanel_larson.pdf", bbox_inches='tight')
