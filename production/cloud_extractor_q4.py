@@ -124,7 +124,7 @@ def get_negative_velocity_clouds(input_catalog, max_descendants=10):
     almost_output_catalog = reduce_catalog(d, pre_output_catalog)
 
     # disambiguate distances here
-    assign_distance_columns(almost_output_catalog, *distance_disambiguator(almost_output_catalog, ambiguous_threshold=0.001, scatter_in_log10_R=0.265*2))
+    assign_distance_columns(almost_output_catalog, *distance_disambiguator(almost_output_catalog, ambiguous_threshold=0.05))
 
     assign_properties(almost_output_catalog)
 

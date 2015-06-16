@@ -71,9 +71,9 @@ def p_from_latitude(z, molecular_HWHM_height=60*u.pc):
 
 
 def calculate_p_nearfar(catalog, return_intermediates=False,
-                        A_coefficient=0.269502604526,
-                        B_coefficient=0.602835495068,
-                        scatter_in_log10_R=0.265,
+                        A_coefficient=0.5,
+                        B_coefficient=0.5,
+                        scatter_in_log10_R=0.5,
                         molecular_HWHM_height=60*u.pc
                         ):
 
