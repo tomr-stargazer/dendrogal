@@ -112,8 +112,19 @@ def plot_mass_density_radius(catalog, bins=20):
     mass_density_per_radius = (mass_per_radius*u.solMass/area_per_radius).to(u.solMass / u.pc**2)
 
     plt.plot(radii, mass_density_per_radius, 'ko-')
+    plt.ylabel('Mass in each kpc annulus, divided by total annulus area')
+    plt.xlabel('Galactocentric distance (kpc)')
 
-    plt.xlim(2,17)
+    plt.xlim(2,15)
+
+    fig2 = plt.figure()
+
+    plt.plot(radii, mass_per_radius, 'ko-')
+    plt.semilogy()
+    plt.ylabel('Total mass per kpc annulus')
+    plt.xlabel('Galactocentric distance (kpc)')
+
+    plt.xlim(2,15)
 
     return mass_per_radius, mass_density_per_radius
 
