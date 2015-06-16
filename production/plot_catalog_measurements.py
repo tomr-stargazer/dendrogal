@@ -139,7 +139,7 @@ def plot_size_linewidth_with_nearfar(catalog, ax, labels=True, distance_threshol
     fit_ys = fit_coefficient * fit_xs ** fit_exponent
 
     if alternate_style:
-        label_string = 'unambiguous (tangent)'
+        label_string = 'tangent'
     else:
         label_string = 'unambiguous (nearby)'
 
