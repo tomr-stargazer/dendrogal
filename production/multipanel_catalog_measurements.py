@@ -20,6 +20,18 @@ from dendrogal.production.plot_catalog_measurements import plot_size_linewidth_w
 
 all_catalog = extract_and_combine_catalogs()
 
+pruned_catalog = all_catalog[
+    # on the sky...
+    (
+    # northernly
+    ((all_catalog['x_cen'] > 20) & (all_catalog['x_cen'] < 160)) |
+    # southernly
+    ((all_catalog['x_cen'] > 200) & (all_catalog['x_cen'] < 340)) 
+    ) & 
+    # in velocity space
+    (np.abs(all_catalog['v_cen']) > 20)
+    ]
+
 
 def multipanel_size_linewidth():
 
@@ -32,14 +44,14 @@ def multipanel_size_linewidth():
     gal_text_dict = {'inner': ' inner Galaxy', 'outer': ' outer Galaxy', 'inner_plus_outer' : ' Galaxy (combined)'}
 
     sky_subset_dict = {}
-    sky_subset_dict['north'] = all_catalog['x_cen'] < 180
-    sky_subset_dict['south'] = all_catalog['x_cen'] > 180
+    sky_subset_dict['north'] = pruned_catalog['x_cen'] < 180
+    sky_subset_dict['south'] = pruned_catalog['x_cen'] > 180
     sky_subset_dict['north_plus_south'] = (sky_subset_dict['north'] | sky_subset_dict['south'])
 
     gal_subset_dict = {}
-    gal_subset_dict['inner'] = all_catalog['R_gal'] < 8
-    gal_subset_dict['outer'] = all_catalog['R_gal'] > 9
-    gal_subset_dict['inner_plus_outer'] = np.ones(len(all_catalog), dtype='bool')
+    gal_subset_dict['inner'] = pruned_catalog['R_gal'] < 8
+    gal_subset_dict['outer'] = pruned_catalog['R_gal'] > 9
+    gal_subset_dict['inner_plus_outer'] = np.ones(len(pruned_catalog), dtype='bool')
 
     fig.axes_list = []
 
@@ -63,7 +75,7 @@ def multipanel_size_linewidth():
 
             fig.axes_list.append(ax)
 
-            catalog = all_catalog[sky_subset_dict[sky_region] & gal_subset_dict[galactic_region]]
+            catalog = pruned_catalog[sky_subset_dict[sky_region] & gal_subset_dict[galactic_region]]
 
             size_linewidth_output = plot_size_linewidth_with_nearfar(catalog, ax, labels=False)
 
@@ -141,14 +153,14 @@ def multipanel_cmf():
     gal_text_dict = {'inner': ' inner Galaxy', 'outer': ' outer Galaxy', 'inner_plus_outer' : ' Galaxy (combined)'}
 
     sky_subset_dict = {}
-    sky_subset_dict['north'] = all_catalog['x_cen'] < 180
-    sky_subset_dict['south'] = all_catalog['x_cen'] > 180
+    sky_subset_dict['north'] = pruned_catalog['x_cen'] < 180
+    sky_subset_dict['south'] = pruned_catalog['x_cen'] > 180
     sky_subset_dict['north_plus_south'] = (sky_subset_dict['north'] | sky_subset_dict['south'])
 
     gal_subset_dict = {}
-    gal_subset_dict['inner'] = all_catalog['R_gal'] < 8
-    gal_subset_dict['outer'] = all_catalog['R_gal'] > 9
-    gal_subset_dict['inner_plus_outer'] = np.ones(len(all_catalog), dtype='bool')
+    gal_subset_dict['inner'] = pruned_catalog['R_gal'] < 8
+    gal_subset_dict['outer'] = pruned_catalog['R_gal'] > 9
+    gal_subset_dict['inner_plus_outer'] = np.ones(len(pruned_catalog), dtype='bool')
 
     fig.axes_list = []
 
@@ -172,16 +184,16 @@ def multipanel_cmf():
 
             fig.axes_list.append(ax)
 
-            catalog = all_catalog[sky_subset_dict[sky_region] & gal_subset_dict[galactic_region]]
+            catalog = pruned_catalog[sky_subset_dict[sky_region] & gal_subset_dict[galactic_region]]
 
             if galactic_region == 'outer':
                 max_mass = 1e6
                 min_mass = 1e4
             else:
-                max_mass = 1e7
+                max_mass = 3e7
                 min_mass = 1e5
 
-            cmf_output = plot_cmf_except_farU(catalog, ax, labels=False, max_mass=max_mass, min_mass=min_mass, bins=30, hist_range=(3.7,7))
+            cmf_output = plot_cmf_except_farU(catalog, ax, labels=False, max_mass=max_mass, min_mass=min_mass, bins=30, hist_range=(3.7,7.5))
 
             M_0, N_0, gamma = cmf_output[0]
 
