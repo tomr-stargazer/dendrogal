@@ -76,6 +76,23 @@ def fourth_quad_cloud_catalog():
     # let's think critically about whether this step is needed.
     assign_properties(catalog_cp)
 
+    near_catalog = catalog_cp.copy(copy_data=True)
+    far_catalog = catalog_cp.copy(copy_data=True)
+
+    near_catalog['distance'] = catalog_cp['near_distance']
+    far_catalog['distance'] = catalog_cp['far_distance']
+    assign_properties(near_catalog)
+    assign_properties(far_catalog)
+
+    catalog_cp['near_size'] = near_catalog['size']
+    catalog_cp['far_size'] = far_catalog['size']
+
+    catalog_cp['near_z_gal'] = near_catalog['z_gal']
+    catalog_cp['far_z_gal'] = far_catalog['z_gal']
+
+    catalog_cp['near_mass'] = near_catalog['mass']
+    catalog_cp['far_mass'] = far_catalog['mass']
+
     return catalog_cp
 
 
@@ -129,7 +146,8 @@ def get_negative_velocity_clouds(input_catalog, max_descendants=10):
     assign_properties(almost_output_catalog)
 
     # now let's do a thing
-    final_qualified = (almost_output_catalog['mass'] > 3e4)
+    final_qualified = ((almost_output_catalog['mass'] > 3e4) | 
+                       ((almost_output_catalog['KDA_resolution']=='A') & (almost_output_catalog['far_mass'] > 3e4) ) )
     output_catalog = almost_output_catalog[final_qualified]
 
     return output_catalog
