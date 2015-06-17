@@ -60,3 +60,28 @@ def print_results_by_quadrant(total_table=None):
     print "All combined    | {0:4d}     | {1:.2e} ".format(len(total_table), np.sum(total_table['mass']))
 
     return total_table
+
+
+def print_ambiguous_results_by_quadrant(total_table):
+
+    first_cat_ambig = total_table[(total_table['quadrant']==1) & (total_table['KDA_resolution']=='A')]
+    # no ambiguities in 2/3
+    # second_cat_ambig = total_table[(total_table['quadrant']==2) & (total_table['KDA_resolution']=='A')]
+    # third_cat_ambig = total_table[(total_table['quadrant']==3) & (total_table['KDA_resolution']=='A')]
+    fourth_cat_ambig = total_table[(total_table['survey']==36) & (total_table['KDA_resolution']=='A')]
+    carina_cat_ambig = total_table[(total_table['survey']==33) & (total_table['KDA_resolution']=='A')]
+    combined_fourth_cat_ambig = total_table[(total_table['quadrant']==4) & (total_table['KDA_resolution']=='A')]
+
+    all_ambig = total_table[total_table['KDA_resolution'] == 'A']
+
+    print "Results for ambiguous clouds:"
+    print "Quadrant       |  N_clouds  | Mass lower limit  "
+    print "------------------------------------"
+    print "I               | {0:4d}     | {1:.2e} ".format(len(first_cat_ambig), np.sum(first_cat_ambig['near_mass']))
+    # print "II              | {0:4d}     | {1:.2e} ".format(len(second_cat_ambig), np.sum(second_cat_ambig['near_mass']))
+    # print "III             | {0:4d}     | {1:.2e} ".format(len(third_cat_ambig), np.sum(third_cat_ambig['near_mass']))
+    print "IV (no Carina)  | {0:4d}     | {1:.2e} ".format(len(fourth_cat_ambig), np.sum(fourth_cat_ambig['near_mass']))
+    print "IV (Carina-only)| {0:4d}     | {1:.2e} ".format(len(carina_cat_ambig), np.sum(carina_cat_ambig['near_mass']))
+    print "IV (combined)   | {0:4d}     | {1:.2e} ".format(len(combined_fourth_cat_ambig), np.sum(combined_fourth_cat_ambig['near_mass']))
+    print "All combined    | {0:4d}     | {1:.2e} ".format(len(all_ambig), np.sum(all_ambig['near_mass']))
+
