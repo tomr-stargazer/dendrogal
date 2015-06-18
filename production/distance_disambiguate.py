@@ -123,10 +123,11 @@ def distance_disambiguator(catalog, ambiguous_threshold=0.1, **kwargs):
     KDA_resolution = np.array(['-']*len(best_distance))
 
     # if neither distance has a p >~ 10%, then don't pick either.
-    use_near_distance = (p_near >= p_far) & ((p_near > ambiguous_threshold) | (p_far > ambiguous_threshold))
-    use_far_distance = (p_far > p_near) & ((p_near > ambiguous_threshold) | (p_far > ambiguous_threshold))
+
     same_distances = catalog['near_distance'] == catalog['far_distance']
-    ambiguous_distance = ((p_near <= ambiguous_threshold) & (p_far <= ambiguous_threshold) & ~same_distances)
+    ambiguous_distance = (p_near <= ambiguous_threshold) & (p_far <= ambiguous_threshold) & (p_near/p_far < 100) & (p_far/p_near < 100) & ~same_distances
+    use_near_distance = (p_near >= p_far) & ~ambiguous_distance
+    use_far_distance = (p_far > p_near) & ~ambiguous_distance
 
     best_distance[use_near_distance] = catalog['near_distance'][use_near_distance]
     best_distance[use_far_distance] = catalog['far_distance'][use_far_distance]
