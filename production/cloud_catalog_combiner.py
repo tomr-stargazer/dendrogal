@@ -49,7 +49,7 @@ def print_results_by_quadrant(total_table=None):
     carina_cat = total_table[total_table['survey']==33]
     combined_fourth_cat = total_table[total_table['quadrant']==4]
 
-    print "Quadrant       |  N_clouds  | Mass  "
+    print "Quadrant        |  N_clouds  | Mass  "
     print "------------------------------------"
     print "I               | {0:4d}     | {1:.2e} ".format(len(first_cat), np.nansum(first_cat['mass']))
     print "II              | {0:4d}     | {1:.2e} ".format(len(second_cat), np.nansum(second_cat['mass']))
@@ -58,6 +58,20 @@ def print_results_by_quadrant(total_table=None):
     print "IV (Carina-only)| {0:4d}     | {1:.2e} ".format(len(carina_cat), np.nansum(carina_cat['mass']))
     print "IV (combined)   | {0:4d}     | {1:.2e} ".format(len(combined_fourth_cat), np.nansum(combined_fourth_cat['mass']))
     print "All combined    | {0:4d}     | {1:.2e} ".format(len(total_table), np.nansum(total_table['mass']))
+
+
+    inner_cat = total_table[total_table['R_gal'] <= 8.34]
+    outer_cat = total_table[total_table['R_gal'] > 8.34]
+
+    inner_1 = first_cat[first_cat['R_gal'] <= 8.34]
+    inner_4 = fourth_cat[fourth_cat['R_gal'] <= 8.34]
+
+    print ""
+    print "Region          |  N_clouds  | Mass  "
+    print "inner           | {0:4d}     | {1:.2e} ".format(len(inner_cat), np.nansum(inner_cat['mass']))
+    print "outer           | {0:4d}     | {1:.2e} ".format(len(outer_cat), np.nansum(outer_cat['mass']))
+    print "inner I         | {0:4d}     | {1:.2e} ".format(len(inner_1), np.nansum(inner_1['mass']))
+    print "inner IV        | {0:4d}     | {1:.2e} ".format(len(inner_4), np.nansum(inner_4['mass']))
 
     return total_table
 
@@ -84,4 +98,15 @@ def print_ambiguous_results_by_quadrant(total_table):
     # print "IV (Carina-only)| {0:4d}     | {1:.2e} ".format(len(carina_cat_ambig), np.sum(carina_cat_ambig['near_mass']))
     print "IV (combined)   | {0:4d}     | {1:.2e} ".format(len(combined_fourth_cat_ambig), np.sum(combined_fourth_cat_ambig['near_mass']))
     print "All combined    | {0:4d}     | {1:.2e} ".format(len(all_ambig), np.sum(all_ambig['near_mass']))
+
+    print "Results for ambiguous clouds:"
+    print "Quadrant       |  N_clouds  | Mass upper limit  "
+    print "------------------------------------"
+    print "I               | {0:4d}     | {1:.2e} ".format(len(first_cat_ambig), np.sum(first_cat_ambig['far_mass']))
+    # print "II              | {0:4d}     | {1:.2e} ".format(len(second_cat_ambig), np.sum(second_cat_ambig['far_mass']))
+    # print "III             | {0:4d}     | {1:.2e} ".format(len(third_cat_ambig), np.sum(third_cat_ambig['far_mass']))
+    print "IV (no Carina)  | {0:4d}     | {1:.2e} ".format(len(fourth_cat_ambig), np.sum(fourth_cat_ambig['far_mass']))
+    # print "IV (Carina-only)| {0:4d}     | {1:.2e} ".format(len(carina_cat_ambig), np.sum(carina_cat_ambig['far_mass']))
+    print "IV (combined)   | {0:4d}     | {1:.2e} ".format(len(combined_fourth_cat_ambig), np.sum(combined_fourth_cat_ambig['far_mass']))
+    print "All combined    | {0:4d}     | {1:.2e} ".format(len(all_ambig), np.sum(all_ambig['far_mass']))
 
