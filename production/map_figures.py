@@ -135,6 +135,10 @@ def make_quadrant_topdown_map(cloud_catalog, loc=None, figsize=(10,8)):
         plt.plot(giants['y_sol'], giants['x_sol'], 'o', markerfacecolor='cyan', markeredgecolor='red', markeredgewidth=1.4, ms=11, label=r"$10^7 M_\odot$")
 
     leg = plt.legend(loc=loc, numpoints=1)
+
+    plt.plot([0], [0], "y*", ms=16, zorder=20)
+    plt.plot([0], [8.34], "kx", ms=7, zorder=20, markeredgewidth=2.5)
+
     leg.get_frame().set_alpha(0.5)
 
     underlay_hurt_galaxy(fig, u.kpc)
@@ -165,9 +169,9 @@ def draw_solar_and_tangent_circles(fig):
     x_tangent_circle = R_array_tangent * np.cos(np.radians(theta_array)) + R_0/2
     y_tangent_circle = R_array_tangent * np.sin(np.radians(theta_array)) 
 
-    lines1 = ax.plot(y_solar_circle, x_solar_circle, 'm', lw=2.5)
+    lines1 = ax.plot(y_solar_circle, x_solar_circle, 'm', lw=1)
 
-    lines2 = ax.plot(y_tangent_circle, x_tangent_circle, 'm--', lw=2)
+    lines2 = ax.plot(y_tangent_circle, x_tangent_circle, 'm--', lw=1)
 
     return lines1, lines2
 

@@ -36,7 +36,7 @@ from dendrogal.production.cloud_extractor_carina import d as carina_d
 
 from dendrogal.comparison_to_other_catalogs import plot_dame_ellipses_on_integrated_viewer, plot_dame_ellipses_on_imf
 from dendrogal.production.remove_degenerate_structures import reduce_catalog, selection_from_catalog
-from dendrogal.production.map_figures import make_quadrant_lbv_map, make_quadrant_topdown_map, make_lv_map_new
+from dendrogal.production.map_figures import make_quadrant_lbv_map, make_quadrant_topdown_map, make_lv_map_new, draw_solar_and_tangent_circles
 from dendrogal.production.plot_catalog_measurements import plot_cmf, plot_size_linewidth_fit
 from dendrogal.production.multipanel_catalog_measurements import multipanel_size_linewidth, multipanel_cmf
 
@@ -118,6 +118,12 @@ def combined_galaxy_figures(catalog):
     # catalog = extract_and_combine_catalogs(args)
 
     topdown_all = make_quadrant_topdown_map(catalog, loc='lower center', figsize=(9,9))
+    draw_solar_and_tangent_circles(topdown_all)    
+    plt.text(9, 17, 'IQ', fontsize=20, family='serif', color='w')
+    plt.text(9, -4, 'IIQ', fontsize=20, family='serif', color='w')
+    plt.text(-11.5, -4, 'IIIQ', fontsize=20, family='serif', color='w')
+    plt.text(-11.5, 17, 'IVQ', fontsize=20, family='serif', color='w')
+
     topdown_all.axes[0].set_xlabel("Solar-centric $y$ (kpc)")
     topdown_all.axes[0].set_ylabel("Solar-centric $x$ (kpc)")
     topdown_all.axes[0].set_xlim(-13, 13)
