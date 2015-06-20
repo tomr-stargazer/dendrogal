@@ -105,14 +105,14 @@ def test_distance_disambiguator():
     mock_catalog['flux_true'].unit = 'K km sr / s'
 
     # remember R = 1.9 sigma_r d
-    mock_catalog['radius'] = [0.015, 0.003, 1]
+    mock_catalog['radius'] = [0.015, 0.003, 0.1]
     mock_catalog['radius'].unit = u.deg
 
-    mock_catalog['v_rms'] = [1]
+    mock_catalog['v_rms'] = [1, 1, 1000]
     mock_catalog['v_rms'].unit = u.km/u.s
 
     mock_catalog['x_cen'] = [30]*3
-    mock_catalog['y_cen'] = [0, 0, 10]
+    mock_catalog['y_cen'] = [0, 0, 1]
 
     A_coefficient=1
     B_coefficient=1
