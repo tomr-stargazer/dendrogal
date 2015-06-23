@@ -15,7 +15,7 @@ from dendrogal.production.disqualify_edge_structures import identify_edge_struct
 from dendrogal.production.convenience_function import load_permute_dendro_catalog
 from dendrogal.production.distance_disambiguate import assign_distance_columns_trivial
 
-from dendrogal.reid_distance_assigner import make_reid_distance_column, distance_assigner_with_plusminus_errors
+from dendrogal.reid_distance_assigner import make_universal_distance_column, distance_assigner_with_plusminus_errors
 from dendrogal.catalog_tree_stats import compute_tree_stats
 
 from dendrogal.production.make_thirdquad_stub import d, catalog, header, metadata
@@ -43,7 +43,7 @@ def third_quad_cloud_catalog():
     catalog_cp['on_edge'] = identify_edge_structures(d)
 
     # DISTANCE assignment
-    distance_table = make_reid_distance_column(catalog, nearfar='near')
+    distance_table = make_universal_distance_column(catalog, nearfar='near')
 
     distance_assigner_with_plusminus_errors(catalog_cp, distance_table, distance_column_name='distance')
     assign_distance_columns_trivial(catalog_cp)

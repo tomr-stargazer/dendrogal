@@ -18,7 +18,7 @@ from dendrogal.production.disqualify_edge_structures import identify_edge_struct
 from dendrogal.production.distance_disambiguate import distance_disambiguator, assign_distance_columns
 from dendrogal.production.velocity_split import calculate_velocity_split, descendants_max_vsplit
 
-from dendrogal.reid_distance_assigner import make_reid_distance_column, distance_assigner_with_plusminus_errors
+from dendrogal.reid_distance_assigner import make_universal_distance_column, distance_assigner_with_plusminus_errors
 from dendrogal.catalog_tree_stats import compute_tree_stats
 
 from dendrogal.production.make_firstquad_stub import d, catalog, header, metadata
@@ -52,8 +52,8 @@ def first_quad_cloud_catalog():
     catalog_cp['v_split'] = calculate_velocity_split(d, catalog_cp)
     catalog_cp['max_vsplit'] = descendants_max_vsplit(d, catalog_cp)
 
-    near_distance_table = make_reid_distance_column(catalog, nearfar='near')
-    far_distance_table = make_reid_distance_column(catalog, nearfar='far')
+    near_distance_table = make_universal_distance_column(catalog, nearfar='near')
+    far_distance_table = make_universal_distance_column(catalog, nearfar='far')
 
     # DISTANCE assignment
     distance_assigner_with_plusminus_errors(catalog_cp, near_distance_table, distance_column_name='near_distance')
