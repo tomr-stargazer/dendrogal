@@ -113,6 +113,8 @@ try:
     assert type(universal_test_output) == astropy.table.table.Table
     assert len(universal_test_output) == 1
     assert len(universal_test_output.colnames) == 8
+    assert universal_test_output['gal_long'] == 30
+    assert universal_test_output['gal_lat'] == -1
     assert universal_test_output['D_k'][0] == 14.92
 except Exception, e:
     print e
@@ -198,7 +200,7 @@ def make_reid_distance_column(catalog, nearfar='near', executable_path=executabl
     return kd_output
 
 
-def make_universal_distance_column(catalog, nearfar='near', executable_path=executable_path):
+def make_universal_distance_column(catalog, nearfar='near', executable_path=executable_path_universal):
     """ 
     Makes a universal distance column. 
 
@@ -210,6 +212,9 @@ def make_universal_distance_column(catalog, nearfar='near', executable_path=exec
                     'far': 1}
 
     source_file_string = ''
+
+    lon_column = catalog['x_cen']
+    lat_column = catalog['y_cen']
     
     fstring = str(nearfar_dict[nearfar])
 
@@ -217,8 +222,8 @@ def make_universal_distance_column(catalog, nearfar='near', executable_path=exec
 
         name = str(row["_idx"])
         
-        lon_string = "{0:07.3f}".format(row['x_cen'])
-        lat_string = "{0:+07.3f}".format(row['y_cen'])
+        lon_string = "{0:07.3f}".format(lon_column[i])
+        lat_string = "{0:+07.3f}".format(lat_column[i])
         # lat_string = "%+03i%02i%05.2f" % (ddd[i], np.abs(dmm)[i], np.abs(dss)[i])
         vstring = "%7.1f" % row['v_cen']
 
@@ -267,7 +272,7 @@ def make_universal_distance_column(catalog, nearfar='near', executable_path=exec
     kd_output['error_D_k_plus'].unit = u.kpc
     kd_output['error_D_k_minus'].unit = u.kpc
 
-    print kd_output
+    # print kd_output
 
     return kd_output
 
