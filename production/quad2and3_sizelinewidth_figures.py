@@ -320,3 +320,42 @@ def new_singlepanel_all_galaxy(allcat):
 def save_singlepanel_all_galaxy(allcat):
     fig = new_singlepanel_all_galaxy(allcat)
     fig.savefig(output_path+"all_galaxy_onepanel_larson.pdf", bbox_inches='tight')
+
+
+def mass_spectrum_multipanel_outer_galaxy(allcat):
+
+    special_allcat_1 = allcat[(allcat['v_cen']<-20 ) & (allcat['x_cen'] < 80) & (allcat['x_cen'] > 20) ]
+    special_allcat_2 = allcat[(np.abs(allcat['v_cen'])>20 ) & (allcat['x_cen'] < 160) & (allcat['x_cen'] > 80) ]
+    special_allcat_3 = allcat[(np.abs(allcat['v_cen'])>20 ) & (allcat['x_cen'] > 200) & (allcat['x_cen'] < 280) ]
+    special_allcat_4 = allcat[(allcat['v_cen']>20 ) & (allcat['x_cen'] < 340) & (allcat['x_cen'] > 280) ]
+
+    quad_2_outer_criteria = (np.abs(allcat['v_cen'])>20 ) & (allcat['x_cen'] < 160) & (allcat['x_cen'] > 80) 
+    quad_3_outer_criteria = (np.abs(allcat['v_cen'])>20 ) & (allcat['x_cen'] > 200) & (allcat['x_cen'] < 280) 
+
+    outer_galaxy_allcat = allcat[quad_2_outer_criteria | quad_3_outer_criteria]
+
+    subcat_list = [special_allcat_1, special_allcat_2, special_allcat_3, special_allcat_4, outer_galaxy_allcat]    
+
+    name_list = ['IQ', 'IIQ', 'IIIQ', 'IVQ', 'II+III']
+
+    min_mass = 3e4
+    max_mass = 4e7
+
+    for subcat, name in zip(subcat_list, name_list):
+
+        catalog = subcat[(~np.isnan(subcat['mass'])) &
+                         (subcat['mass']>min_mass) & (subcat['mass']<max_mass)]
+
+        mass = catalog['mass']
+        mass_err = np.sqrt(catalog['error_mass_plus']*catalog['error_mass_minus'])
+
+        path = os.path.expanduser("~/Documents/Code/idl-low-sky/eroslib/")
+
+        fname_mass = path + 'outer_'+name+'_mass.txt'
+        fname_err = path + 'outer_'+name+'_err.txt'
+
+        np.savetxt(fname_mass, mass)
+        np.savetxt(fname_err, mass_err)
+
+        print len(mass), name
+
