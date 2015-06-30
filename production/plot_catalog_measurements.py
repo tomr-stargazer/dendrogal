@@ -10,7 +10,9 @@ import matplotlib.pyplot as plt
 
 import astropy.units as u
 
-from dendrogal.production.catalog_measurement import size_linewidth_slope, cumulative_massfunction_fit, truncated_cloudmass_function
+from dendrogal.production.catalog_measurement import (
+    size_linewidth_slope, cumulative_massfunction_fit, 
+    truncated_cloudmass_function, powerlaw_cloudmass_function)
 
 
 def plot_size_linewidth_fit(catalog, title=""):
@@ -265,3 +267,41 @@ def plot_cmf_with_fit_fig(catalog, **kwargs):
     ax = fig.add_subplot(111)
 
     return fig, plot_cmf_except_farU(catalog, ax, **kwargs)
+
+
+def plot_cmf_with_pl_and_tpl(catalog, cmf_input, ax, bins=20, hist_range=(4, 7), labels=True, **kwargs):
+
+    N_0, tpl_M_0, tpl_gamma, pl_M_0, pl_gamma = cmf_input
+
+    number_in_bin_q2, bin_edges, ch = ax.hist(np.log10(catalog['mass']), cumulative=-1, log=True, bins=bins, range=hist_range)
+    bin_centers_q2 = (bin_edges[1:] + bin_edges[:-1])/2.
+
+    ax.plot(bin_centers_q2, number_in_bin_q2, 'ko' )
+    ax.semilogy()
+    # if labels:
+    #     ax.set_xlabel(r"log$_{10}$ (M$_{GMC}$ / M$_\odot$)")
+    #     ax.set_ylabel("n(M > M')")
+
+    m_array = np.linspace(min(bin_edges), max(bin_edges), 50)
+    tpl_n_array = truncated_cloudmass_function([tpl_M_0, N_0, tpl_gamma], 10**m_array)
+    pl_n_array = powerlaw_cloudmass_function([pl_M_0, pl_gamma], 10**m_array)
+
+    plt.plot(m_array, tpl_n_array, label="TPL $\\gamma = {0:.2f}$,\n$M_0={1:.2e}$,\n$N_0={2:.1f}$".format(tpl_gamma, tpl_M_0, N_0))
+    plt.plot(m_array, pl_n_array, label="PL $\\gamma = {0:.2f}$,\n$M_0={1:.2e}$".format(pl_gamma, pl_M_0))
+
+    if labels:
+        ax.legend(loc='upper right')
+
+    ax.set_xlim(*hist_range)
+    ax.set_ylim(0.7, 1e3)
+
+    return 
+
+
+def plot_cmf_with_pl_and_tpl_fig(catalog, cmf_input, **kwargs):
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+
+    return fig, plot_cmf_with_pl_and_tpl(catalog, cmf_input, ax, **kwargs)
+
