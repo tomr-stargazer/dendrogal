@@ -17,7 +17,7 @@ from dendrogal.production.cloud_extractor_q3 import export_thirdquad_catalog
 from dendrogal.production.cloud_extractor_q3 import d as quad3_d
 
 from dendrogal.production.catalog_measurement import size_linewidth_slope
-from dendrogal.production.plot_catalog_measurements import plot_size_linewidth_with_nearfar
+from dendrogal.production.plot_catalog_measurements import plot_size_linewidth_with_nearfar, plot_cmf_with_pl_and_tpl
 
 output_path = os.path.expanduser("~/Dropbox/Grad School/Research/Milkyway/paper/")
 
@@ -358,4 +358,72 @@ def mass_spectrum_multipanel_outer_galaxy(allcat):
         np.savetxt(fname_err, mass_err)
 
         print len(mass), name
+
+    # the following is put in by hand, but someday maybe we'll automate 
+    # the process of exporting the data to IDL, reading it in, 
+    # and using it in python
+
+    fig1 = plt.figure(figsize=(6.5,6.5))
+
+    ax1 = fig1.add_subplot(2,2,1)
+    ax2 = fig1.add_subplot(2,2,2, sharex=ax1, sharey=ax1)
+    ax3 = fig1.add_subplot(2,2,3, sharex=ax1, sharey=ax1)
+    ax4 = fig1.add_subplot(2,2,4, sharex=ax1, sharey=ax1)
+
+    ax_list = [ax4, ax2, ax1, ax3]
+
+    cmf_1 = (5.61, 8.46e5, -1.72, 1.76e6, -2.01)
+    err_1 = (4.45, 1.90e5, 0.20, 0.66e6, 0.11)
+
+    cmf_2 = (0.56, 2.67e6, -2.05, 1.29e6, -2.10)
+    err_2 = (1.15, 1.56e6, 0.15, 0.58e6, 0.18)
+
+    cmf_3 = (10.5, 3.76e5, -1.55, 6.56e5, -2.18)
+    err_3 = (6.04, 0.68e5, 0.27, 1.91e5, 0.10)
+
+    cmf_4 = (6.52, 5.19e6, -1.37, 1.59e7, -1.60)
+    err_4 = (5.94, 2.57e6, 0.13, 1.03e7, 0.06)
+
+    cmf_list = [cmf_1, cmf_2, cmf_3, cmf_4]
+    err_list = [err_1, err_2, err_3, err_4]
+
+    name_list = ['IQ', 'IIQ', 'IIIQ', 'IVQ']
+
+    for ax, subcat, name, cmf, err in zip(ax_list, subcat_list, name_list, cmf_list, err_list):
+
+        plot_cmf_with_pl_and_tpl(subcat, cmf, ax, labels=False)
+
+        N_0, tpl_M_0, tpl_gamma, pl_M_0, pl_gamma = cmf
+        N_0_e, tpl_M_0_e, tpl_gamma_e, pl_M_0_e, pl_gamma_e = err
+
+        tpl_exp = int(np.floor(np.log10(tpl_M_0)))
+
+        tpl_M_0_string = "$M_0 = {{({0:.2f} \pm {1:.2f}) \\times 10^{2:1d}}}$".format(tpl_M_0/10**tpl_exp, tpl_M_0_e/10**tpl_exp, tpl_exp)
+
+        tpl_string = ("$N_0 = {{{0:.2f} \pm {1:.2f}}}$\n"
+                      "{2}\n"
+                      "$\\gamma = {{{3:.2f} \pm {4:.2f}}}$".format(N_0, N_0_e, tpl_M_0_string, tpl_gamma, tpl_gamma_e) )
+
+        pl_exp = int(np.floor(np.log10(pl_M_0)))
+
+        pl_M_0_string = "$M_0 = {{({0:.2f} \pm {1:.2f}) \\times 10^{2:1d}}}$".format(pl_M_0/10**pl_exp, pl_M_0_e/10**pl_exp, pl_exp)
+
+        pl_string = ( "{2}\n"
+                      "$\\gamma = {{{3:.2f} \pm {4:.2f}}}$".format(N_0, N_0_e, pl_M_0_string, pl_gamma, pl_gamma_e) )        
+
+        ax.text(5.2, 100, tpl_string, fontsize=8, color='g')
+        ax.text(5.2, 30, pl_string, fontsize=8, color='r')
+        ax.text(4.5, 1.05, name, fontsize=20, family='serif')
+
+    ax1.set_ylabel("n(M > M')", fontsize=16)
+    ax3.set_ylabel("n(M > M')", fontsize=16)
+
+    ax3.set_xlabel(r"log (M$_{GMC}$ / M$_\odot$)", fontsize=16)
+    ax4.set_xlabel(r"log (M$_{GMC}$ / M$_\odot$)", fontsize=16)
+
+
+    cmf_outer = (3.48, 9.13e5, -1.98, 1.53e6, -2.17)
+
+    return fig1
+
 
