@@ -85,6 +85,38 @@ def plot_cmf(catalog, bins=20, hist_range=(4, 7), mass_column_name='mass', **kwa
 
     return fig, cmf_output
 
+
+def plot_cmf_with_arbitrary_input(catalog, cmf_input, bins=20, hist_range=(4, 7), 
+                                  mass_column_name='mass', **kwargs):
+
+    fig = plt.figure()
+
+    number_in_bin_q2, bin_edges, ch = plt.hist(np.log10(catalog[mass_column_name]), cumulative=-1, log=True, bins=bins, range=hist_range)
+    bin_centers_q2 = (bin_edges[1:] + bin_edges[:-1])/2.
+    plt.clf()
+    plt.plot(bin_centers_q2, number_in_bin_q2, 'ko' )
+    plt.semilogy()
+    plt.xlabel(r"log$_{10}$ (M$_{GMC}$ / M$_\odot$)")
+    plt.ylabel("n(M > M')")
+
+    M_0, N_0, gamma = cmf_input
+
+    m_array = np.linspace(min(bin_edges), max(bin_edges), 50)
+    n_array = truncated_cloudmass_function([M_0, N_0, gamma], 10**m_array)
+
+    plt.plot(m_array, n_array, label="$\\gamma = {0:.2f}$,\n$M_0={1:.2e}$,\n$N_0={2:.1f}$".format(gamma, M_0, N_0))
+
+    text_string = r"$N(M' > M) = N_0 \left [ \left ( \frac{M}{M_0} \right )^{\gamma+1} - 1 \right ]$"
+
+    plt.text(4.1, 3, text_string, fontsize=18)
+    plt.xlim(*hist_range)
+    plt.ylim(0.7, 1e3)
+
+    plt.legend(loc='upper right')
+
+    return fig    
+
+
 def plot_mass_density_radius(catalog, bins=20):
 
     fig = plt.figure()
