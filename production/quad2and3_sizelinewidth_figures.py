@@ -411,8 +411,8 @@ def mass_spectrum_multipanel_outer_galaxy(allcat):
         pl_string = ( "{2}\n"
                       "$\\gamma = {{{3:.2f} \pm {4:.2f}}}$".format(N_0, N_0_e, pl_M_0_string, pl_gamma, pl_gamma_e) )        
 
-        ax.text(5.2, 100, tpl_string, fontsize=8, color='g')
-        ax.text(5.2, 30, pl_string, fontsize=8, color='r')
+        # ax.text(5.2, 100, tpl_string, fontsize=8, color='g')
+        # ax.text(5.2, 30, pl_string, fontsize=8, color='r')
         ax.text(4.5, 1.05, name, fontsize=20, family='serif')
 
     ax1.set_ylabel("n(M > M')", fontsize=16)
@@ -422,8 +422,23 @@ def mass_spectrum_multipanel_outer_galaxy(allcat):
     ax4.set_xlabel(r"log (M$_{GMC}$ / M$_\odot$)", fontsize=16)
 
 
-    cmf_outer = (3.48, 9.13e5, -1.98, 1.53e6, -2.17)
+    fig2 = plt.figure(figsize=(6.5,6.5))
 
-    return fig1
+    ax_all = fig2.add_subplot(1,1,1)
+    cmf_all = (3.48, 9.13e5, -1.98, 1.53e6, -2.17)
 
+    name_all = "IIQ + IIIQ"
+
+    N_0, tpl_M_0, tpl_gamma, pl_M_0, pl_gamma = cmf_all
+
+    plot_cmf_with_pl_and_tpl(outer_galaxy_allcat, cmf_all, ax_all, labels=False)
+    ax_all.text(4.5, 1.05, name_all, fontsize=20, family='serif')
+
+    return fig1, fig2
+
+
+def save_mass_spectrum_figures(allcat):
+    fig1, fig2 = mass_spectrum_multipanel_outer_galaxy(allcat)
+    fig1.savefig(output_path+"outer_gal_multi_cmf.pdf", bbox_inches='tight')
+    fig2.savefig(output_path+"outer_gal_single_cmf.pdf", bbox_inches='tight')
 
