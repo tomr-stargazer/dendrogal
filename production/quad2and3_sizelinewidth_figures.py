@@ -434,6 +434,9 @@ def mass_spectrum_multipanel_outer_galaxy(allcat):
     plot_cmf_with_pl_and_tpl(outer_galaxy_allcat, cmf_all, ax_all, labels=False)
     ax_all.text(4.5, 1.05, name_all, fontsize=20, family='serif')
 
+    ax_all.set_ylabel("n(M > M')", fontsize=16)
+    ax_all.set_xlabel(r"log (M$_{GMC}$ / M$_\odot$)", fontsize=16)
+
     return fig1, fig2
 
 
