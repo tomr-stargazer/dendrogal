@@ -85,6 +85,35 @@ def truncated_cloudmass_function(parameter_list, mass_array):
     return N_by_mass
 
 
+def powerlaw_cloudmass_function(parameter_list, mass_array):
+    """
+    The cumulative mass function from Columbo et al. (2014),
+    equation 15.
+
+    Parameters
+    ----------
+    parameter_list : list of floats
+        contains M_0, gamma
+        M_0 : the maximumum mass in the distribution
+        gamma : the index describing how mass is distributed
+
+    mass_array : array of x values
+        represents the mass bins
+
+    Returns
+    -------
+    N(M' > M) : array
+        number of clouds expected in each mass bin
+
+    """
+
+    M_0, gamma = parameter_list
+
+    N_by_mass = ((mass_array/M_0)**(gamma+1) )
+
+    return N_by_mass
+
+
 def cumulative_massfunction_fit(catalog, min_mass=1e5, max_mass=3e7, bins=20, mass_column_name='mass'):
     """
     Measures a catalog's mass function slope using .
