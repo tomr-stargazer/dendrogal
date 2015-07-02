@@ -440,8 +440,79 @@ def mass_spectrum_multipanel_outer_galaxy(allcat):
     return fig1, fig2
 
 
-def save_mass_spectrum_figures(allcat):
+def save_outer_mass_spectrum_figures(allcat):
     fig1, fig2 = mass_spectrum_multipanel_outer_galaxy(allcat)
     fig1.savefig(output_path+"outer_gal_multi_cmf.pdf", bbox_inches='tight')
     fig2.savefig(output_path+"outer_gal_single_cmf.pdf", bbox_inches='tight')
 
+
+def mass_spectrum_multipanel_inner_galaxy(allcat):
+
+    quad_1_inner_criteria = (allcat['v_cen']>20 ) & (allcat['x_cen'] < 80) & (allcat['x_cen'] > 20)
+    quad_4_inner_criteria = (allcat['v_cen']<-20 ) & (allcat['x_cen'] < 340) & (allcat['x_cen'] > 280) 
+
+    special_allcat_1 = allcat[quad_1_inner_criteria]
+    special_allcat_4 = allcat[quad_4_inner_criteria]
+    inner_galaxy_allcat = allcat[quad_1_inner_criteria | quad_4_inner_criteria]
+
+    subcat_list = [special_allcat_1, special_allcat_4, inner_galaxy_allcat]    
+
+    name_list = ['IQ', 'IVQ']
+
+    # the following is put in by hand, but someday maybe we'll automate 
+    # the process of exporting the data to IDL, reading it in, 
+    # and using it in python
+
+    fig1 = plt.figure(figsize=(6.5,6.5))
+
+    # ax1 = fig.add_subplot(2,2,1)
+    # ax2 = fig.add_subplot(2,2,2)
+    ax3 = fig1.add_subplot(2,2,3)
+    ax4 = fig1.add_subplot(2,2,4, sharex=ax3, sharey=ax3)
+
+    ax_list = [ax4, ax3]
+
+    cmf_1 = (6.64, 8.19e6, -1.59, 2.60e7, -1.87)
+    cmf_4 = (3.89, 1.53e7, -1.61, 3.78e7, -1.75)
+
+    cmf_list = [cmf_1, cmf_4]
+
+    for ax, subcat, name, cmf, in zip(ax_list, subcat_list, name_list, cmf_list):
+
+        plot_cmf_with_pl_and_tpl(subcat, cmf, ax, labels=False)
+
+        N_0, tpl_M_0, tpl_gamma, pl_M_0, pl_gamma = cmf
+        ax.text(4.75, 1.05, name, fontsize=20, family='serif')
+
+    # ax1.set_ylabel("n(M > M')", fontsize=16)
+    ax3.set_ylabel("n(M > M')", fontsize=16)
+
+    ax3.set_xlabel(r"log (M$_{GMC}$ / M$_\odot$)", fontsize=16)
+    ax4.set_xlabel(r"log (M$_{GMC}$ / M$_\odot$)", fontsize=16)
+
+    ax3.set_xlim(4.5, 7.0)
+
+    fig2 = plt.figure(figsize=(6.5,6.5))
+
+    ax_all = fig2.add_subplot(1,1,1)
+    cmf_all = (11.19, 1.02e7, -1.59, 6.04e7, -1.81)
+
+    name_all = "IQ + IVQ"
+
+    N_0, tpl_M_0, tpl_gamma, pl_M_0, pl_gamma = cmf_all
+
+    plot_cmf_with_pl_and_tpl(inner_galaxy_allcat, cmf_all, ax_all, labels=False)
+    ax_all.text(4.75, 1.05, name_all, fontsize=20, family='serif')
+
+    ax_all.set_ylabel("n(M > M')", fontsize=16)
+    ax_all.set_xlabel(r"log (M$_{GMC}$ / M$_\odot$)", fontsize=16)
+
+    ax_all.set_xlim(4.5, 7.0)
+
+    return fig1, fig2
+
+
+def save_inner_mass_spectrum_figures(allcat):
+    fig1, fig2 = mass_spectrum_multipanel_inner_galaxy(allcat)
+    fig1.savefig(output_path+"inner_gal_multi_cmf.pdf", bbox_inches='tight')
+    fig2.savefig(output_path+"inner_gal_single_cmf.pdf", bbox_inches='tight')
