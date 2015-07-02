@@ -276,7 +276,7 @@ def plot_cmf_with_pl_and_tpl(catalog, cmf_input, ax, bins=20, hist_range=(4, 7),
     number_in_bin_q2, bin_edges, ch = ax.hist(np.log10(catalog['mass']), cumulative=-1, log=True, bins=bins, range=hist_range)
     bin_centers_q2 = (bin_edges[1:] + bin_edges[:-1])/2.
 
-    ax.plot(bin_centers_q2, number_in_bin_q2, 'ko', ms=3 )
+    ax.plot(bin_centers_q2, number_in_bin_q2, 'ko', ms=4 )
     ax.semilogy()
     # if labels:
     #     ax.set_xlabel(r"log$_{10}$ (M$_{GMC}$ / M$_\odot$)")
@@ -286,8 +286,8 @@ def plot_cmf_with_pl_and_tpl(catalog, cmf_input, ax, bins=20, hist_range=(4, 7),
     tpl_n_array = truncated_cloudmass_function([tpl_M_0, N_0, tpl_gamma], 10**m_array)
     pl_n_array = powerlaw_cloudmass_function([pl_M_0, pl_gamma], 10**m_array)
 
-    ax.plot(m_array, tpl_n_array, 'b-', lw=2, label="TPL $\\gamma = {0:.2f}$,\n$M_0={1:.2e}$,\n$N_0={2:.1f}$".format(tpl_gamma, tpl_M_0, N_0))
-    ax.plot(m_array, pl_n_array, 'r--', lw=2, label="PL $\\gamma = {0:.2f}$,\n$M_0={1:.2e}$".format(pl_gamma, pl_M_0))
+    ax.plot(m_array, tpl_n_array, 'b-', lw=1.75, label="TPL $\\gamma = {0:.2f}$,\n$M_0={1:.2e}$,\n$N_0={2:.1f}$".format(tpl_gamma, tpl_M_0, N_0))
+    ax.plot(m_array, pl_n_array, 'r--', lw=2.25, label="PL $\\gamma = {0:.2f}$,\n$M_0={1:.2e}$".format(pl_gamma, pl_M_0))
 
     if labels:
         ax.legend(loc='upper right')
