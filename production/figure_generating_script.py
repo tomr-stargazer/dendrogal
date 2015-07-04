@@ -146,6 +146,15 @@ def make_thumbnail_figures():
     quad1_fig = make_thumbnail_dendro_figure(quad1_d, quad1_cat, quad1_cloud_idx)
     quad1_fig.savefig(output_path+"quad1_thumbnail.pdf", bbox_inches='tight')
 
+    print quad1_cat['mass'][quad1_cat['_idx']==quad1_cloud_idx]
+    print quad1_cat['error_mass_plus'][quad1_cat['_idx']==quad1_cloud_idx]
+    print quad1_cat['error_mass_minus'][quad1_cat['_idx']==quad1_cloud_idx]
+
+    print quad1_cat['distance'][quad1_cat['_idx']==quad1_cloud_idx]
+    print quad1_cat['error_distance_plus'][quad1_cat['_idx']==quad1_cloud_idx]
+    print quad1_cat['error_distance_minus'][quad1_cat['_idx']==quad1_cloud_idx]
+
+    print ""
 
     quad2_cloud_idx = 66
     quad2_cat = export_secondquad_catalog()
@@ -153,11 +162,32 @@ def make_thumbnail_figures():
     quad2_fig = make_thumbnail_dendro_figure(quad2_d, quad2_cat, quad2_cloud_idx)
     quad2_fig.savefig(output_path+"quad2_thumbnail.pdf", bbox_inches='tight')
 
+    print quad2_cat['mass'][quad2_cat['_idx']==quad2_cloud_idx]
+    print quad2_cat['error_mass_plus'][quad2_cat['_idx']==quad2_cloud_idx]
+    print quad2_cat['error_mass_minus'][quad2_cat['_idx']==quad2_cloud_idx]
+
+    print quad2_cat['distance'][quad2_cat['_idx']==quad2_cloud_idx]
+    print quad2_cat['error_distance_plus'][quad2_cat['_idx']==quad2_cloud_idx]
+    print quad2_cat['error_distance_minus'][quad2_cat['_idx']==quad2_cloud_idx]
+
+    print ""
+    
     quad3_cloud_idx = 697
     quad3_cat = export_thirdquad_catalog()
 
     quad3_fig = make_thumbnail_dendro_figure(quad3_d, quad3_cat, quad3_cloud_idx, panel_width=3.5*u.deg, latitude_px_override=[22, 32])
     quad3_fig.savefig(output_path+"quad3_thumbnail.pdf", bbox_inches='tight')
+
+    print quad3_cat['mass'][quad3_cat['_idx']==quad3_cloud_idx]
+    print quad3_cat['error_mass_plus'][quad3_cat['_idx']==quad3_cloud_idx]
+    print quad3_cat['error_mass_minus'][quad3_cat['_idx']==quad3_cloud_idx]
+
+    print quad3_cat['distance'][quad3_cat['_idx']==quad3_cloud_idx]
+    print quad3_cat['error_distance_plus'][quad3_cat['_idx']==quad3_cloud_idx]
+    print quad3_cat['error_distance_minus'][quad3_cat['_idx']==quad3_cloud_idx]
+
+    print ""
+
 
     quad3b_cloud_idx = 710
     quad3b_fig = make_thumbnail_dendro_figure(quad3_d, quad3_cat, quad3b_cloud_idx, latitude_px_override=[17, 34])
@@ -169,5 +199,12 @@ def make_thumbnail_figures():
     quad4_fig = make_thumbnail_dendro_figure(quad4_d, quad4_cat, quad4_cloud_idx)
     quad4_fig.savefig(output_path+"quad4_thumbnail.pdf", bbox_inches='tight')
 
+    print quad4_cat['mass'][quad4_cat['_idx']==quad4_cloud_idx]
+    print quad4_cat['error_mass_plus'][quad4_cat['_idx']==quad4_cloud_idx]
+    print quad4_cat['error_mass_minus'][quad4_cat['_idx']==quad4_cloud_idx]
+
+    print quad4_cat['distance'][quad4_cat['_idx']==quad4_cloud_idx]
+    print quad4_cat['error_distance_plus'][quad4_cat['_idx']==quad4_cloud_idx]
+    print quad4_cat['error_distance_minus'][quad4_cat['_idx']==quad4_cloud_idx]
 
 
