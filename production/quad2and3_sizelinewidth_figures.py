@@ -113,7 +113,7 @@ def new_multipanel_outer_galaxy(allcat):
 
     subcat_list = [special_allcat_1, special_allcat_2, special_allcat_3, special_allcat_4]    
 
-    name_list = ['IQ', 'IIQ', 'IIIQ', 'IVQ']
+    name_list = ['I', 'II', 'III', 'IV']
 
     for ax, subcat, name in zip(ax_list, subcat_list, name_list):
         size_linewidth_output = plot_size_linewidth_with_nearfar(subcat, ax, labels=False, distance_threshold=20)
@@ -177,7 +177,7 @@ def new_singlepanel_outer_galaxy(allcat):
     fit_string = "$A = {{{0:.2f} \pm {2:.2f}}}$,\n$\\beta ={{{1:.2f} \pm {3:.2f}}}$".format(fit_coefficient, fit_exponent, sd_coefficient, sd_exponent) 
 
     ax1.text(1.85, -0.1, fit_string, fontsize=24)
-    ax1.text(0.9, 1.05, "IIQ + IIIQ", fontsize=20, family='serif')
+    ax1.text(0.9, 1.05, "II + III", fontsize=20, family='serif')
 
     ax1.set_ylabel(r"$\log(\sigma_v)$", fontsize=20)
     ax1.set_xlabel(r"$\log(R/\rm{pc})$", fontsize=20)
@@ -219,7 +219,7 @@ def new_multipanel_inner_galaxy(allcat):
 
     subcat_list = [special_allcat_1, special_allcat_4, special_allcat_1_4]    
 
-    name_list = ['IQ', 'IVQ', 'IQ + IVQ']
+    name_list = ['I', 'IV', 'I + IV']
 
     for ax, subcat, name in zip(ax_list, subcat_list, name_list):
         size_linewidth_output = plot_size_linewidth_with_nearfar(
@@ -336,7 +336,7 @@ def mass_spectrum_multipanel_outer_galaxy(allcat):
 
     subcat_list = [special_allcat_1, special_allcat_2, special_allcat_3, special_allcat_4, outer_galaxy_allcat]    
 
-    name_list = ['IQ', 'IIQ', 'IIIQ', 'IVQ', 'II+III']
+    name_list = ['I', 'II', 'III', 'IV', 'II+III']
 
     min_mass = 3e4
     max_mass = 4e7
@@ -387,7 +387,7 @@ def mass_spectrum_multipanel_outer_galaxy(allcat):
     cmf_list = [cmf_1, cmf_2, cmf_3, cmf_4]
     err_list = [err_1, err_2, err_3, err_4]
 
-    name_list = ['IQ', 'IIQ', 'IIIQ', 'IVQ']
+    name_list = ['I', 'II', 'III', 'IV']
 
     for ax, subcat, name, cmf, err in zip(ax_list, subcat_list, name_list, cmf_list, err_list):
 
@@ -427,7 +427,7 @@ def mass_spectrum_multipanel_outer_galaxy(allcat):
     ax_all = fig2.add_subplot(1,1,1)
     cmf_all = (3.48, 9.13e5, -1.98, 1.53e6, -2.17)
 
-    name_all = "IIQ + IIIQ"
+    name_all = "II + III"
 
     N_0, tpl_M_0, tpl_gamma, pl_M_0, pl_gamma = cmf_all
 
@@ -457,7 +457,7 @@ def mass_spectrum_multipanel_inner_galaxy(allcat):
 
     subcat_list = [special_allcat_1, special_allcat_4, inner_galaxy_allcat]    
 
-    name_list = ['IQ', 'IVQ']
+    name_list = ['I', 'IV']
 
     # the following is put in by hand, but someday maybe we'll automate 
     # the process of exporting the data to IDL, reading it in, 
@@ -497,7 +497,7 @@ def mass_spectrum_multipanel_inner_galaxy(allcat):
     ax_all = fig2.add_subplot(1,1,1)
     cmf_all = (11.19, 1.02e7, -1.59, 6.04e7, -1.81)
 
-    name_all = "IQ + IVQ"
+    name_all = "I + IV"
 
     N_0, tpl_M_0, tpl_gamma, pl_M_0, pl_gamma = cmf_all
 
