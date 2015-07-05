@@ -17,14 +17,22 @@ More reasons we should make it into a class:
 """
 
 from __future__ import division
+import os.path
 
 import datetime
 
 import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+
+
+from astropy.convolution import convolve, convolve_fft, Gaussian2DKernel
+
+output_path = os.path.expanduser("~/Dropbox/Grad School/Research/Milkyway/paper/")
 
 # from production.dame_color_dict import dame_cmap
 
-grid = np.zeros((1000, 1000))
+grid = np.zeros((2000, 2000))
 
 def cloud_emission(mass, radius, center=(0,0)):
 
@@ -77,14 +85,16 @@ def cloud_emission_2d_gaussian(mass, radius_px, center_px=(0,0)):
 
     return cloud_emission
 
+
 def cheaply_convert_pc_to_px(radius_pc):
 
-    # the grid is 30 kpc across.
+    # the grid is 25 kpc across.
     pc_per_px = 25000 / grid.shape[0] 
 
     radius_px = radius_pc / pc_per_px
 
     return radius_px
+
 
 def transform_xgal_ygal_to_xgrid_ygrid(xgal, ygal):
 
@@ -99,6 +109,22 @@ def transform_xgal_ygal_to_xgrid_ygrid(xgal, ygal):
     y_grid = y_px + ygal0_in_px
 
     return x_grid, y_grid
+
+
+def area_per_px():
+    """ Returns the area of each pixel in pc^2. """
+
+    len_per_px = cheaply_convert_pc_to_px(1)
+    area = len_per_px**2
+
+    return area
+
+
+def len_per_px():
+    """ Returns the area of each pixel in pc^2. """
+
+    return cheaply_convert_pc_to_px(1)
+
 
 def cloud_emission_from_catalog(catalog):
 
@@ -126,4 +152,57 @@ def cloud_emission_from_catalog(catalog):
     time_elapsed = (end - beginning)
     print " *** Image generation took {0}".format(time_elapsed)
 
-    return cloud_emission_sum
+    return cloud_emission_sum / area_per_px()
+
+
+def image_convolution_and_display(catalog, emission=None, resolution_stddev=1.6):
+
+    if emission is None:
+        emission = cloud_emission_from_catalog(catalog)
+
+    g_kernel = Gaussian2DKernel(stddev=resolution_stddev)
+
+    result = convolve_fft(emission, g_kernel)
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+
+    image = ax.imshow(np.sqrt(result+1e-6), cmap='gist_heat_r', origin='lower', vmax=300)
+    ax.invert_xaxis()
+    ax.set_xticks([0*2, 250*2, 500*2, 750*2, 1000*2])
+    ax.set_xticklabels([12.5, 6.25, 0, -6.25, -12.5])
+    ax.set_yticks([0*2, 250*2, 500*2, 750*2, 1000*2])
+    ax.set_yticklabels([-12.5, -6.25, 0, 6.25, 12.5])
+
+    fig.colorbar(image)
+
+    return fig
+
+
+def make_emission_maps_for_paper(emission=None, catalog=None, save=False):
+
+    if emission.shape != grid.shape:
+        print 'size mismatch'
+        raise ValueError("grid and emission are not same size - problems will occur")
+
+    if emission is None:
+        if catalog is None:
+
+            from dendrogal.production.cloud_catalog_combiner import extract_and_combine_catalogs
+            catalog = extract_and_combine_catalogs()
+
+        emission = cloud_emission_from_catalog(catalog)
+
+    paws_rez = cheaply_convert_pc_to_px(40)
+    paws_10x_rez = cheaply_convert_pc_to_px(400)
+    paws_5x_rez = cheaply_convert_pc_to_px(200)
+
+    fig1 = image_convolution_and_display(None, emission, resolution_stddev=paws_rez)
+    fig2 = image_convolution_and_display(None, emission, resolution_stddev=paws_10x_rez)
+    fig3 = image_convolution_and_display(None, emission, resolution_stddev=paws_5x_rez)
+
+    if save:
+        fig1.savefig(output_path+"MW_sim_PAWS_40pc_rez.pdf", bbox_inches='tight')
+        fig2.savefig(output_path+"MW_sim_400pc_rez.pdf", bbox_inches='tight')
+
+    return fig1, fig2, fig3
