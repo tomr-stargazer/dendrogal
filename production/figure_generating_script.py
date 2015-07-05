@@ -119,10 +119,10 @@ def combined_galaxy_figures(catalog):
 
     topdown_all = make_quadrant_topdown_map(catalog, loc='lower center', figsize=(9,9))
     draw_solar_and_tangent_circles(topdown_all)    
-    plt.text(9, 17, 'IQ', fontsize=20, family='serif', color='w')
-    plt.text(9, -4, 'IIQ', fontsize=20, family='serif', color='w')
-    plt.text(-11.5, -4, 'IIIQ', fontsize=20, family='serif', color='w')
-    plt.text(-11.5, 17, 'IVQ', fontsize=20, family='serif', color='w')
+    plt.text(9, 17, 'I', fontsize=20, family='serif', color='w')
+    plt.text(9, -4, 'II', fontsize=20, family='serif', color='w')
+    plt.text(-11.5, -4, 'III', fontsize=20, family='serif', color='w')
+    plt.text(-11.5, 17, 'IV', fontsize=20, family='serif', color='w')
 
     topdown_all.axes[0].set_xlabel("Solar-centric $y$ (kpc)")
     topdown_all.axes[0].set_ylabel("Solar-centric $x$ (kpc)")
@@ -192,6 +192,19 @@ def make_thumbnail_figures():
     quad3b_cloud_idx = 710
     quad3b_fig = make_thumbnail_dendro_figure(quad3_d, quad3_cat, quad3b_cloud_idx, latitude_px_override=[17, 34])
     quad3b_fig.savefig(output_path+"quad3b_thumbnail.pdf", bbox_inches='tight')
+
+    print "\n ****** THIS IS THE ONE: ****** \n \n \n"
+
+    print quad3_cat['mass'][quad3_cat['_idx']==quad3b_cloud_idx]
+    print quad3_cat['error_mass_plus'][quad3_cat['_idx']==quad3b_cloud_idx]
+    print quad3_cat['error_mass_minus'][quad3_cat['_idx']==quad3b_cloud_idx]
+
+    print quad3_cat['distance'][quad3_cat['_idx']==quad3b_cloud_idx]
+    print quad3_cat['error_distance_plus'][quad3_cat['_idx']==quad3b_cloud_idx]
+    print quad3_cat['error_distance_minus'][quad3_cat['_idx']==quad3b_cloud_idx]
+
+    print ""
+
 
     quad4_cloud_idx = 484
     quad4_cat = export_fourthquad_catalog()
