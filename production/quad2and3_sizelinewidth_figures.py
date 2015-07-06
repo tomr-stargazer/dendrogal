@@ -234,8 +234,13 @@ def new_multipanel_inner_galaxy(allcat):
 
         fit_string = "$A = {{{0:.2f} \pm {2:.2f}}}$,\n$\\beta ={{{1:.2f} \pm {3:.2f}}}$".format(fit_coefficient, fit_exponent, sd_coefficient, sd_exponent) 
 
-        ax.text(1.85, -0.2, fit_string, fontsize=12)
+        if ax is ax2:
+            ax.text(1.85, -0.1, fit_string, fontsize=24)
+        else:
+            ax.text(1.85, -0.2, fit_string, fontsize=12)
         ax.text(0.9, 1.05, name, fontsize=20, family='serif')
+
+
 
 
     ax3.legend(bbox_to_anchor=(0.49, 0.65), bbox_transform=fig.transFigure, numpoints=1)
