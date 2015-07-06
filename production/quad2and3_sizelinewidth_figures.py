@@ -202,9 +202,10 @@ def save_singlepanel_outer_galaxy(allcat):
 def new_multipanel_inner_galaxy(allcat):
 
     fig = plt.figure(figsize=(6.5,6.5))
+    fig2 = plt.figure(figsize=(6.5,6.5))
 
     # ax1 = fig.add_subplot(2,2,1)
-    ax2 = fig.add_subplot(2,2,2)
+    ax2 = fig2.add_subplot(111)
     ax3 = fig.add_subplot(2,2,3, sharex=ax2, sharey=ax2)
     ax4 = fig.add_subplot(2,2,4, sharex=ax2, sharey=ax2)
 
@@ -244,6 +245,7 @@ def new_multipanel_inner_galaxy(allcat):
 
     ax4.set_xlabel(r"$\log(R/\rm{pc})$", fontsize=16)
     ax3.set_xlabel(r"$\log(R/\rm{pc})$", fontsize=16)
+    ax2.set_xlabel(r"$\log(R/\rm{pc})$", fontsize=16)
 
     ax3.set_xticks([0.5, 1.0, 1.5, 2.0, 2.5, 3.0])
     ax3.set_xticks(np.linspace(0.5,3, 30), minor=True)
@@ -257,12 +259,18 @@ def new_multipanel_inner_galaxy(allcat):
     fig.ax3 = ax3
     fig.ax4 = ax4
 
-    return fig
+    fig2.ax2 = ax2
+
+    fig.canvas.draw()
+    fig2.canvas.draw()
+
+    return fig, fig2
 
 
 def save_multipanel_inner_galaxy(allcat):
-    fig = new_multipanel_inner_galaxy(allcat)
-    fig.savefig(output_path+"inner_galaxy_threepanel_larson.pdf", bbox_inches='tight')
+    fig1, fig2 = new_multipanel_inner_galaxy(allcat)
+    fig1.savefig(output_path+"inner_galaxy_twopanel_larson.pdf", bbox_inches='tight')
+    fig2.savefig(output_path+"inner_galaxy_onepanel_larson.pdf", bbox_inches='tight')
 
 
 
