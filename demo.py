@@ -23,7 +23,10 @@ import astropy.io.fits as fits
 
 from astrodendro.scatter import Scatter
 from dendrogal.integrated_viewer import IntegratedViewer
-from dendrogal.reid_distance_assigner import make_reid_distance_column
+try:
+    from dendrogal.reid_distance_assigner import make_reid_distance_column
+except:
+    pass
 from dendrogal.assign_physical_values import assign_size_mass_alpha_pressure
 
 data_path = os.path.expanduser("~/Dropbox/College/Astro99/DATA/")
