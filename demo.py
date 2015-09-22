@@ -256,7 +256,7 @@ def thirdquad_demo_mominterp(**kwargs):
 def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
                      min_value=0.01, min_delta=0.005, min_npix=2000, 
                      neighbours=None, resample=False, compute_catalog=True, recenter=True,
-                     data_path=data_path):
+                     data_path=data_path, memmap=True):
 
     df = downsample_factor
     tt = transpose_tuple
@@ -274,7 +274,7 @@ def downsampled_demo(data_file, downsample_factor=4, transpose_tuple=(2,0,1),
     print("\n ** Beginning at: {0}".format(beginning_string))
 
     print "\n** loading data from {0}: ...\n".format(data_path+data_file)
-    datacube, datacube_header = getdata(data_path+data_file, memmap=True,
+    datacube, datacube_header = getdata(data_path+data_file, memmap=memmap,
                                         header=True)
 
     print "\n** transposing {0} and downsampling ({1}) data: ...\n".format(tt, df)
