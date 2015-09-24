@@ -13,12 +13,13 @@ from scipy.misc import imread
 from wcsaxes import WCSAxes
 from astropy import wcs
 
-dropbox_path = os.path.expanduser("~/Dropbox/Grad School/Research/Milkyway/")
+code_directory = os.path.dirname(__file__)
+cartoon_path = os.path.join(code_directory, "images")
 
-dame_lb_cartoon_location = dropbox_path+"Fig2_Dame_cropped.png"
+dame_lb_cartoon_location = os.path.join(cartoon_path,"Fig2_Dame_cropped.png")
 lb_cartoon_image = imread(dame_lb_cartoon_location)
 
-dame_lv_cartoon_location = dropbox_path+"Fig3_Dame_cropped.png"
+dame_lv_cartoon_location = os.path.join(cartoon_path,"Fig3_Dame_cropped.png")
 lv_cartoon_image = imread(dame_lv_cartoon_location)
 
 # test_fig = plt.figure()
