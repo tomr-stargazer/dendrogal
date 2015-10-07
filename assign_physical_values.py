@@ -14,7 +14,10 @@ import astrodendro
 import astropy.units as u
 import astropy.constants as c
 
-from reid_distance_assigner import make_reid_distance_column
+try:
+    from reid_distance_assigner import make_reid_distance_column
+except:
+    pass
 
 
 def assign_distances(catalog, nearfar='near'):
