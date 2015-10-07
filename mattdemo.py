@@ -33,7 +33,9 @@ except ImportError:
 
 from dendrogal.integrated_and_cartoon_viewer import CartoonDualViewer
 import dendrogal.hub_selection_manager as selection_manager
-from dendrogal.hub_selection_manager import transfer_function_generator, stash_function_generator
+from dendrogal.hub_selection_manager import (
+  transfer_function_generator, stash_function_generator, assign_region_dict_distances,
+  save_template, load_template)
 
 
 matt_demo_function = partial(
@@ -48,7 +50,7 @@ matt_demo_function = partial(
 
 def run_matt_demo():
 
-    d, catalog, x, y = matt_demo_function()
+    d, catalog, header, metadata = matt_demo_function()
 
     dv = d.viewer()
 
@@ -60,6 +62,7 @@ def run_matt_demo():
     output_dict = {}
     output_dict['dendrogram'] = d
     output_dict['catalog'] = catalog
+    output_dict['header'] = header
     output_dict['viewer'] = dv
     output_dict['dual_viewer'] = cdv
     output_dict['transfer_function'] = t
@@ -70,6 +73,28 @@ def run_matt_demo():
     print next_string
 
     return output_dict
+
+
+def save_matt_template(output_dict, filename):
+    if type(filename) is not str:
+        raise ValueError("`filename` argument must be a string")
+    if type(output_dict) is not dict:
+        raise ValueError("`output_dict` argument must be a dict")
+
+    output_path = matt_path+filename
+
+    save_template(output_dict['selection_dictionary'], output_dict['selection_ID_dictionary'], output_dict['header'], output_path=output_path)
+
+
+def load_matt_template(output_dict, filename, dv=None):
+
+    input_path = matt_path+filename
+
+    (cube, header, selection_idx_dictionary, 
+        selection_ID_dictionary) = load_template(filename, input_path, dv=dv)
+
+    output_dict['selection_dictionary'] = selection_idx_dictionary
+    output_dict['selection_ID_dictionary'] = selection_ID_dictionary
 
 
 print(
