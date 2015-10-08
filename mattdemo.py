@@ -36,6 +36,7 @@ import dendrogal.hub_selection_manager as selection_manager
 from dendrogal.hub_selection_manager import (
   transfer_function_generator, stash_function_generator, assign_region_dict_distances,
   save_template, load_template)
+from dendrogal.draw_schlafly_points_on_map import draw_big_cloud_table, draw_mbm_cloud_table
 
 
 matt_demo_function = partial(
@@ -141,4 +142,18 @@ next_string = """
 .. selection_dictionary = output['selection_dictionary']
 
   Let's give this a shot and see where it goes!"""
+
+
+def draw_big_clouds(output):
+    viewer = output['dual_viewer']
+
+    return draw_big_cloud_table(viewer.ax_cartoon)
+
+
+def draw_mbm_clouds(output):
+    viewer = output['dual_viewer']
+
+    return draw_mbm_cloud_table(viewer.ax_cartoon)
+
+
 
