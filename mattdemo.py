@@ -147,13 +147,13 @@ next_string = """
 def draw_big_clouds(output):
     viewer = output['dual_viewer']
 
-    return draw_big_cloud_table(viewer.ax_cartoon)
+    return draw_big_cloud_table(viewer.ax_cartoon), draw_big_cloud_table(viewer.ax_integrated)
 
 
 def draw_mbm_clouds(output):
     viewer = output['dual_viewer']
 
-    return draw_mbm_cloud_table(viewer.ax_cartoon)
+    return draw_mbm_cloud_table(viewer.ax_cartoon), draw_mbm_cloud_table(viewer.ax_integrated)
 
 
 
