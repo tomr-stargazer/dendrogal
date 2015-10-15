@@ -156,4 +156,14 @@ def draw_mbm_clouds(output):
     return draw_mbm_cloud_table(viewer.ax_cartoon), draw_mbm_cloud_table(viewer.ax_integrated)
 
 
+def matt_clear_selection(output):
 
+    print "now clearing selection..."
+
+    # clear both selection dictionaries simultaneously
+    output['selection_dictionary'].clear()
+    output['selection_ID_dictionary'].clear()
+
+    # clear the green (ID=3) viewer selection and refresh the viewer
+    output['dual_viewer'].hub.select(3, None)
+    output['dual_viewer'].fig.canvas.draw()
