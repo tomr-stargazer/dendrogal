@@ -49,9 +49,22 @@ matt_demo_function = partial(
     data_path=matt_path,
     memmap=False)
 
-def run_matt_demo():
+matt_testing_function = partial(
+    downsampled_demo, 
+    data_file='COGAL_local_mom.fits', 
+    downsample_factor=2,
+    min_npix=2000,
+    min_delta=1,
+    min_value=1,
+    data_path=matt_path,
+    memmap=False)
 
-    d, catalog, header, metadata = matt_demo_function()
+def run_matt_demo(testing=False):
+
+    if testing:
+        d, catalog, header, metadata = matt_testing_function()
+    else:
+        d, catalog, header, metadata = matt_demo_function()
 
     dv = d.viewer()
 
@@ -74,6 +87,16 @@ def run_matt_demo():
     print next_string
 
     return output_dict
+
+
+def launch_pv_viewer(output):
+
+    d = output['dendrogram']
+    dv = output['viewer']
+
+    cdv_pv = CartoonDualViewer(d, dv.hub, alignment='velocity')
+
+    output['dual_viewer_pv'] = cdv_pv
 
 
 def save_matt_template(output_dict, filename):
