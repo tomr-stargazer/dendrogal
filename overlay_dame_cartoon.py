@@ -72,7 +72,7 @@ def overlay_lv_cartoon(ax, wcs_object=None, **kwargs):
 
 	# if wcs_object is None:
 	# 	try:
-	# 		wcs_object= ax.wcs.sub([wcs.WCSSUB_CELESTIAL])
+	# 		wcs_object= ax.wcs.sub(2)
 	# 		wcs_object.wcs.bounds_check(False,False)
 	# 	except AttributeError:
 	# 		print "`ax` has no `wcs` -- please provide one"
@@ -95,7 +95,9 @@ def overlay_lv_cartoon(ax, wcs_object=None, **kwargs):
 	# print left2, right2
 
 	# extents = [left, right, bottom, top]
-	extents = [-112.92, 1479.88, 39.46, 199.92]
+
+	# Note added by Tom Rice on 14 Nov '15: the limits shown below are for Matt P's analysis. Revert to an older (pre-Nov'15) version if you need em.
+	extents = [-112.92, 1479.88, 39.46-282/2.58, 199.92-282/2.58]
 	
 	image = ax.imshow(lv_cartoon_image, zorder=0.05, extent=extents, aspect=2.5, **kwargs)
 	
