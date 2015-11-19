@@ -19,7 +19,7 @@ import astropy.io.fits as fits
 
 from .config import data_path
 
-def load_data(filename, data_path=data_path):
+def load_data(filename, data_path=data_path, memmap=True):
     """
     Loads a datacube (and its header) from disk using `astropy.io.fits.getdata`.
 
@@ -41,7 +41,7 @@ def load_data(filename, data_path=data_path):
     """
 
     # memmap is set to True because large files can otherwise slow us down
-    datacube, header = getdata(data_path+filename, header=True, memmap=True)
+    datacube, header = getdata(data_path+filename, header=True, memmap=memmap)
 
     return datacube, header
 

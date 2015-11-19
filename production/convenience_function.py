@@ -43,6 +43,13 @@ def memoize(func):
     return wrapper
 
 
+def load_permute_data(filename, memmap=False):
+
+    datacube, header = permute_data_to_standard_order(*load_data(filename, memmap=memmap))
+
+    return datacube, header
+
+
 @memoize
 def load_permute_dendro_catalog(filename, min_value=None, min_delta=None, min_npix=None):
 
