@@ -49,14 +49,50 @@ def roll_cube(cube, roll_tuple):
     return shifted_cube
 
 
-def moment_mask(cube, rms_noise, velocity_smoothing=2, spatial_smoothing=2, clip_at_sigma=5):
+def moment_mask(cube, rms_noise, smoothed_rms_noise=None, velocity_smoothing=2, spatial_smoothing=2, clip_at_sigma=5):
+    """
+    Moment-masks a cube according to Dame 2011 prescription.
+
+    Parameters
+    ----------
+    cube : numpy.ndarray
+        PPV datacube with velocity axis first (i.e. numpy zero-th axis).
+        Dame (2011) calls this "T (v,x,y)".
+    rms_noise : float
+        RMS noise per channel in `cube`. 
+        Only used if `smoothed_rms_noise` is not given.
+    smoothed_rms_noise : float or None, optional
+        I recommend you provide this value.
+        If provided, then this is the rms noise in the smooth cube which
+        is used (along with `clip_at_sigma`) for clipping the mask cube.
+    velocity_smoothing : float, optional
+        The data will be convolved along the velocity axis with a Gaussian
+        that has a FWHM of `velocity_smoothing` times the data's velocity 
+        resolution.
+    spatial_smoothing : float, optional
+        The data will be convolved along each spatial axis with a Gaussian
+        that has a FWHM of `spatial_smoothing` times the data's angular 
+        resolution.
+    clip_at_sigma : float, optional
+        What factor times `smoothed_rms_noise` should the mask cube clip at?
+        Dame (2011) recommends that `clip_at_sigma`=5.
+
+    Returns
+    -------
+    moment_masked_cube : numpy.ndarray
+        A noise-suppressed version of `cube`.
+        Dame (2011) calls this "T_M (v,x,y)".
+
+    """
 
     # cube : T (v, x, y)
 
     # T_s (v, x, y)
-    smooth_cube = gsmooth_cube(cube, [velocity_smoothing, spatial_smoothing, spatial_smoothing], kernelsize_mult=1)
+    smooth_cube = gsmooth_cube(cube, [velocity_smoothing/2.3548, spatial_smoothing/2.3548, spatial_smoothing/2.3548], kernelsize_mult=4)
 
-    smoothed_rms_noise = 1/np.sqrt(spatial_smoothing*spatial_smoothing*velocity_smoothing) * rms_noise
+    if smoothed_rms_noise is None:
+        # yes, square root not cube root: noise goes down as (# pixels binned) squared.
+        smoothed_rms_noise = 1/np.sqrt(spatial_smoothing*spatial_smoothing*velocity_smoothing) * rms_noise
 
     # T_c
     clipping_level = clip_at_sigma*smoothed_rms_noise
@@ -66,6 +102,9 @@ def moment_mask(cube, rms_noise, velocity_smoothing=2, spatial_smoothing=2, clip
 
     mask_cube[smooth_cube > clipping_level] = 1
 
+    # This nomenclature departs from the Dame (2011) paper: 
+    #  My `ns` and `nv` are double that of Dame's.
+    #  I do this to simplify the following code.
     ns = spatial_smoothing
     nv = velocity_smoothing
 
