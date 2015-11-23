@@ -25,6 +25,7 @@ from dendrogal.production.convenience_function import load_permute_dendro_catalo
 from dendrogal.production.load_and_process_data import load_data, permute_data_to_standard_order
 from dendrogal.dame_moment_masking import moment_mask
 from dendrogal.production.compute_dendrogram_and_catalog import compute_dendrogram, compute_catalog
+from dendrogal.production.cloud_extractor_q1 import first_quad_cloud_catalog, compile_firstquad_catalog
 
 from dendrogal.production.config import data_path
 
@@ -50,6 +51,10 @@ def compute_noise_added_processed_dendrogram(noise_added=0, original_noise=0.18)
         print "loading data..."
         datacube, header = load_permute_data(data_filename, memmap=False)
 
+        print "HEADER:"
+        print header
+        print datacube.shape
+
         # add some noise to it
         print "adding noise to data..."
         noise_cube = np.random.normal(scale=noise_added, size=datacube.shape)
@@ -72,4 +77,26 @@ def compute_noise_added_processed_dendrogram(noise_added=0, original_noise=0.18)
         from dendrogal.production.make_firstquad_stub import d, catalog
 
         return d, catalog
+
+def extract_properties_from_dendrogram_catalog(d, catalog):
+
+    # we want to extract the following:
+
+    # (Size-linewidth results, mass spectrum results, total mass, number of clouds.)
+
+    processed_catalog = first_quad_cloud_catalog(d=d, catalog=catalog)
+    reduced_catalog = compile_firstquad_catalog(processed_catalog)
+
+    n_clouds = len(reduced_catalog)
+    total_mass = np.nansum(reduced_catalog['mass'])
+
+    print "number of clouds: {0}\ntotal mass: {1:.2e} Msun".format(n_clouds, total_mass)
+
+    output_dict = {}
+
+    output_dict['n_clouds'] = n_clouds
+    output_dict['total_mass'] = total_mass
+
+    return output_dict
+
 
