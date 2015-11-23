@@ -21,10 +21,10 @@ from dendrogal.production.velocity_split import calculate_velocity_split, descen
 from dendrogal.reid_distance_assigner import make_universal_distance_column, distance_assigner_with_plusminus_errors
 from dendrogal.catalog_tree_stats import compute_tree_stats
 
-from dendrogal.production.make_firstquad_stub import d, catalog, header, metadata
+from dendrogal.production.make_firstquad_stub import d, catalog
 
 
-def first_quad_cloud_catalog():
+def first_quad_cloud_catalog(d=d, catalog=catalog):
     """
     This generates a 'processed' dendrogram catalog, made
     from the global, pre-loaded `catalog` from the first quadrant.
@@ -99,7 +99,7 @@ def first_quad_cloud_catalog():
     return catalog_cp
 
 
-def get_positive_velocity_clouds(input_catalog, max_descendants=10):
+def get_positive_velocity_clouds(input_catalog, max_descendants=10, dendrogram=d):
     """
     Extracts clouds from the positive-velocity region of the first quad.
 
@@ -141,7 +141,7 @@ def get_positive_velocity_clouds(input_catalog, max_descendants=10):
     pre_output_catalog = catalog[~disqualified & qualified]
 
     # now it's just got clouds that COULD be real
-    almost_output_catalog = reduce_catalog(d, pre_output_catalog)
+    almost_output_catalog = reduce_catalog(dendrogram, pre_output_catalog)
 
     # disambiguate distances here
     assign_distance_columns(almost_output_catalog, *distance_disambiguator(almost_output_catalog, ambiguous_threshold=0.05))
@@ -156,7 +156,7 @@ def get_positive_velocity_clouds(input_catalog, max_descendants=10):
     return output_catalog
 
 
-def get_negative_velocity_clouds(input_catalog, max_descendants=10):
+def get_negative_velocity_clouds(input_catalog, max_descendants=10, dendrogram=d):
     """
     Extracts clouds from the negative-velocity region of the first quad.
 
@@ -205,7 +205,7 @@ def get_negative_velocity_clouds(input_catalog, max_descendants=10):
         ~disqualified_location & ~disqualified_extreme_negative_velocities_near_GC]
 
     # now it's just got clouds that COULD be real
-    almost_output_catalog = reduce_catalog(d, pre_output_catalog)
+    almost_output_catalog = reduce_catalog(dendrogram, pre_output_catalog)
 
     # these objects already have mass, size etc computed so that's fine
     final_qualified = (almost_output_catalog['mass'] > 3e3)
@@ -214,7 +214,7 @@ def get_negative_velocity_clouds(input_catalog, max_descendants=10):
     return output_catalog
 
 
-def get_low_velocity_perseus_clouds(input_catalog, max_descendants=10):
+def get_low_velocity_perseus_clouds(input_catalog, max_descendants=10, dendrogram=d):
     """
     Extracts clouds from the low-velocity Perseus region of Q1.
 
@@ -261,7 +261,7 @@ def get_low_velocity_perseus_clouds(input_catalog, max_descendants=10):
     pre_output_catalog = catalog[~disqualified & qualified]
 
     # now it's just got clouds that COULD be real
-    almost_output_catalog = reduce_catalog(d, pre_output_catalog)
+    almost_output_catalog = reduce_catalog(dendrogram, pre_output_catalog)
 
     # disambiguate distances here
     assign_distance_columns(almost_output_catalog, *distance_disambiguator(almost_output_catalog, ambiguous_threshold=0.05))
@@ -280,15 +280,15 @@ def get_low_velocity_perseus_clouds(input_catalog, max_descendants=10):
     return output_catalog
 
 
-def compile_firstquad_catalog(input_catalog):
+def compile_firstquad_catalog(input_catalog, dendrogram=d):
 
-    negative_v_catalog = get_negative_velocity_clouds(input_catalog)
-    positive_v_catalog = get_positive_velocity_clouds(input_catalog)
-    low_v_catalog = get_low_velocity_perseus_clouds(input_catalog)
+    negative_v_catalog = get_negative_velocity_clouds(input_catalog, dendrogram=dendrogram)
+    positive_v_catalog = get_positive_velocity_clouds(input_catalog, dendrogram=dendrogram)
+    low_v_catalog = get_low_velocity_perseus_clouds(input_catalog, dendrogram=dendrogram)
 
     composite_unreduced_catalog = astropy.table.vstack([negative_v_catalog, positive_v_catalog, low_v_catalog])
 
-    composite_reduced_catalog = reduce_catalog(d, composite_unreduced_catalog)
+    composite_reduced_catalog = reduce_catalog(dendrogram, composite_unreduced_catalog)
 
     return composite_reduced_catalog
 
