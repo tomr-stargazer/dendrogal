@@ -50,7 +50,7 @@ def roll_cube(cube, roll_tuple):
     return shifted_cube
 
 
-def moment_mask(cube, rms_noise, smoothed_rms_noise=None, velocity_smoothing=2, spatial_smoothing=2, clip_at_sigma=5):
+def moment_mask(cube, rms_noise, smoothed_rms_noise=None, velocity_smoothing=2, spatial_smoothing=2, clip_at_sigma=5, velocity_axis=0):
     """
     Moment-masks a cube according to Dame 2011 prescription.
 
@@ -88,8 +88,15 @@ def moment_mask(cube, rms_noise, smoothed_rms_noise=None, velocity_smoothing=2, 
 
     # cube : T (v, x, y)
 
+    # convert between FWHM and Gaussian "sigma"
+    velocity_sigma = velocity_smoothing/2.3548
+    spatial_sigma = spatial_smoothing/2.3548
+
+    kernelsize = 3 * [spatial_sigma]
+    kernelsize[velocity_axis] = velocity_sigma
+
     # T_s (v, x, y)
-    smooth_cube = gsmooth_cube(cube, [velocity_smoothing/2.3548, spatial_smoothing/2.3548, spatial_smoothing/2.3548], kernelsize_mult=4)
+    smooth_cube = gsmooth_cube(cube, kernelsize, kernelsize_mult=4)
 
     if smoothed_rms_noise is None:
         # yes, square root not cube root: noise goes down as (# pixels binned) squared.
