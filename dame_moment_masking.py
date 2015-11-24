@@ -1,13 +1,14 @@
 """ 
 This is an implementation of Tom Dame's datacube moment-masking technique. 
 
-A shortcoming of clipping is that it determines whether or not a particular 
+As Tom Dame says:
+"A shortcoming of clipping is that it determines whether or not a particular 
 spectral channel contains real emission based only on the intensity level in
 that channel, whereas a seasoned radio astronomer would, in addition, look 
 for spatial and velocity coherence of the signal. Essentially, moment masking
 is a refinement of the clipping method in which the coherence of the 
 signal---determined from a smoothed version of the data cube---is considered 
-in determining which peaks are real (i.e., not blanked).
+in determining which peaks are real (i.e., not blanked)."
 
 Described in detail here:
 http://www.cfa.harvard.edu/rtdc/CO/MomentMasking/
