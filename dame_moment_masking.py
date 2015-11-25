@@ -86,6 +86,9 @@ def moment_mask(cube, rms_noise, smoothed_rms_noise=None, velocity_smoothing=2, 
 
     """
 
+    if velocity_axis != 2:
+        raise NotImplementedError("Velocity axis has to be zero right now.")
+
     # cube : T (v, x, y)
 
     # convert between FWHM and Gaussian "sigma"
@@ -122,6 +125,7 @@ def moment_mask(cube, rms_noise, smoothed_rms_noise=None, velocity_smoothing=2, 
 
             for dv in range(-nv+1, nv):
 
+                # The following line needs to be fixed before we can lift the NotImplementedError exception.
                 rolled_smooth_cube = roll_cube(smooth_cube, (dv, dx, dy)) # assumes data has been transposed (2, 0, 1)
 
                 mask_cube[rolled_smooth_cube > clipping_level] = 1
