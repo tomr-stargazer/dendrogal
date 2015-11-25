@@ -92,8 +92,8 @@ def moment_mask(cube, rms_noise, smoothed_rms_noise=None, velocity_smoothing=2, 
     # cube : T (v, x, y)
 
     # convert between FWHM and Gaussian "sigma"
-    velocity_sigma = velocity_smoothing/2.3548
-    spatial_sigma = spatial_smoothing/2.3548
+    velocity_sigma = velocity_smoothing/(2*np.sqrt(2*np.log(2)))
+    spatial_sigma = spatial_smoothing/(2*np.sqrt(2*np.log(2)))
 
     kernelsize = 3 * [spatial_sigma]
     kernelsize[velocity_axis] = velocity_sigma
