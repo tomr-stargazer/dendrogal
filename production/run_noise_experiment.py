@@ -20,6 +20,7 @@ from __future__ import division
 
 import os
 import numpy as np
+import matplotlib.pyplot as plt
 
 from dendrogal.production.convenience_function import load_permute_dendro_catalog, load_permute_data
 from dendrogal.production.load_and_process_data import load_data, permute_data_to_standard_order
@@ -40,6 +41,7 @@ dendrogram_kwargs = {'min_value': min_value,
 
 # btw the noise here is 0.18 K / px / channel
 data_filename = "DHT08_Quad1_interp.fits"
+raw_filename = "DHT08_Quad1_raw.fits"
 
 # so for the "part 2" thing above... we'll have to take the INTERPOLATED data and moment-mask it manually yeah?
 
@@ -50,10 +52,6 @@ def compute_noise_added_processed_dendrogram(noise_added=0, original_noise=0.18,
         # get some data
         print "loading data..."
         datacube, header = load_permute_data(data_filename, memmap=False)
-
-        print "HEADER:"
-        print header
-        print datacube.shape
 
         # add some noise to it
         print "adding noise to data..."
@@ -67,7 +65,7 @@ def compute_noise_added_processed_dendrogram(noise_added=0, original_noise=0.18,
         if smoothed_rms_noise is None:
             smoothed_rms_noise = 0.05
 
-        moment_masked_cube = moment_mask(noise_added_cube, total_noise, velocity_smoothing=4, smoothed_rms_noise=smoothed_rms_noise)
+        moment_masked_cube = moment_mask(noise_added_cube, total_noise, velocity_smoothing=3, smoothed_rms_noise=smoothed_rms_noise)
 
         # now we'll dendrogram it
         print "dendrogramming data..."
@@ -101,6 +99,20 @@ def extract_properties_from_dendrogram_catalog(dendrogram, raw_catalog):
     output_dict['n_clouds'] = n_clouds
     output_dict['total_mass'] = total_mass
 
+    output_dict['inner_larson_beta'] = None
+    output_dict['inner_larson_A'] = None
+
+    output_dict['outer_larson_beta'] = None
+    output_dict['outer_larson_A'] = None
+
+    output_dict['inner_N0'] = None
+    output_dict['inner_M0'] = None
+    output_dict['inner_gamma'] = None
+
+    output_dict['outer_N0'] = None
+    output_dict['outer_M0'] = None
+    output_dict['outer_gamma'] = None
+
     return output_dict
 
 
@@ -120,23 +132,14 @@ def inspect_noise_in_first_quadrant_smoothed_cube_before_masking(noise_added=0):
 
     coordinate_pairs = [ (45, 145), (46, 126), (44, 152), (90, 90), (95, 10) ]
 
-    raw_rmss = []
+    # for (x, y) in coordinate_pairs:
 
-    print "We have added {0:.5f} noise.".format(noise_added)
-    print ""
-    print "Here are some stats on the raw cube:"
+    #     raw_spectrum = datacube[50:-50, x, y]
+    #     rms = np.nanstd(raw_spectrum)
 
-    for (x, y) in coordinate_pairs:
+    #     print "  rms at {0}, {1}: {2:.4f}".format(x, y, rms)
 
-        raw_spectrum = datacube[:, x, y]
-        rms = np.nanstd(raw_spectrum)
-
-        print "  rms at {0}, {1}: {2:.4f}".format(x, y, rms)
-
-        raw_rmss.append(rms)
-
-    print "Mean raw rms: {0:.4f}".format(np.mean(raw_rmss))
-
+    #     raw_rmss.append(rms)
 
     smooth_rmss = []
 
@@ -144,7 +147,7 @@ def inspect_noise_in_first_quadrant_smoothed_cube_before_masking(noise_added=0):
 
     for (x, y) in coordinate_pairs:
 
-        smooth_spectrum = smooth_cube[:, x, y]
+        smooth_spectrum = smooth_cube[50:-50, x, y]
         rms = np.nanstd(smooth_spectrum)
 
         print "  rms at {0}, {1}: {2:.4f}".format(x, y, rms)
@@ -168,7 +171,7 @@ def multiple_noise_trials_experiment():
 
     noise_levels = [0.05, 0.1, 0.2]
 
-    n_times_per_noise_level = 3
+    n_times_per_noise_level = 1
 
     output_dict = {}
 
@@ -186,3 +189,70 @@ def multiple_noise_trials_experiment():
             output_dict['{0}:{1}'.format(noise_level, i)] = (n_clouds, mass)
 
     return output_dict
+
+
+def compare_first_quadrant_moment_masking(smoothed_rms_noise):
+
+    print "loading data..."
+    datacube, header = load_permute_data(data_filename, memmap=False)
+
+    noise = 0.18
+
+    moment_masked_cube = moment_mask(datacube, noise, velocity_smoothing=4, smoothed_rms_noise=None)
+
+    actual_moment_masked_cube, masked_header = load_permute_data("DHT08_Quad1_mominterp.fits", memmap=False)
+
+    return moment_masked_cube, actual_moment_masked_cube
+
+
+reference_cube, reference_header = load_permute_data("DHT08_Quad1_mom.fits", memmap=False)
+
+raw_cube, raw_header = load_permute_data(raw_filename, memmap=False)
+
+
+def moment_masking_comparison_diagnostic(smoothed_rms_noise=0.05, reference_cube=reference_cube, data_cube=raw_cube):
+
+    moment_cube = moment_mask(raw_cube, rms_noise=0.18, smoothed_rms_noise=smoothed_rms_noise, velocity_smoothing=3, spatial_smoothing=2)
+
+    diff_cube = np.abs(reference_cube - moment_cube)
+
+    fig = plt.figure()
+
+    ax_reference = fig.add_subplot(131)
+    ax_moment = fig.add_subplot(132)
+    ax_diff = fig.add_subplot(133)
+
+    reference_lv = np.nansum(reference_cube, axis=1)
+    reference_lv[(reference_lv < 0) | np.isinf(reference_lv) | np.isnan(reference_lv)] = 0
+
+    moment_lv = np.nansum(moment_cube, axis=1)
+    moment_lv[(moment_lv < 0) | np.isinf(moment_lv) | np.isnan(moment_lv)] = 0
+
+    diff_lv = np.nansum(diff_cube, axis=1)
+    diff_lv[(diff_lv < 0) | np.isinf(diff_lv) | np.isnan(diff_lv)] = 0
+
+    reference_image = ax_reference.imshow(np.log10(reference_lv+1), origin='lower', 
+            interpolation='nearest', cmap='gray', aspect=2.5)
+
+    moment_image = ax_moment.imshow(np.log10(moment_lv+1), origin='lower', 
+            interpolation='nearest', cmap='gray', aspect=2.5)
+
+    diff_image = ax_diff.imshow(np.log10(diff_lv+1), origin='lower', 
+            interpolation='nearest', cmap='gray', aspect=2.5)
+
+    print ""
+    print smoothed_rms_noise
+    print "Max diff: {0:.4f}".format(np.nanmax(diff_cube))
+    print np.nanmedian(diff_cube)
+    print np.nanstd(diff_cube)
+    print "{0:.2e}".format(np.nansum(diff_cube))
+
+    ax_reference.set_title("Smoothed RMS noise assumed: {0}".format(smoothed_rms_noise))
+    ax_diff.set_xlabel("Diff std: {0:.3f} Diff sum: {1:.2e}".format(np.nanstd(diff_cube), np.nansum(diff_cube)))
+
+    fig.canvas.draw()
+
+    return fig
+
+
+
