@@ -86,7 +86,7 @@ def moment_mask(cube, rms_noise, smoothed_rms_noise=None, velocity_smoothing=2, 
 
     """
 
-    if velocity_axis != 2:
+    if velocity_axis != 0:
         raise NotImplementedError("Velocity axis has to be zero right now.")
 
     # cube : T (v, x, y)
