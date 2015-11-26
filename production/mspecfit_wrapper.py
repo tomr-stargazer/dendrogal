@@ -51,9 +51,9 @@ def parse_idl_output(output):
 
     split_output = output.split("\n")
 
-    N_0 = float(split_output[0])
-    M_0 = float(split_output[1])
-    gamma = float(split_output[2])
+    N_0 = float(split_output[-5])
+    M_0 = float(split_output[-4])
+    gamma = float(split_output[-3])
 
     output_dict = {}
     output_dict['N_0'] = N_0
