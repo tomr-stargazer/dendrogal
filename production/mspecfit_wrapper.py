@@ -9,7 +9,7 @@ import subprocess
 
 import numpy as np
 
-from dendrogal.production.config import idl_code_path
+from dendrogal.production.config import idl_code_path, idl_executable
 
 
 def prepare_stuff_for_mspecfit(catalog, name):
@@ -30,87 +30,48 @@ def prepare_stuff_for_mspecfit(catalog, name):
 
 def send_mspec_command_to_idl(name, notrunc=1):
 
-    cwd = os.getcwd()
+    p1 = subprocess.Popen(["echo",
+        'read_files_noise_experiment(\'{0}\', {1})'.format(name, notrunc)],
+        stdout=subprocess.PIPE)
+    p2 = subprocess.Popen([idl_executable], 
+        stdin=p1.stdout, cwd=idl_code_path, shell=True, 
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    idl_command = "/Applications/exelis/idl83/bin/idl"
-
-
-    # os.chdir(idl_code_path)
-
-    p1 = subprocess.Popen(["echo", 'read_files_noise_experiment(\'{0}\', {1})'.format(name, notrunc)], stdout=subprocess.PIPE)
-
-    # return p1.communicate()
-
-    p2 = subprocess.Popen([idl_command], stdin=p1.stdout, cwd=idl_code_path, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
-    # p2 = subprocess.Popen([idl_command], stdin='\"read_files_noise_experiment(\'{0}\', {1})\"'.format(name, notrunc), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    
-    # p1.communicate()
     output = p2.communicate()[0]
 
-    # os.chdir(cwd)
-
-
-    # output = os.system("echo \"read_files_noise_experiment(\'{0}\', {1})\" | {2}".format(name, notrunc, idl_command))
-
     return output
 
 
-def send_mspec_command_to_idl_backup(name, notrunc=1):
+def parse_idl_output(output):
 
-    idl_command = "/Applications/exelis/idl83/bin/idl"
+    # ok so output is a string.
+# ; OUTPUTS:
+# ;   fit -- the parameters of the fit: [N_0, M_0, gamma] for a
+# ;          truncated power law, [0.0 , N_0, gamma] for a power law.
 
-    cwd = os.getcwd()
+    split_output = output.split("\n")
 
-    # p1 = subprocess.Popen(["echo", '\"read_files_noise_experiment(\'{0}\', {1})\"'.format(name, notrunc)], stdout=subprocess.PIPE)
+    N_0 = float(split_output[0])
+    M_0 = float(split_output[1])
+    gamma = float(split_output[2])
 
-    # # return p1.communicate()
+    output_dict = {}
+    output_dict['N_0'] = N_0
+    output_dict['M_0'] = M_0
+    output_dict['gamma'] = gamma
 
-
-    # p2 = subprocess.Popen([idl_command], stdin=p1.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=idl_code_path)
-
-    # p2 = subprocess.Popen([idl_command], stdin='\"read_files_noise_experiment(\'{0}\', {1})\"'.format(name, notrunc), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    
-    # p1.communicate()
-    # output = p2.communicate()
-
-    os.chdir(idl_code_path)
-
-    output = os.system("echo \"read_files_noise_experiment(\'{0}\', {1})\" | {2}".format(name, notrunc, idl_command))
-
-    os.chdir(cwd)
-
-    return output
+    return output_dict
 
 
-def send_mspec_command_to_idl_backup2(name, notrunc=1):
+def get_mspec_fit(catalog, name, notrunc=1):
+    """ Combines the above helper functions. """
 
-    idl_command = "/Applications/exelis/idl83/bin/idl"
+    # first - make the files
+    prepare_stuff_for_mspecfit(catalog, name)
 
-    p1 = subprocess.check_output("echo \"read_files_noise_experiment(\'{0}\', {1})\" | {2}".format(name, notrunc, idl_command))
+    # next - tell IDL to read them and spew out stdout noise
+    output = send_mspec_command_to_idl(name, notrunc)
 
-    return p1
+    # finally - parse it and return the values as a dict
+    return parse_idl_output(output)
 
-    # p1 = subprocess.Popen(["echo", '\"read_files_noise_experiment(\'{0}\', {1})\"'.format(name, notrunc)], stdout=subprocess.PIPE)
-
-    # # return p1.communicate()
-
-
-    # p2 = subprocess.Popen([idl_command], stdin=p1.stdout, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=idl_code_path)
-
-    # p2 = subprocess.Popen([idl_command], stdin='\"read_files_noise_experiment(\'{0}\', {1})\"'.format(name, notrunc), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    
-    # p1.communicate()
-    # output = p2.communicate()
-
-    os.chdir(idl_code_path)
-
-    output = os.system("echo \"read_files_noise_experiment(\'{0}\', {1})\" | {2}".format(name, notrunc, idl_command))
-
-    os.chdir(cwd)
-
-    return output    
-
-
-def parse_idl_output():
-    pass
