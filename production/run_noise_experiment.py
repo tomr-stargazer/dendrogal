@@ -28,6 +28,9 @@ from dendrogal.dame_moment_masking import moment_mask, gsmooth_cube
 from dendrogal.production.compute_dendrogram_and_catalog import compute_dendrogram, compute_catalog
 from dendrogal.production.cloud_extractor_q1 import first_quad_cloud_catalog, compile_firstquad_catalog
 
+from dendrogal.production.catalog_measurement import size_linewidth_slope
+from dendrogal.production.mspecfit_wrapper import get_mspec_fit
+
 from dendrogal.production.config import data_path
 
 # these are hard-coded because reasons.
@@ -80,7 +83,7 @@ def compute_noise_added_processed_dendrogram(noise_added=0, original_noise=0.18,
 
         return d, catalog
 
-def extract_properties_from_dendrogram_catalog(dendrogram, raw_catalog):
+def extract_properties_from_dendrogram_catalog(dendrogram, raw_catalog, i=0):
 
     # we want to extract the following:
 
@@ -88,6 +91,32 @@ def extract_properties_from_dendrogram_catalog(dendrogram, raw_catalog):
 
     processed_catalog = first_quad_cloud_catalog(d=dendrogram, catalog=raw_catalog)
     reduced_catalog = compile_firstquad_catalog(processed_catalog, dendrogram=dendrogram)
+
+    pruned_catalog = reduced_catalog[
+        # on the sky...
+        (
+        # northernly
+        ((reduced_catalog['x_cen'] > 20) & (reduced_catalog['x_cen'] < 160)) |
+        # southernly
+        ((reduced_catalog['x_cen'] > 200) & (reduced_catalog['x_cen'] < 340)) 
+        ) & 
+        # in velocity space
+        (np.abs(reduced_catalog['v_cen']) > 20)
+        ]
+
+    inner_catalog = pruned_catalog[pruned_catalog['R_gal'] < 8]
+    outer_catalog = pruned_catalog[pruned_catalog['R_gal'] > 9]
+
+    outer_max_mass = 3e7
+    outer_min_mass = 1e4
+    inner_max_mass = 3e7
+    inner_min_mass = 1e5
+
+    vetted_inner_catalog = inner_catalog[(~np.isnan(inner_catalog['mass'])) &
+                                    (inner_catalog['mass']>inner_min_mass) & (inner_catalog['mass']<inner_max_mass)]
+
+    vetted_outer_catalog = outer_catalog[(~np.isnan(outer_catalog['mass'])) &
+                                    (outer_catalog['mass']>outer_min_mass) & (outer_catalog['mass']<outer_max_mass)]
 
     n_clouds = len(reduced_catalog)
     total_mass = np.nansum(reduced_catalog['mass'])
@@ -99,19 +128,40 @@ def extract_properties_from_dendrogram_catalog(dendrogram, raw_catalog):
     output_dict['n_clouds'] = n_clouds
     output_dict['total_mass'] = total_mass
 
-    output_dict['inner_larson_beta'] = None
-    output_dict['inner_larson_A'] = None
+    # Size Linewidth results
 
-    output_dict['outer_larson_beta'] = None
-    output_dict['outer_larson_A'] = None
+    inner_larson_output = size_linewidth_slope(inner_catalog)
+    outer_larson_output = size_linewidth_slope(outer_catalog)
 
-    output_dict['inner_N0'] = None
-    output_dict['inner_M0'] = None
-    output_dict['inner_gamma'] = None
+    larson_dict = {}
 
-    output_dict['outer_N0'] = None
-    output_dict['outer_M0'] = None
-    output_dict['outer_gamma'] = None
+    larson_dict['inner_larson_beta'] = inner_larson_output.beta[1]
+    larson_dict['inner_larson_A'] = inner_larson_output.beta[0]
+
+    larson_dict['outer_larson_beta'] = outer_larson_output.beta[1]
+    larson_dict['outer_larson_A'] = outer_larson_output.beta[0]
+
+    output_dict['larson'] = larson_dict
+
+    # feed stuff to Mass function
+
+    # inner : truncated
+    inner_mspec = get_mspec_fit(vetted_inner_catalog, 'inner_', notrunc=0)
+
+    # outer : non-truncated
+    outer_mspec = get_mspec_fit(vetted_outer_catalog, 'outer_', notrunc=1)
+
+    mspec_dict = {}
+
+    mspec_dict['inner_N0'] = inner_mspec['N_0']
+    mspec_dict['inner_M0'] = inner_mspec['M_0']
+    mspec_dict['inner_gamma'] = inner_mspec['gamma']
+
+    mspec_dict['outer_N0'] = outer_mspec['N_0']
+    mspec_dict['outer_M0'] = outer_mspec['M_0']
+    mspec_dict['outer_gamma'] = outer_mspec['gamma']
+
+    output_dict['mspec'] = mspec_dict
 
     return output_dict
 
@@ -150,8 +200,6 @@ def inspect_noise_in_first_quadrant_smoothed_cube_before_masking(noise_added=0):
         smooth_spectrum = smooth_cube[50:-50, x, y]
         rms = np.nanstd(smooth_spectrum)
 
-        print "  rms at {0}, {1}: {2:.4f}".format(x, y, rms)
-
         smooth_rmss.append(rms)
 
     print "Mean smooth rms: {0:.4f}".format(np.mean(smooth_rmss))
@@ -161,32 +209,30 @@ def inspect_noise_in_first_quadrant_smoothed_cube_before_masking(noise_added=0):
 
 def multiple_noise_trials_experiment():
 
-    # ok so here's the story:
-
     # first get the expected noise to use for moment-masking
-
     # then do the whole shebang and get your d, catalog
 
-    # then 
+    noise_levels = [0.045, 0.09, 0.18, 0.27, 0.36]
 
-    noise_levels = [0.05, 0.1, 0.2]
-
-    n_times_per_noise_level = 1
+    n_times_per_noise_level = 5
 
     output_dict = {}
 
-    for noise_level in noise_levels:
+    for i, noise_level in enumerate(noise_levels):
 
-        smoothed_rms_noise = 1.2*inspect_noise_in_first_quadrant_smoothed_cube_before_masking(noise_added=noise_level)
+        smoothed_rms_noise = inspect_noise_in_first_quadrant_smoothed_cube_before_masking(noise_added=noise_level)
 
         for i in range(n_times_per_noise_level):
 
-            d, catalog = compute_noise_added_processed_dendrogram(noise_added=noise_level, smoothed_rms_noise=smoothed_rms_noise)
+            d, catalog = compute_noise_added_processed_dendrogram(
+                noise_added=noise_level, smoothed_rms_noise=smoothed_rms_noise)
 
-            extract_result = extract_properties_from_dendrogram_catalog(d, catalog)
+            extract_result = extract_properties_from_dendrogram_catalog(d, catalog, i)
             n_clouds, mass = extract_result['n_clouds'], extract_result['total_mass']
 
-            output_dict['{0}:{1}'.format(noise_level, i)] = (n_clouds, mass)
+            mass_spectrum_dict = {}
+
+            output_dict['{0}:{1}'.format(noise_level, i)] = (i, noise_level, n_clouds, mass, extract_result['larson'], extract_result['mspec'])
 
     return output_dict
 
