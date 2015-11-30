@@ -96,7 +96,50 @@ def build_table_from_output_dict(output_dict):
 
 
 def plot_noise_experiment(output_table):
+    """
+    Makes a six-panel plot of the output of the noise trials.
+
+    """
 
     if type(output_table) is dict:
         output_table = build_table_from_output_dict(output_table)
+
+    fig = plt.figure(figsize=(8,8))
+
+    ax_nclouds = fig.add_subplot(321)
+    ax_totalmass = fig.add_subplot(322, sharex=ax_nclouds)
+
+    ax_larson_A = fig.add_subplot(323, sharex=ax_nclouds)
+    ax_larson_beta = fig.add_subplot(324, sharex=ax_nclouds)
+
+    ax_mspec_M0 = fig.add_subplot(325, sharex=ax_nclouds)
+    ax_mspec_gamma = fig.add_subplot(326, sharex=ax_nclouds)
+
+    noise_added = output_table['noise_added']
+
+    ax_nclouds.plot(noise_added, output_table['n_clouds'], 'ko', ms=5)
+    ax_nclouds.set_ylim(0, 450)
+    ax_nclouds.set_yticks(np.linspace(0,400,5))
+    ax_nclouds.set_ylabel("Number of clouds")
+
+    ax_nclouds.set_xticks([0]+list(set(noise_added) - set([0.045])))
+    ax_nclouds.set_xlim(0, 0.4)
+
+    ax_totalmass.plot(noise_added, output_table['total_mass']/1e7, 'ko', ms=5)
+    ax_totalmass.set_ylim(0, 11)
+    ax_totalmass.set_ylabel("Total mass / $10^7 M_\odot$")
+
+    ax_larson_A.plot(noise_added, output_table['inner_larson_A'], 'ko', ms=5)
+    ax_larson_A.set_ylim(0, 0.65)
+
+    ax_larson_beta.plot(noise_added, output_table['inner_larson_beta'], 'ko', ms=5)
+    ax_larson_beta.set_ylim(0, 0.6)
+
+    ax_mspec_M0.plot(noise_added, output_table['inner_M0']/1e6, 'ko', ms=5)
+    ax_mspec_M0.set_ylim(0, 12)
+
+    ax_mspec_gamma.plot(noise_added, output_table['inner_gamma'], 'ko', ms=5)
+    ax_mspec_gamma.set_ylim(-2, -1.4)
+
+    return fig
 
