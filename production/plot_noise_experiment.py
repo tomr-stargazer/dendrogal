@@ -48,6 +48,10 @@ import matplotlib.pyplot as plt
 import astropy.table
 
 
+import matplotlib
+matplotlib.rcParams['mathtext.fontset'] = 'stix'
+matplotlib.rcParams['font.family'] = 'STIXGeneral'
+
 def build_table_from_output_dict(output_dict):
     """ Traverses the output dict to build a plottable table. """
 
@@ -134,11 +138,12 @@ def plot_noise_experiment(output_table):
     ax_nclouds.plot(noise_added, output_table['n_clouds'], 'ko', ms=5)
     ax_nclouds.set_ylim(0, 450)
     ax_nclouds.set_yticks(np.linspace(0,400,5))
-    ax_nclouds.set_ylabel("Number of clouds")
+    # ax_nclouds.set_ylabel("Number of clouds")
+
+    ax_nclouds.text(0.025, 200, "(a) Number of clouds", fontsize=14, family='serif')
 
     ax_nclouds.plot([0, 0.5], [real_nclouds]*2, 'b--', lw=0.5, scalex=False, scaley=False)
 
-    # ax_nclouds.text()
 
     ax_nclouds.set_xticks([0]+list(set(noise_added) - set([0.045])))
     ax_nclouds.set_xlim(0, 0.4)
@@ -146,7 +151,9 @@ def plot_noise_experiment(output_table):
 
     ax_totalmass.plot(noise_added, output_table['total_mass']/1e7, 'ko', ms=5)
     ax_totalmass.set_ylim(0, 11)
-    ax_totalmass.set_ylabel("Total mass / $10^7 M_\odot$")
+    # ax_totalmass.set_ylabel("Total mass / $10^7 M_\odot$")
+
+    ax_totalmass.text(0.025, 3, "(b) Total mass of clouds\n\n$(\\times 10^7 M_\odot)$", fontsize=14, family='serif')
 
     ax_totalmass.plot([0, 0.5], [real_totalmass]*2, 'b--', lw=0.5, scalex=False, scaley=False)
 
@@ -158,6 +165,8 @@ def plot_noise_experiment(output_table):
     ax_larson_A.plot([0, 0.5], [real_larson_A+err_larson_A]*2, 'k:', lw=0.5, scalex=False, scaley=False)
     ax_larson_A.plot([0, 0.5], [real_larson_A-err_larson_A]*2, 'k:', lw=0.5, scalex=False, scaley=False)
 
+    ax_larson_A.text(0.025, 0.1, "(c) Size-linewidth $A$\nfrom $\\sigma_v  = A \\times R^\\beta$", fontsize=14, family='serif')
+
 
     ax_larson_beta.plot(noise_added, output_table['inner_larson_beta'], 'ko', ms=5)
     ax_larson_beta.set_ylim(0, 0.6)
@@ -165,6 +174,8 @@ def plot_noise_experiment(output_table):
     ax_larson_beta.plot([0, 0.5], [real_larson_beta]*2, 'b--', lw=0.5, scalex=False, scaley=False)
     ax_larson_beta.plot([0, 0.5], [real_larson_beta+err_larson_beta]*2, 'k:', lw=0.5, scalex=False, scaley=False)
     ax_larson_beta.plot([0, 0.5], [real_larson_beta-err_larson_beta]*2, 'k:', lw=0.5, scalex=False, scaley=False)
+
+    ax_larson_beta.text(0.025, 0.1, "(d) Size-linewidth $\\beta$\nfrom $\\sigma_v  = A \\times R^\\beta$", fontsize=14, family='serif')
 
 
     ax_mspec_M0.plot(noise_added, output_table['inner_M0']/1e6, 'ko', ms=5)
@@ -174,6 +185,9 @@ def plot_noise_experiment(output_table):
     ax_mspec_M0.plot([0, 0.5], [real_mspec_M0+err_mspec_M0]*2, 'k:', lw=0.5, scalex=False, scaley=False)
     ax_mspec_M0.plot([0, 0.5], [real_mspec_M0-err_mspec_M0]*2, 'k:', lw=0.5, scalex=False, scaley=False)
 
+    ax_mspec_M0.set_xlabel("Noise added (K)", family='serif', fontsize=14)
+    ax_mspec_M0.text(0.025, 1, "(e) Mass spectrum\n\ntruncation mass $M_0$", fontsize=14, family='serif')
+
 
     ax_mspec_gamma.plot(noise_added, output_table['inner_gamma'], 'ko', ms=5)
     ax_mspec_gamma.set_ylim(-2, -1.4)
@@ -181,6 +195,8 @@ def plot_noise_experiment(output_table):
     ax_mspec_gamma.plot([0, 0.5], [real_mspec_gamma]*2, 'b--', lw=0.5, scalex=False, scaley=False)
     ax_mspec_gamma.plot([0, 0.5], [real_mspec_gamma+err_mspec_gamma]*2, 'k:', lw=0.5, scalex=False, scaley=False)
     ax_mspec_gamma.plot([0, 0.5], [real_mspec_gamma-err_mspec_gamma]*2, 'k:', lw=0.5, scalex=False, scaley=False)
+
+    ax_mspec_gamma.text(0.025, -1.9, "(f) Mass spectrum slope $\\gamma$", fontsize=14, family='serif')
 
 
     return fig
