@@ -153,7 +153,7 @@ def plot_noise_experiment(output_table):
     ax_totalmass.set_ylim(0, 11)
     # ax_totalmass.set_ylabel("Total mass / $10^7 M_\odot$")
 
-    ax_totalmass.text(0.025, 3, "(b) Total mass of clouds\n\n$(\\times 10^7 M_\odot)$", fontsize=14, family='serif')
+    ax_totalmass.text(0.025, 3, "(b) Total mass of clouds\n$(\\times 10^7 M_\odot)$", fontsize=14, family='serif')
 
     ax_totalmass.plot([0, 0.5], [real_totalmass]*2, 'b--', lw=0.5, scalex=False, scaley=False)
 
@@ -186,7 +186,7 @@ def plot_noise_experiment(output_table):
     ax_mspec_M0.plot([0, 0.5], [real_mspec_M0-err_mspec_M0]*2, 'k:', lw=0.5, scalex=False, scaley=False)
 
     ax_mspec_M0.set_xlabel("Noise added (K)", family='serif', fontsize=14)
-    ax_mspec_M0.text(0.025, 1, "(e) Mass spectrum\n\ntruncation mass $M_0$", fontsize=14, family='serif')
+    ax_mspec_M0.text(0.025, 1, "(e) Mass spectrum\ntruncation mass $M_0$", fontsize=14, family='serif')
 
 
     ax_mspec_gamma.plot(noise_added, output_table['inner_gamma'], 'ko', ms=5)
