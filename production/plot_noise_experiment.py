@@ -101,6 +101,20 @@ def plot_noise_experiment(output_table):
 
     """
 
+    # "real" values from Quadrant I for comparison - these are plotted as dotted lines
+    real_nclouds = 389
+    real_totalmass = 9.69
+
+    real_larson_A = 0.52
+    err_larson_A = 0.08
+    real_larson_beta = 0.51
+    err_larson_beta = 0.04
+
+    real_mspec_M0 = 8.19
+    err_mspec_M0 = 2.57
+    real_mspec_gamma = -1.59
+    err_mspec_gamma = 0.13
+
     if type(output_table) is dict:
         output_table = build_table_from_output_dict(output_table)
 
@@ -122,24 +136,52 @@ def plot_noise_experiment(output_table):
     ax_nclouds.set_yticks(np.linspace(0,400,5))
     ax_nclouds.set_ylabel("Number of clouds")
 
+    ax_nclouds.plot([0, 0.5], [real_nclouds]*2, 'b--', lw=0.5, scalex=False, scaley=False)
+
+    # ax_nclouds.text()
+
     ax_nclouds.set_xticks([0]+list(set(noise_added) - set([0.045])))
     ax_nclouds.set_xlim(0, 0.4)
+
 
     ax_totalmass.plot(noise_added, output_table['total_mass']/1e7, 'ko', ms=5)
     ax_totalmass.set_ylim(0, 11)
     ax_totalmass.set_ylabel("Total mass / $10^7 M_\odot$")
 
+    ax_totalmass.plot([0, 0.5], [real_totalmass]*2, 'b--', lw=0.5, scalex=False, scaley=False)
+
+
     ax_larson_A.plot(noise_added, output_table['inner_larson_A'], 'ko', ms=5)
     ax_larson_A.set_ylim(0, 0.65)
+
+    ax_larson_A.plot([0, 0.5], [real_larson_A]*2, 'b--', lw=0.5, scalex=False, scaley=False)
+    ax_larson_A.plot([0, 0.5], [real_larson_A+err_larson_A]*2, 'k:', lw=0.5, scalex=False, scaley=False)
+    ax_larson_A.plot([0, 0.5], [real_larson_A-err_larson_A]*2, 'k:', lw=0.5, scalex=False, scaley=False)
+
 
     ax_larson_beta.plot(noise_added, output_table['inner_larson_beta'], 'ko', ms=5)
     ax_larson_beta.set_ylim(0, 0.6)
 
+    ax_larson_beta.plot([0, 0.5], [real_larson_beta]*2, 'b--', lw=0.5, scalex=False, scaley=False)
+    ax_larson_beta.plot([0, 0.5], [real_larson_beta+err_larson_beta]*2, 'k:', lw=0.5, scalex=False, scaley=False)
+    ax_larson_beta.plot([0, 0.5], [real_larson_beta-err_larson_beta]*2, 'k:', lw=0.5, scalex=False, scaley=False)
+
+
     ax_mspec_M0.plot(noise_added, output_table['inner_M0']/1e6, 'ko', ms=5)
     ax_mspec_M0.set_ylim(0, 12)
 
+    ax_mspec_M0.plot([0, 0.5], [real_mspec_M0]*2, 'b--', lw=0.5, scalex=False, scaley=False)
+    ax_mspec_M0.plot([0, 0.5], [real_mspec_M0+err_mspec_M0]*2, 'k:', lw=0.5, scalex=False, scaley=False)
+    ax_mspec_M0.plot([0, 0.5], [real_mspec_M0-err_mspec_M0]*2, 'k:', lw=0.5, scalex=False, scaley=False)
+
+
     ax_mspec_gamma.plot(noise_added, output_table['inner_gamma'], 'ko', ms=5)
     ax_mspec_gamma.set_ylim(-2, -1.4)
+
+    ax_mspec_gamma.plot([0, 0.5], [real_mspec_gamma]*2, 'b--', lw=0.5, scalex=False, scaley=False)
+    ax_mspec_gamma.plot([0, 0.5], [real_mspec_gamma+err_mspec_gamma]*2, 'k:', lw=0.5, scalex=False, scaley=False)
+    ax_mspec_gamma.plot([0, 0.5], [real_mspec_gamma-err_mspec_gamma]*2, 'k:', lw=0.5, scalex=False, scaley=False)
+
 
     return fig
 
