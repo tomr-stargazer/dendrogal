@@ -42,11 +42,14 @@ containing a tuple
 
 from __future__ import division
 
+import os
+
 import numpy as np
 import matplotlib.pyplot as plt
 
 import astropy.table
 
+from dendrogal.production.config import paper_path
 
 import matplotlib
 matplotlib.rcParams['mathtext.fontset'] = 'stix'
@@ -186,7 +189,7 @@ def plot_noise_experiment(output_table):
     ax_mspec_M0.plot([0, 0.5], [real_mspec_M0-err_mspec_M0]*2, 'k:', lw=0.5, scalex=False, scaley=False)
 
     ax_mspec_M0.set_xlabel("Noise added (K)", family='serif', fontsize=14)
-    ax_mspec_M0.text(0.025, 1, "(e) Mass spectrum\ntruncation mass $M_0$", fontsize=14, family='serif')
+    ax_mspec_M0.text(0.025, 1, "(e) Mass spectrum\ntruncation mass $M_0$\n$(\\times 10^6 M_\odot)$", fontsize=14, family='serif')
 
 
     ax_mspec_gamma.plot(noise_added, output_table['inner_gamma'], 'ko', ms=5)
@@ -200,4 +203,19 @@ def plot_noise_experiment(output_table):
 
 
     return fig
+
+
+def save_noise_experiment_figure(input_table=None):
+
+    if input_table is None:
+
+        from dendrogal.production.noise_experiment_results_28nov import results_dict
+        input_table = build_table_from_output_dict(results_dict)
+
+
+    fig = plot_noise_experiment(input_table)
+
+    fig.savefig(os.path.join(paper_path, "noise_experiment_results.pdf"))
+
+
 
