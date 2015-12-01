@@ -222,7 +222,7 @@ def make_thumbnail_dendro_figure(dendrogram, catalog, cloud_idx, panel_width=7*u
     p = single_cloud_dendro_thumbnail(ax_dendro, d, cloud_idx)
 
     ax_dendro.set_ylabel("Intensity (K)")
-    ax_dendro.set_title('cloud structure IDx: {0}'.format(cloud_idx))
+    # ax_dendro.set_title('cloud structure IDx: {0}'.format(cloud_idx))
 
     # draw maps on ax_lb & ax_lv
     ax_lb_limits = [0.1, 0.55, 0.35, 0.35]
