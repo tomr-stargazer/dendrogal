@@ -11,6 +11,8 @@ from dendrogal.production.cloud_extractor_q3 import export_thirdquad_catalog
 from dendrogal.production.cloud_extractor_q4 import export_fourthquad_catalog
 from dendrogal.production.cloud_extractor_carina import export_carina_catalog
 
+from dendrogal.production.config import catalog_output_path
+
 def extract_and_combine_catalogs():
 
     first_cat = export_firstquad_catalog()
@@ -36,6 +38,93 @@ def extract_and_combine_catalogs():
     total_table = astropy.table.vstack([first_cat, second_cat, third_cat, fourth_cat, carina_cat])
 
     return total_table
+
+
+def save_catalog_to_file():
+
+    catalog = extract_and_combine_catalogs()
+
+    # reprogram some columns
+
+    catalog['x_cen'].name = 'l (deg)'
+    catalog['y_cen'].name = 'b (deg)'
+    catalog['v_cen'].name = 'v (km/s)'
+
+    catalog['flux'].name = 'summed_intensity'
+
+    # remove a bunch of columns
+
+    columns_to_remove = [
+       '_idx',
+    # 'area_ellipse',
+    # 'area_exact',
+    # 'major_sigma',
+    # 'minor_sigma',
+    # 'position_angle',
+    # 'radius',
+    # 'v_cen',
+    # # 'v_rms',
+    # 'x_cen',
+    # 'y_cen',
+    # 'flux_true',
+    'flux_clipped',
+    # 'level',
+    # 'n_descendants',
+    'is_leaf',
+    # 'fractional_gain',
+    'on_edge',
+    'v_split',
+    'max_vsplit' ]
+    # 'near_distance',
+    # 'error_near_distance_plus',
+    # 'error_near_distance_minus',
+    # 'far_distance',
+    # 'error_far_distance_plus',
+    # 'error_far_distance_minus',
+    # 'distance',
+    # 'error_distance_plus',
+    # 'error_distance_minus',
+    # 'KDA_resolution',
+    # 'p_near',
+    # 'p_far',
+    # 'size',
+    # 'error_size_plus',
+    # 'error_size_minus',
+    # 'mass',
+    # 'error_mass_plus',
+    # 'error_mass_minus',
+    # 'virial_alpha',
+    # 'error_virial_alpha_plus',
+    # 'error_virial_alpha_minus',
+    # 'pressure',
+    # 'error_pressure_plus',
+    # 'error_pressure_minus',
+    # 'x_sol',
+    # 'y_sol',
+    # 'z_sol',
+    # 'x_gal',
+    # 'y_gal',
+    # 'z_gal',
+    # 'R_gal',
+    # 'phi_gal',
+    # 'near_size',
+    # 'far_size',
+    # 'near_z_gal',
+    # 'far_z_gal',
+    # 'near_mass',
+    # 'far_mass',
+    # 'quadrant',
+    # 'survey']
+
+    for col in columns_to_remove:
+        del catalog[col]
+
+    # add an index column
+    index_column = astropy.table.Column(data=1+np.arange(len(catalog)), name='cloud index')
+    catalog.add_column(index_column, index=0)
+
+    catalog.write(catalog_output_path+"cloud_catalog.fits", format='fits', overwrite=True)
+
 
 def print_results_by_quadrant(total_table=None):
 
