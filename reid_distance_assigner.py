@@ -283,6 +283,24 @@ def distance_assigner_with_plusminus_errors(structure_catalog, kdist_catalog, di
     structure_catalog['error_'+distance_column_name+'_plus'] = np.abs(kdist_catalog['error_D_k_plus'])
     structure_catalog['error_'+distance_column_name+'_minus'] = np.abs(kdist_catalog['error_D_k_minus'])
 
+
+def choose_nearfar_distance(structure_catalog, nearfar, bool_array, unambiguous_tag=False):
+
+    if nearfar not in ['near', 'far']:
+        raise ValueError("`nearfar` must be 'near' or 'far'.")
+
+    tag_dict = {'near': 'N', 'far': 'F'}
+    if unambiguous_tag:
+        tag = 'U'
+    else:
+        tag = tag_dict[nearfar]
+
+    structure_catalog['distance'][bool_array] = structure_catalog[nearfar+'_distance'][bool_array]
+    structure_catalog['error_distance_plus'][bool_array] = structure_catalog['error_'+nearfar+'_distance_plus'][bool_array]
+    structure_catalog['error_distance_minus'][bool_array] = structure_catalog['error_'+nearfar+'_distance_minus'][bool_array]
+    structure_catalog['KDA_resolution'][bool_array] = tag
+
+
 """
 ! Source     Gal Long  Gal Lat    V_lsr     V_rev    Rev. D_k     +/-
 !              (deg)    (deg)    (km/s)    (km/s)     (kpc)      (kpc)

@@ -204,7 +204,10 @@ def multipanel_cmf():
             plt.text(4.5, 3e2, sky_text_dict[sky_region]+gal_text_dict[galactic_region], fontsize=10)
 
             fit_string = ("$\gamma = {{{0:.2f}}}$\n"
-                          "$M_0 = {{{1:.1f}}} \\times 10^{{{2}}}$".format(gamma, M_0_coeff, M_0_power))
+                          "$M_0 = {{{1:.1f}}} \\times 10^{{{2}}}$\n"
+                          "$N_0 = {{{3:.1f}}}$".format(gamma, M_0_coeff, M_0_power, N_0))
+
+            print sky_region, galactic_region, cmf_output[0]
 
             plt.text(3.9, 1, fit_string, fontsize=14)
 

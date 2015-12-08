@@ -154,7 +154,7 @@ def cumulative_massfunction_fit(catalog, min_mass=1e5, max_mass=3e7, bins=20, ma
 
     errfunc = lambda p, x, y: truncated_cloudmass_function(p, x) - y # Distance to the target function
 
-    fit = leastsq(errfunc, initial_parameters, args=(10**bin_centers, cum_hist))
+    fit = leastsq(errfunc, initial_parameters, args=(10**bin_centers, cum_hist), full_output=1)
 
     return fit
 
