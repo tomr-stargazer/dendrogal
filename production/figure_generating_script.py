@@ -221,3 +221,40 @@ def make_thumbnail_figures():
     print quad4_cat['error_distance_minus'][quad4_cat['_idx']==quad4_cloud_idx]
 
 
+def make_tangent_cirle_figures(catalog):
+
+    tangent_circle = catalog[(catalog['R_gal']<8.33) & (catalog['KDA_resolution'] == 'U')]
+    non_tangent_circle = catalog[(catalog['R_gal']<8.33) & (catalog['KDA_resolution'] != 'U')]
+
+    fig1 = plt.figure(figsize=(5,4))
+
+    plt.plot(non_tangent_circle['size'], non_tangent_circle['major_sigma']/non_tangent_circle['minor_sigma'], 
+        'k.', label="not on tangent circle")
+    plt.plot(tangent_circle['size'], tangent_circle['major_sigma']/tangent_circle['minor_sigma'], 
+        'ro', label='on tangent circle')
+
+    plt.xlabel("Cloud radius (pc)", fontsize=18, family='serif')
+    plt.ylabel("Cloud aspect ratio", fontsize=18, family='serif')
+
+    leg = plt.legend(framealpha=0.5, numpoints=1)
+
+    fig2 = plt.figure(figsize=(5,4))
+
+    plt.hist(non_tangent_circle['size'], range=[0,200], bins=20, color='black')
+    plt.hist(tangent_circle['size'], range=[0,200], bins=20, color='red')
+
+    plt.xlabel("Cloud radius (pc)", fontsize=18, family='serif')
+    plt.ylabel("Number of clouds", fontsize=18, family='serif')
+
+    plt.text(40,70, "Black: non-tangent circle clouds", color='black', weight='bold', family='serif')
+    plt.text(70,20, "Red: tangent circle clouds", color='red', weight='bold', family='serif')
+
+    return fig1, fig2
+
+def save_tangent_figures(catalog):
+
+    fig1, fig2 = make_tangent_cirle_figures(catalog)
+
+    fig1.savefig(output_path+'tangent_1.pdf', bbox_inches='tight')
+    fig2.savefig(output_path+'tangent_2.pdf', bbox_inches='tight')
+
