@@ -59,7 +59,9 @@ def make_latex_table(input_table, start=0, end=27):
     latex_table['$R$'] = input_table['size']
     latex_table['$R$'].format = '%.2f'
 
-    mass_string_list = [r"${0:.2f} \times 10^{1}$".format(mass/10**(np.floor(np.log10(mass))), int(np.floor(np.log10(mass)))) for mass in input_table['mass']]
+    # The if/else clause in this list comprehension exists to deal with NaN masses, which otherwise crash it
+    mass_string_list = [r"${0:.2f} \times 10^{1}$".format(mass/10**(np.floor(np.log10(mass))), 
+        int(np.floor(np.log10(mass)))) if ~np.isnan(mass) else "..." for mass in input_table['mass']]
 
     latex_table['Mass'] = mass_string_list
     latex_table['Mass'].unit = u.Msun
